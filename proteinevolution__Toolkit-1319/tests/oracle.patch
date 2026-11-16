@@ -1,0 +1,97 @@
+diff --git a/.scalafmt.conf b/.scalafmt.conf
+index 7376698c1c..7d900c6eac 100644
+--- a/.scalafmt.conf
++++ b/.scalafmt.conf
+@@ -13,4 +13,4 @@ optIn.breakChainOnFirstMethodDot = false
+ align.openParenDefnSite          = false
+ project.git                      = true
+ assumeStandardLibraryStripMargin = true
+-version                          = 3.0.7
++version                          = 3.0.8
+diff --git a/modules/auth/src/main/scala/de/proteinevolution/auth/services/UserSessionService.scala b/modules/auth/src/main/scala/de/proteinevolution/auth/services/UserSessionService.scala
+index a42eaec992..82c7483ca9 100644
+--- a/modules/auth/src/main/scala/de/proteinevolution/auth/services/UserSessionService.scala
++++ b/modules/auth/src/main/scala/de/proteinevolution/auth/services/UserSessionService.scala
+@@ -127,7 +127,7 @@ class UserSessionService @Inject() (
+    * updates a user in the cache
+    */
+   def updateUserInCache(user: User): User = {
+-    //logger.info("User WatchList is now: " + user.jobs.mkString(", "))
++    // logger.info("User WatchList is now: " + user.jobs.mkString(", "))
+     user.sessionID.foreach { sessionID =>
+       userCache.set(sessionID, user, 10.minutes)
+     }
+diff --git a/modules/common/src/main/scala/de/proteinevolution/common/models/ConstantsV2.scala b/modules/common/src/main/scala/de/proteinevolution/common/models/ConstantsV2.scala
+index a6d7b5a30f..10fa179b15 100644
+--- a/modules/common/src/main/scala/de/proteinevolution/common/models/ConstantsV2.scala
++++ b/modules/common/src/main/scala/de/proteinevolution/common/models/ConstantsV2.scala
+@@ -79,13 +79,13 @@ class ConstantsV2 @Inject() (config: Configuration) {
+   final val userDeletionInterval: FiniteDuration = 3 hours
+ 
+   /** Sending an eMail to the user this many days before the deletion */
+-  final val userDeletionWarning: Int = 14 //days
++  final val userDeletionWarning: Int = 14 // days
+   /** Deletes regular accounts after this time frame */
+-  final val userDeleting: Int = 1 //months
++  final val userDeleting: Int = 1 // months
+   /** Deletes users awaiting registration after this time frame */
+-  final val userDeletingRegisterEmail: Int = 3 //days
++  final val userDeletingRegisterEmail: Int = 3 // days
+   /** Deletes registered accounts after this time frame */
+-  final val userDeletingRegistered: Int = 24 //months
++  final val userDeletingRegistered: Int = 24 // months
+ 
+   // qstat long polling in order to detect zombie jobs, not used for cluster load calc anymore
+   /** Interval of the qstat requests */
+diff --git a/modules/jobs/src/main/scala/de/proteinevolution/jobs/actors/JobActor.scala b/modules/jobs/src/main/scala/de/proteinevolution/jobs/actors/JobActor.scala
+index 2e7fcee309..3d01cb9551 100644
+--- a/modules/jobs/src/main/scala/de/proteinevolution/jobs/actors/JobActor.scala
++++ b/modules/jobs/src/main/scala/de/proteinevolution/jobs/actors/JobActor.scala
+@@ -434,10 +434,10 @@ class JobActor @Inject() (
+ 
+               val h_rt = config.get[Int](s"Tools.${job.tool}.hardruntime")
+ 
+-              //Set soft runtime to 30s less than hard runtime
++              // Set soft runtime to 30s less than hard runtime
+               val s_rt   = h_rt - 30
+               val h_vmem = (config.get[Int](s"Tools.${job.tool}.memory") * TEL.memFactor).toInt
+-              //Set soft memory limit to 95% of hard memory limit
++              // Set soft memory limit to 95% of hard memory limit
+               val s_vmem  = h_vmem * 0.95
+               val threads = math.ceil(config.get[Int](s"Tools.${job.tool}.threads") * TEL.threadsFactor).toInt
+ 
+@@ -565,7 +565,7 @@ class JobActor @Inject() (
+           if (job.isFinished) {
+             // Now we can update the JobState and remove it, once the update has completed
+             updateJobState(job).map { job =>
+-              //Remove the job from the jobActor
++              // Remove the job from the jobActor
+               updateJobLogAndExecution(job.jobID)
+               // Tell the user that their job finished via eMail (can be either failed or done)
+               sendJobUpdateMail(job)
+diff --git a/modules/message/src/main/scala/de/proteinevolution/message/actors/WebSocketActor.scala b/modules/message/src/main/scala/de/proteinevolution/message/actors/WebSocketActor.scala
+index 7bf6140e01..3494cd93a4 100644
+--- a/modules/message/src/main/scala/de/proteinevolution/message/actors/WebSocketActor.scala
++++ b/modules/message/src/main/scala/de/proteinevolution/message/actors/WebSocketActor.scala
+@@ -120,7 +120,7 @@ final class WebSocketActor @Inject() (
+             // Received a ping, so we return a pong
+             case "Ping" =>
+               json.hcursor.get[Long]("date").map { msTime =>
+-                //log.info(s"[WSActor] Ping from session ${sid.stringify} with msTime $msTime")
++                // log.info(s"[WSActor] Ping from session ${sid.stringify} with msTime $msTime")
+                 out ! JsonObject("type" -> Json.fromString("Pong"), "date" -> Json.fromLong(msTime)).asJson
+               }
+ 
+diff --git a/modules/tel/src/main/scala/de/proteinevolution/tel/execution/ExecutionContext.scala b/modules/tel/src/main/scala/de/proteinevolution/tel/execution/ExecutionContext.scala
+index b93cad4b01..4ce01d4be5 100644
+--- a/modules/tel/src/main/scala/de/proteinevolution/tel/execution/ExecutionContext.scala
++++ b/modules/tel/src/main/scala/de/proteinevolution/tel/execution/ExecutionContext.scala
+@@ -96,7 +96,7 @@ class ExecutionContext(val root: File, reOpen: Boolean = false) {
+ 
+   def executeNext: RegisteredExecution = {
+     executionQueue.dequeue()
+-    //RunnableExecution(Process(x.run.pathAsString, x.run.parent.toJava),x.delete.map(f => Process(f.pathAsString)))
++    // RunnableExecution(Process(x.run.pathAsString, x.run.parent.toJava),x.delete.map(f => Process(f.pathAsString)))
+   }
+   def hasMoreExecutions: Boolean = executionQueue.nonEmpty
+ }

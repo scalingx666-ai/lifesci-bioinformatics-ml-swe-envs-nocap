@@ -1,0 +1,71 @@
+version = "1.0"
+
+[task]
+name = "default/BALL-Project__ball-634"
+description = "Revamped the workflow_support section"
+
+[metadata]
+difficulty = "large"
+category = "bugfix"
+keywords = [
+    "ball",
+    "pr_diff",
+]
+
+[metadata.repo2env]
+pipeline = "pr_diff"
+pipeline_version = "0.3.0"
+repo = "BALL-Project/ball"
+ref = "990aa0c06bf9f73810a1ec784287a13b1f1f793d"
+reference = "https://github.com/BALL-Project/ball/pull/634"
+source_access = "auto"
+built_at = "2026-11-16T05:52:37.312012+00:00"
+reward_kinds = [
+    "diff_similarity",
+]
+spec_version = "0.2.0"
+content_hash = "sha256:37ef37ed72e777cc1eb0676ae005d0409e1fa3b1d104735703e334c2a123a6c4"
+
+[metadata.repo2env.pr_diff]
+pr_merged_at = "2017-08-23T09:09:08Z"
+diff_format = "unified"
+context_files = [
+    "CMakeLists.txt",
+    "workflow_support/README.md",
+    "workflow_support/common/generate_ctds.cmake.in",
+    "workflow_support/common/install_ctdconverter.cmake.in",
+    "workflow_support/cwl/CMakeLists.txt",
+    "workflow_support/cwl/README.md",
+    "workflow_support/cwl/cwl_generator.cmake.in",
+    "workflow_support/galaxy/CMakeLists.txt",
+    "workflow_support/galaxy/README.md",
+    "workflow_support/galaxy/ballaxy_generator.cmake.in",
+]
+
+[metadata.repo2env.reward_calibration]
+baseline_reward = 0.0
+loc_changed = 294
+difficulty = "large"
+
+[metadata.repo2env.evaluation]
+schema_version = "1"
+status = "unverified"
+stage = "generation"
+reason_codes = [
+    "validation_not_run",
+]
+detail = "Generated task; validation has not been established."
+provenance = "unknown"
+evidence = []
+
+[metadata.repo2env.reproducibility]
+mode = "local_only"
+image_ref = "python:3.12-slim"
+image_tag = "python:3.12-slim"
+image_visibility = "private"
+
+[agent]
+timeout_sec = 1800.0
+
+[verifier]
+timeout_sec = 300.0

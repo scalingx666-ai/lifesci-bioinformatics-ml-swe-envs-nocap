@@ -1,0 +1,67 @@
+version = "1.0"
+
+[task]
+name = "default/proteinevolution__Toolkit-1257"
+description = "Prokaryotic proteasome database for HHpred and PSI-BLAST"
+
+[metadata]
+difficulty = "large"
+category = "bugfix"
+keywords = [
+    "Toolkit",
+    "pr_diff",
+]
+
+[metadata.repo2env]
+pipeline = "pr_diff"
+pipeline_version = "0.3.0"
+repo = "proteinevolution/Toolkit"
+ref = "bd15f3aba6cab6e752bb1007a7397edb5d3c07ab"
+reference = "https://github.com/proteinevolution/Toolkit/pull/1257"
+source_access = "auto"
+built_at = "2026-11-16T06:04:17.838000+00:00"
+reward_kinds = [
+    "diff_similarity",
+]
+spec_version = "0.2.0"
+content_hash = "sha256:7d0f9db5adf9d6ed2de013faa269db6ad536369b94313d91db86b53b02963d54"
+
+[metadata.repo2env.pr_diff]
+pr_merged_at = "2021-06-20T15:33:47Z"
+diff_format = "unified"
+context_files = [
+    "conf/application.conf",
+    "frontend/src/components/modals/TemplateStructureModal.vue",
+    "frontend/src/components/sidebar/JobList.vue",
+    "frontend/src/i18n/lang/extras/modals/toolHelp/clans.ts",
+    "modules/jobs/src/main/scala/de/proteinevolution/jobs/controllers/FileController.scala",
+    "modules/jobs/src/main/scala/de/proteinevolution/jobs/results/LinkUtil.scala",
+]
+
+[metadata.repo2env.reward_calibration]
+baseline_reward = 0.0
+loc_changed = 748
+difficulty = "large"
+
+[metadata.repo2env.evaluation]
+schema_version = "1"
+status = "unverified"
+stage = "generation"
+reason_codes = [
+    "validation_not_run",
+]
+detail = "Generated task; validation has not been established."
+provenance = "unknown"
+evidence = []
+
+[metadata.repo2env.reproducibility]
+mode = "local_only"
+image_ref = "python:3.12-slim"
+image_tag = "python:3.12-slim"
+image_visibility = "private"
+
+[agent]
+timeout_sec = 1800.0
+
+[verifier]
+timeout_sec = 300.0

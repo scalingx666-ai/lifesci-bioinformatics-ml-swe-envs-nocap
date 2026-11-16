@@ -1,0 +1,67 @@
+version = "1.0"
+
+[task]
+name = "default/K-Dense-AI__scientific-agent-skills-203"
+description = "feat(skills): add onekgpd skill: individual-level queries over the 1000 Genomes variant dataset"
+
+[metadata]
+difficulty = "large"
+category = "bugfix"
+keywords = [
+    "scientific-agent-skills",
+    "pr_diff",
+]
+
+[metadata.repo2env]
+pipeline = "pr_diff"
+pipeline_version = "0.3.0"
+repo = "K-Dense-AI/scientific-agent-skills"
+ref = "75b944c18964903d9a6c4dc1f7b8d037019102ef"
+reference = "https://github.com/K-Dense-AI/scientific-agent-skills/pull/203"
+source_access = "auto"
+built_at = "2026-11-15T10:22:26.482338+00:00"
+reward_kinds = [
+    "diff_similarity",
+]
+spec_version = "0.2.0"
+content_hash = "sha256:13c8999f6e7d8597e49bedf63df6fa7b34e51e682cc44e866148be86cd27c7e1"
+
+[metadata.repo2env.pr_diff]
+pr_merged_at = "2026-06-29T17:45:05Z"
+diff_format = "unified"
+context_files = [
+    "skills/onekgpd/SKILL.md",
+    "skills/onekgpd/assets/kgpe.json",
+    "skills/onekgpd/references/annotation_vocabularies.md",
+    "skills/onekgpd/references/onekgpd_commands.md",
+    "skills/onekgpd/scripts/onekgpd_api.py",
+    "skills/onekgpd/scripts/onekgpd_meta.py",
+]
+
+[metadata.repo2env.reward_calibration]
+baseline_reward = 0.0
+loc_changed = 50150
+difficulty = "large"
+
+[metadata.repo2env.evaluation]
+schema_version = "1"
+status = "unverified"
+stage = "generation"
+reason_codes = [
+    "validation_not_run",
+]
+detail = "Generated task; validation has not been established."
+provenance = "unknown"
+evidence = []
+
+[metadata.repo2env.reproducibility]
+mode = "local_only"
+image_ref = "python:3.12-slim"
+image_tag = "python:3.12-slim"
+image_visibility = "private"
+
+[agent]
+timeout_sec = 1800.0
+
+[verifier]
+timeout_sec = 300.0

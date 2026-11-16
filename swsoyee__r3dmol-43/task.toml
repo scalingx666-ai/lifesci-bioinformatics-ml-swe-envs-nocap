@@ -1,0 +1,65 @@
+version = "1.0"
+
+[task]
+name = "default/swsoyee__r3dmol-43"
+description = "build: bump 3Dmol.js to latest (v1.7.0) (#41)"
+
+[metadata]
+difficulty = "large"
+category = "bugfix"
+keywords = [
+    "r3dmol",
+    "pr_diff",
+]
+
+[metadata.repo2env]
+pipeline = "pr_diff"
+pipeline_version = "0.3.0"
+repo = "swsoyee/r3dmol"
+ref = "6da4ad51a1ed5ae2a5a01263af18fd5b4d0df70d"
+reference = "https://github.com/swsoyee/r3dmol/pull/43"
+source_access = "auto"
+built_at = "2026-11-16T04:44:41.469778+00:00"
+reward_kinds = [
+    "diff_similarity",
+]
+spec_version = "0.2.0"
+content_hash = "sha256:063bb5caecb1ca2b166a8fe3fab64dc15d849eddb273c57d9c30fa0c952e1534"
+
+[metadata.repo2env.pr_diff]
+pr_merged_at = "2021-09-16T13:53:50Z"
+diff_format = "unified"
+context_files = [
+    "inst/htmlwidgets/lib/3Dmol/3Dmol-min.js",
+    "inst/htmlwidgets/lib/3Dmol/3Dmol-nojquery-min.js",
+    "inst/htmlwidgets/lib/3Dmol/3Dmol-nojquery.js",
+    "inst/htmlwidgets/lib/3Dmol/3Dmol.js",
+]
+
+[metadata.repo2env.reward_calibration]
+baseline_reward = 0.0
+loc_changed = 15952
+difficulty = "large"
+
+[metadata.repo2env.evaluation]
+schema_version = "1"
+status = "unverified"
+stage = "generation"
+reason_codes = [
+    "validation_not_run",
+]
+detail = "Generated task; validation has not been established."
+provenance = "unknown"
+evidence = []
+
+[metadata.repo2env.reproducibility]
+mode = "local_only"
+image_ref = "python:3.12-slim"
+image_tag = "python:3.12-slim"
+image_visibility = "private"
+
+[agent]
+timeout_sec = 1800.0
+
+[verifier]
+timeout_sec = 300.0

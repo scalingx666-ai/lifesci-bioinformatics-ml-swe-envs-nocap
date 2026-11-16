@@ -1,0 +1,406 @@
+diff --git a/skills/nextflow/SKILL.md b/skills/nextflow/SKILL.md
+index 41f462377..09ced00ea 100644
+--- a/skills/nextflow/SKILL.md
++++ b/skills/nextflow/SKILL.md
+@@ -3,7 +3,7 @@ name: nextflow
+ description: Build, run, and debug Nextflow data pipelines and nf-core workflows end to end. Use whenever the user mentions Nextflow, nf-core, .nf files, nextflow.config, DSL2, processes/channels/operators, samplesheets, or wants to run a community pipeline (e.g. nf-core/rnaseq, nf-core/sarek), write or test a module/subworkflow with nf-test, configure executors/containers (Docker, Singularity/Apptainer, Conda, Wave), scale a workflow to HPC/SLURM or cloud (AWS Batch, Google Batch, Azure, Kubernetes), or debug a failed/-resume run. Make sure to use this skill for any reproducible scientific/bioinformatics workflow work even if the user does not say the word "Nextflow", and for authoring nf-core-compliant pipelines, modules, configs, and linting.
+ license: Apache-2.0
+ metadata:
+-  version: "1.1"
++  version: "1.2"
+   skill-author: K-Dense Inc.
+ ---
+ 
+diff --git a/skills/nextflow/references/developing.md b/skills/nextflow/references/developing.md
+index 960013066..0ca7688b4 100644
+--- a/skills/nextflow/references/developing.md
++++ b/skills/nextflow/references/developing.md
+@@ -289,7 +289,8 @@ nf-core pipelines schema build      # interactive web editor to add/edit params
+ nf-core pipelines schema lint       # CI checks schema ↔ params consistency
+ ```
+ 
+-The samplesheet itself is validated against `assets/schema_input.json`.
++The samplesheet itself is validated against the pipeline's own
++`<pipeline>/assets/schema_input.json`.
+ 
+ ## Linting and the Harshil alignment style
+ 
+diff --git a/skills/research-grants/SKILL.md b/skills/research-grants/SKILL.md
+index 8485347eb..4cbe6aed6 100644
+--- a/skills/research-grants/SKILL.md
++++ b/skills/research-grants/SKILL.md
+@@ -5,7 +5,7 @@ allowed-tools: Read Write Edit Bash
+ license: MIT license
+ compatibility: Works in Agent Skills-compatible hosts. Grant-writing guidance needs no network; optional figures via the scientific-schematics skill require OPENROUTER_API_KEY and outbound API access.
+ metadata:
+-  version: "1.2"
++  version: "1.3"
+   skill-author: K-Dense Inc.
+ ---
+ 
+@@ -47,10 +47,10 @@ Strong proposals often include 1–3 figures (timelines, workflow diagrams, prel
+ - **Preferred:** Use the **scientific-schematics** skill (`--doc-type grant`) for AI-generated diagrams from a natural-language description
+ - **Alternative:** Build figures in your usual tools (matplotlib, Illustrator, PowerPoint, etc.)
+ 
+-From the `scientific-schematics` skill directory, with `OPENROUTER_API_KEY` set:
++Run from the repository root, with `OPENROUTER_API_KEY` set:
+ 
+ ```bash
+-python scripts/generate_schematic.py "project timeline with Year 1-3 milestones" -o figures/timeline.png --doc-type grant
++python skills/scientific-schematics/scripts/generate_schematic.py "project timeline with Year 1-3 milestones" -o figures/timeline.png --doc-type grant
+ ```
+ 
+ **Disclosure:** AI schematic generation sends your prompt to [OpenRouter](https://openrouter.ai/) (a third-party API). Do not include unpublished sensitive details unless that transmission is appropriate for your project.
+diff --git a/skills/research-grants/references/README.md b/skills/research-grants/references/README.md
+index 1cd1821ec..f1671e810 100644
+--- a/skills/research-grants/references/README.md
++++ b/skills/research-grants/references/README.md
+@@ -119,7 +119,8 @@ For in-depth help on specific components:
+ - `references/review_criteria.md` - Comparative review criteria by agency
+ - `references/writing_principles.md` - What separates funded proposals from competent ones
+ - `references/proposal_types_and_resubmission.md` - Proposal types and resubmission strategy
+-- `references/timeline_planning.md` - Project management (coming soon)
++Project timelines and milestone planning are covered inside
++`references/core_components.md` rather than in a file of their own.
+ 
+ ### Templates
+ - `assets/nsf_project_summary_template.md`
+diff --git a/skills/scientific-critical-thinking/SKILL.md b/skills/scientific-critical-thinking/SKILL.md
+index de17d5b45..504c23fb0 100644
+--- a/skills/scientific-critical-thinking/SKILL.md
++++ b/skills/scientific-critical-thinking/SKILL.md
+@@ -5,7 +5,7 @@ allowed-tools: Read Write Edit
+ license: MIT license
+ compatibility: Analytical guidance needs no network. Optional figures via the scientific-schematics skill require OPENROUTER_API_KEY and outbound API access to OpenRouter.
+ metadata:
+-  version: "1.2"
++  version: "1.3"
+   skill-author: K-Dense Inc.
+ ---
+ 
+@@ -40,10 +40,10 @@ Only add figures when the **user explicitly requests** a diagram (for example, a
+ - **Preferred:** Use the **scientific-schematics** skill for AI-generated diagrams from a natural-language description
+ - **Alternative:** Build figures in your usual tools (draw.io, PowerPoint, matplotlib, etc.)
+ 
+-From the `scientific-schematics` skill directory, with `OPENROUTER_API_KEY` set:
++Run from the repository root, with `OPENROUTER_API_KEY` set:
+ 
+ ```bash
+-python scripts/generate_schematic.py "GRADE evidence assessment flowchart with downgrade and upgrade factors" -o figures/grade_flowchart.png --doc-type report
++python skills/scientific-schematics/scripts/generate_schematic.py "GRADE evidence assessment flowchart with downgrade and upgrade factors" -o figures/grade_flowchart.png --doc-type report
+ ```
+ 
+ **Disclosure:** AI schematic generation sends your prompt to [OpenRouter](https://openrouter.ai/) (a third-party API). Do not include unpublished sensitive details unless that transmission is appropriate for your project.
+diff --git a/skills/scientific-slides/SKILL.md b/skills/scientific-slides/SKILL.md
+index d305e5642..6102b037b 100644
+--- a/skills/scientific-slides/SKILL.md
++++ b/skills/scientific-slides/SKILL.md
+@@ -4,7 +4,7 @@ description: Build slide decks and presentations for research talks. Use this fo
+ allowed-tools: Read Write Edit Bash
+ license: MIT license
+ metadata:
+-  version: "1.7"
++  version: "1.8"
+   skill-author: K-Dense Inc.
+   openclaw:
+     primaryEnv: OPENROUTER_API_KEY
+@@ -178,7 +178,7 @@ When creating PowerPoint presentations, use Nano Banana Pro to generate images a
+ **How it works:**
+ 1. **Plan the deck**: Create content plan for each slide
+ 2. **Generate visuals**: Use Nano Banana Pro with `--visual-only` flag to create images for slides
+-3. **Build PPTX**: Use the PPTX skill (html2pptx or template-based) to create slides with generated visuals and separate text
++3. **Build PPTX**: Use the PPTX skill (PptxGenJS or template-based) to create slides with generated visuals and separate text
+ 
+ **Step 1: Generate Visuals for Each Slide**
+ 
+@@ -195,7 +195,7 @@ python scripts/generate_slide_image.py "Before and after comparison showing impr
+ 
+ **Step 2: Build PowerPoint with PPTX Skill**
+ 
+-Use the PPTX skill's html2pptx workflow to create slides that include:
++Use the PPTX skill's PptxGenJS workflow to create slides that include:
+ - Generated images from step 1
+ - Title and body text added separately
+ - Professional layout and formatting
+@@ -261,7 +261,7 @@ often sink a talk are catalogued in
+ - Use for PowerPoint creation and editing
+ - Leverage scripts for template workflows
+ - Use thumbnail generation for validation
+-- Reference html2pptx for programmatic creation
++- Reference the PPTX skill's `SKILL.md` for programmatic creation
+ 
+ **Data Visualization**:
+ - Create presentation-appropriate figures
+diff --git a/skills/scientific-slides/assets/powerpoint_design_guide.md b/skills/scientific-slides/assets/powerpoint_design_guide.md
+index ae1d43eca..1ac6af9d2 100644
+--- a/skills/scientific-slides/assets/powerpoint_design_guide.md
++++ b/skills/scientific-slides/assets/powerpoint_design_guide.md
+@@ -18,21 +18,20 @@ This guide provides comprehensive instructions for creating professional scienti
+ ### Reference
+ 
+ For complete technical documentation on PowerPoint creation, refer to:
+-- **Main documentation**: `document-skills/pptx/SKILL.md`
+-- **HTML to PowerPoint workflow**: Detailed in `pptx/html2pptx.md`
+-- **OOXML editing**: For advanced editing in `pptx/ooxml.md`
++- **Main documentation**: the `pptx` skill's `SKILL.md`, which covers creation,
++  template editing, and the OOXML round-trip in one place
+ 
+ ### Two Approaches to PowerPoint Creation
+ 
+-#### 1. Programmatic Creation (html2pptx)
++#### 1. Programmatic Creation (PptxGenJS)
+ 
+ **Best for**: Creating presentations from scratch with custom designs and data visualizations.
+ 
+ **Workflow**:
+-1. Read `document-skills/pptx/SKILL.md` completely
+-2. Design slides in HTML with proper dimensions (720pt × 405pt for 16:9)
+-3. Create JavaScript file using `html2pptx()` function
+-4. Add charts and tables using PptxGenJS API
++1. Read the `pptx` skill's `SKILL.md` completely — its "Creating with pptxgenjs" section lists the footguns
++2. Set `pres.layout` before adding slides (`LAYOUT_16x9` is 10" × 5.625"; coordinates are inches)
++3. Create a JavaScript file that builds the deck with the PptxGenJS API
++4. Add charts and tables using the PptxGenJS API
+ 5. Generate thumbnails and validate visually
+ 6. Iterate based on visual inspection
+ 
+@@ -59,19 +58,26 @@ pptx.writeFile({ fileName: "presentation.pptx" });
+ 
+ **Best for**: Using existing PowerPoint templates or editing existing presentations.
+ 
+-**Workflow**:
++**Workflow** (all scripts live in the `pptx` skill; run them from the repository root):
+ 1. Start with template.pptx
+-2. Use `scripts/rearrange.py` to duplicate/reorder slides
+-3. Use `scripts/inventory.py` to extract text
+-4. Generate replacement text JSON
+-5. Use `scripts/replace.py` to update content
+-6. Validate with thumbnail grids
+-
+-**Key Scripts**:
+-- `rearrange.py`: Duplicate and reorder slides
+-- `inventory.py`: Extract all text shapes
+-- `replace.py`: Apply text replacements
+-- `thumbnail.py`: Visual validation
++2. Render a thumbnail grid to see which layouts the template offers
++3. Read the existing text with `markitdown` to plan replacements
++4. Unzip the deck, edit `ppt/slides/slideN.xml` directly, and zip it back up
++5. Duplicate slides with `add_slide.py`, then drop orphaned parts with `clean.py`
++6. Validate the result and re-render thumbnails
++
++**Key Scripts** (under `skills/pptx/scripts/`):
++- `thumbnail.py`: Labeled grid of every slide — for picking template layouts and visual validation
++- `add_slide.py`: Duplicate a slide or layout with the package bookkeeping handled
++- `clean.py`: Delete slides, media, and rels that are no longer referenced
++- `office/validate.py`: Schema, relationship, and content-type checks; pass `--original` for template-derived decks
++- `office/soffice.py`: LibreOffice wrapper for converting to PDF
++
++Text extraction uses `markitdown` rather than a dedicated script:
++
++```bash
++markitdown template.pptx
++```
+ 
+ ## Design Principles for Scientific Presentations
+ 
+@@ -452,10 +458,10 @@ After creating presentation:
+ 
+ ```bash
+ # Create thumbnail grid for quick review
+-python scripts/thumbnail.py presentation.pptx review/thumbnails --cols 4
++python skills/pptx/scripts/thumbnail.py presentation.pptx review/thumbnails --cols 4
+ 
+-# Or for individual slides
+-python scripts/thumbnail.py presentation.pptx review/slide
++# Or a single-column strip for per-slide detail
++python skills/pptx/scripts/thumbnail.py presentation.pptx review/slide --cols 1
+ ```
+ 
+ ### Inspection Checklist
+@@ -491,26 +497,28 @@ For each slide, check:
+ 
+ If you have an existing template:
+ 
+-1. **Extract template structure**:
++1. **Extract template text**:
+ ```bash
+-python scripts/inventory.py template.pptx inventory.json
++markitdown template.pptx > inventory.md
+ ```
+ 
+ 2. **Create thumbnail grid**:
+ ```bash
+-python scripts/thumbnail.py template.pptx template_review
++python skills/pptx/scripts/thumbnail.py template.pptx template_review
+ ```
+ 
+ 3. **Analyze layouts** and document which slides to use
+ 
+-4. **Rearrange slides**:
++4. **Duplicate the layouts you need**, then drop what you don't:
+ ```bash
+-python scripts/rearrange.py template.pptx working.pptx 0,5,5,12,18,22
++python skills/pptx/scripts/add_slide.py template.pptx slide2.xml -o working.pptx
++python skills/pptx/scripts/clean.py unpacked/
+ ```
+ 
+-5. **Replace content**:
++5. **Replace content** by editing `ppt/slides/slideN.xml` in the unzipped deck, then
++   zip it back up and check the result:
+ ```bash
+-python scripts/replace.py working.pptx replacements.json output.pptx
++python skills/pptx/scripts/office/validate.py output.pptx --original template.pptx
+ ```
+ 
+ ## Best Practices Summary
+@@ -595,10 +603,8 @@ python scripts/replace.py working.pptx replacements.json output.pptx
+ - Image editing (PowerPoint built-in, external tools)
+ 
+ **PPTX Skill Documentation**:
+-- `document-skills/pptx/SKILL.md`: Main documentation
+-- `document-skills/pptx/html2pptx.md`: HTML to PPTX workflow
+-- `document-skills/pptx/ooxml.md`: Advanced editing
+-- `document-skills/pptx/scripts/`: Utility scripts
++- `skills/pptx/SKILL.md`: Main documentation — creation, template editing, and OOXML
++- `skills/pptx/scripts/`: Utility scripts
+ 
+ ## Quick Reference
+ 
+diff --git a/skills/scientific-slides/references/slide_capabilities.md b/skills/scientific-slides/references/slide_capabilities.md
+index 0008bc472..2c918a615 100644
+--- a/skills/scientific-slides/references/slide_capabilities.md
++++ b/skills/scientific-slides/references/slide_capabilities.md
+@@ -196,13 +196,13 @@ Use Nano Banana Pro with `--visual-only` to generate images, then build PPTX wit
+ 
+ **Key Resources**:
+ - `assets/powerpoint_design_guide.md`: Complete PowerPoint design guide
+-- PPTX skill's `html2pptx.md`: Programmatic creation workflow
+-- PPTX skill's scripts: `rearrange.py`, `inventory.py`, `replace.py`, `thumbnail.py`
++- PPTX skill's `SKILL.md`: Programmatic creation with PptxGenJS, plus template editing
++- PPTX skill's scripts: `thumbnail.py`, `add_slide.py`, `clean.py`, `office/validate.py`
+ 
+ **Workflow**:
+ 1. Generate visuals with `generate_slide_image.py --visual-only`
+-2. Design HTML slides (for programmatic) or use templates
+-3. Create presentation using html2pptx or template editing
++2. Author slides with PptxGenJS (for programmatic) or use templates
++3. Create presentation using PptxGenJS or template editing
+ 4. Add generated images and text content
+ 5. Generate thumbnails for visual validation
+ 6. Iterate based on visual inspection
+diff --git a/tests/_contract/structure.py b/tests/_contract/structure.py
+index ebbc81164..879f4801e 100644
+--- a/tests/_contract/structure.py
++++ b/tests/_contract/structure.py
+@@ -44,6 +44,18 @@
+ _INLINE_PATH = re.compile(r"`((?:assets|references|scripts)/[A-Za-z0-9_./-]+)`")
+ _MARKDOWN_LINK = re.compile(r"\]\(((?:assets|references|scripts)/[A-Za-z0-9_./-]+)\)")
+ 
++# A path in executable position -- `python scripts/thumbnail.py`, `./scripts/run.sh`.
++# Inside a fenced block these carry no backticks, so the two patterns above miss
++# them, yet they are the references that strand an agent hardest: it runs the
++# command and gets "No such file or directory" instead of a document it can work
++# around. Matching only the executable slot keeps output paths (`-o assets/x.svg`)
++# and prose about deleted files out of the results.
++_COMMAND_PATH = re.compile(
++    r"(?:^|\s)(?:python[23]?|bash|sh|uv run(?: python)?)\s+"
++    r"((?:assets|references|scripts)/[A-Za-z0-9_./-]+)"
++    r"|(?:^|\s)\./((?:assets|references|scripts)/[A-Za-z0-9_./-]+)"
++)
++
+ # An absolute path under someone's home or drive mount is a leaked local
+ # environment: it names a person, and it cannot work on any other machine.
+ _PERSONAL_PATH = re.compile(
+@@ -86,6 +98,20 @@ def all_skill_names(skills_dir: Path = SKILLS_DIR) -> set[str]:
+     }
+ 
+ 
++def documented_skills(skills_dir: Path = SKILLS_DIR) -> list[Path]:
++    """Every skill directory, whether or not it ships scripts.
++
++    The document-level rules in `DOCUMENT_RULES` apply here. Restricting them to
++    script-bearing skills would leave the docs of a reference-only skill
++    unchecked, which is how a broken `references/` link can survive review.
++    """
++    return [
++        skill
++        for skill in sorted(skills_dir.iterdir())
++        if skill.is_dir() and (skill / "SKILL.md").is_file()
++    ]
++
++
+ def _frontmatter(skill: Path) -> str | None:
+     """The raw YAML between the opening and closing `---`, or None."""
+     text = (skill / "SKILL.md").read_text(encoding="utf-8")
+@@ -270,16 +296,26 @@ def link_problems(skill: Path, known_skills: Iterable[str] | None = None) -> lis
+     named on the same line and owns it.
+     """
+     names = set(known_skills) if known_skills is not None else all_skill_names()
+-    documents = [skill / "SKILL.md", *sorted((skill / "references").glob("*.md"))]
++    documents = [
++        skill / "SKILL.md",
++        *sorted((skill / "references").glob("*.md")),
++        *sorted((skill / "assets").glob("*.md")),
++    ]
+ 
+     problems = []
+     for document in documents:
+         if not document.is_file():
+             continue
+         for number, line in enumerate(document.read_text(encoding="utf-8").splitlines(), 1):
++            commands = {
++                match
++                for pair in _COMMAND_PATH.findall(line)
++                for match in pair
++                if match
++            }
+             for relative in set(_INLINE_PATH.findall(line)) | set(
+                 _MARKDOWN_LINK.findall(line)
+-            ):
++            ) | commands:
+                 if (skill / relative).exists():
+                     continue
+                 owners = [
+@@ -430,3 +466,16 @@ def shell_script_problems(skill: Path) -> list[str]:
+     "no_personal_paths": personal_path_problems,
+     "shell_scripts": shell_script_problems,
+ }
++
++# Rules that read only SKILL.md, `references/`, and `assets/`. They hold for every
++# skill; the rest of `CHECKS` inspects `scripts/` and is meaningful only where a
++# skill ships some.
++DOCUMENT_RULES = frozenset(
++    {
++        "frontmatter",
++        "skill_md_length",
++        "no_tests_under_skills",
++        "local_links_resolve",
++        "no_personal_paths",
++    }
++)
+diff --git a/tests/_meta/test_repo_contract.py b/tests/_meta/test_repo_contract.py
+index c70584d9b..b366b8e35 100644
+--- a/tests/_meta/test_repo_contract.py
++++ b/tests/_meta/test_repo_contract.py
+@@ -51,6 +51,7 @@
+ office = skill_contract.office
+ 
+ SCRIPT_BEARING = structure.script_bearing_skills(SKILLS_DIR)
++DOCUMENTED = structure.documented_skills(SKILLS_DIR)
+ KNOWN_SKILLS = structure.all_skill_names(SKILLS_DIR)
+ 
+ 
+@@ -122,7 +123,12 @@ class StructuralContractTests(unittest.TestCase):
+     def test_all_skills_satisfy_every_structural_rule(self) -> None:
+         self.assertTrue(SCRIPT_BEARING, "no skills found -- the anchor is wrong")
+         for rule, check in structure.CHECKS.items():
+-            for skill in SCRIPT_BEARING:
++            # Document rules hold for every skill; script rules only where a
++            # skill ships scripts to inspect.
++            subjects = (
++                DOCUMENTED if rule in structure.DOCUMENT_RULES else SCRIPT_BEARING
++            )
++            for skill in subjects:
+                 with self.subTest(rule=rule, skill=skill.name):
+                     problems = (
+                         check(skill, KNOWN_SKILLS)

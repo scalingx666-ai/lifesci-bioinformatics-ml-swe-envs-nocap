@@ -1,0 +1,62 @@
+version = "1.0"
+
+[task]
+name = "default/proteinevolution__Toolkit-1457"
+description = "Update filters-helpers, play-ahc-ws, ... to 2.8.18"
+
+[metadata]
+difficulty = "easy"
+category = "bugfix"
+keywords = [
+    "Toolkit",
+    "pr_diff",
+]
+
+[metadata.repo2env]
+pipeline = "pr_diff"
+pipeline_version = "0.3.0"
+repo = "proteinevolution/Toolkit"
+ref = "6fe04cba68e38a11204b6565357f53c2f107cd4f"
+reference = "https://github.com/proteinevolution/Toolkit/pull/1457"
+source_access = "auto"
+built_at = "2026-11-16T05:59:04.926075+00:00"
+reward_kinds = [
+    "diff_similarity",
+]
+spec_version = "0.2.0"
+content_hash = "sha256:dab2f4aa05763d62701930f0ff2784b6ac1f3c4bcb69c9b41b35a2c5ba563e46"
+
+[metadata.repo2env.pr_diff]
+pr_merged_at = "2022-10-25T14:54:47Z"
+diff_format = "unified"
+context_files = [
+    "project/plugins.sbt",
+]
+
+[metadata.repo2env.reward_calibration]
+baseline_reward = 0.0
+loc_changed = 2
+difficulty = "trivial"
+
+[metadata.repo2env.evaluation]
+schema_version = "1"
+status = "unverified"
+stage = "generation"
+reason_codes = [
+    "validation_not_run",
+]
+detail = "Generated task; validation has not been established."
+provenance = "unknown"
+evidence = []
+
+[metadata.repo2env.reproducibility]
+mode = "local_only"
+image_ref = "python:3.12-slim"
+image_tag = "python:3.12-slim"
+image_visibility = "private"
+
+[agent]
+timeout_sec = 1800.0
+
+[verifier]
+timeout_sec = 300.0

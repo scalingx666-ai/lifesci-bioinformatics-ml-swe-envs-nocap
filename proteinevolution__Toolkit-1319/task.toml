@@ -1,0 +1,67 @@
+version = "1.0"
+
+[task]
+name = "default/proteinevolution__Toolkit-1319"
+description = "Update scalafmt-core to 3.0.8"
+
+[metadata]
+difficulty = "medium"
+category = "bugfix"
+keywords = [
+    "Toolkit",
+    "pr_diff",
+]
+
+[metadata.repo2env]
+pipeline = "pr_diff"
+pipeline_version = "0.3.0"
+repo = "proteinevolution/Toolkit"
+ref = "ce0df366f3c0ec2adfd552d834912c7211674410"
+reference = "https://github.com/proteinevolution/Toolkit/pull/1319"
+source_access = "auto"
+built_at = "2026-11-16T06:03:03.510804+00:00"
+reward_kinds = [
+    "diff_similarity",
+]
+spec_version = "0.2.0"
+content_hash = "sha256:81d936534913ca4a1e7f000fa7bad50b07b79102b752d501c5cd2b0b1c2abfc0"
+
+[metadata.repo2env.pr_diff]
+pr_merged_at = "2021-11-08T08:16:37Z"
+diff_format = "unified"
+context_files = [
+    ".scalafmt.conf",
+    "modules/auth/src/main/scala/de/proteinevolution/auth/services/UserSessionService.scala",
+    "modules/common/src/main/scala/de/proteinevolution/common/models/ConstantsV2.scala",
+    "modules/jobs/src/main/scala/de/proteinevolution/jobs/actors/JobActor.scala",
+    "modules/message/src/main/scala/de/proteinevolution/message/actors/WebSocketActor.scala",
+    "modules/tel/src/main/scala/de/proteinevolution/tel/execution/ExecutionContext.scala",
+]
+
+[metadata.repo2env.reward_calibration]
+baseline_reward = 0.0
+loc_changed = 22
+difficulty = "medium"
+
+[metadata.repo2env.evaluation]
+schema_version = "1"
+status = "unverified"
+stage = "generation"
+reason_codes = [
+    "validation_not_run",
+]
+detail = "Generated task; validation has not been established."
+provenance = "unknown"
+evidence = []
+
+[metadata.repo2env.reproducibility]
+mode = "local_only"
+image_ref = "python:3.12-slim"
+image_tag = "python:3.12-slim"
+image_visibility = "private"
+
+[agent]
+timeout_sec = 1800.0
+
+[verifier]
+timeout_sec = 300.0

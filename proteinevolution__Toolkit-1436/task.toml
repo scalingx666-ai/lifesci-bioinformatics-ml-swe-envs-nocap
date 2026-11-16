@@ -1,0 +1,62 @@
+version = "1.0"
+
+[task]
+name = "default/proteinevolution__Toolkit-1436"
+description = "PSI-BLAST: Added link to AlphaFoldDB"
+
+[metadata]
+difficulty = "medium"
+category = "bugfix"
+keywords = [
+    "Toolkit",
+    "pr_diff",
+]
+
+[metadata.repo2env]
+pipeline = "pr_diff"
+pipeline_version = "0.3.0"
+repo = "proteinevolution/Toolkit"
+ref = "28c0186244e6e9b19e25fdb13cce9309a957cc1c"
+reference = "https://github.com/proteinevolution/Toolkit/pull/1436"
+source_access = "auto"
+built_at = "2026-11-16T05:59:39.510870+00:00"
+reward_kinds = [
+    "diff_similarity",
+]
+spec_version = "0.2.0"
+content_hash = "sha256:c6b1419125cfd9a27ce17f521a4d69b2ab6cea97bf921e6e572da6df3ef4b88d"
+
+[metadata.repo2env.pr_diff]
+pr_merged_at = "2022-07-29T12:27:18Z"
+diff_format = "unified"
+context_files = [
+    "modules/jobs/src/main/scala/de/proteinevolution/jobs/results/LinkUtil.scala",
+]
+
+[metadata.repo2env.reward_calibration]
+baseline_reward = 0.0
+loc_changed = 27
+difficulty = "medium"
+
+[metadata.repo2env.evaluation]
+schema_version = "1"
+status = "unverified"
+stage = "generation"
+reason_codes = [
+    "validation_not_run",
+]
+detail = "Generated task; validation has not been established."
+provenance = "unknown"
+evidence = []
+
+[metadata.repo2env.reproducibility]
+mode = "local_only"
+image_ref = "python:3.12-slim"
+image_tag = "python:3.12-slim"
+image_visibility = "private"
+
+[agent]
+timeout_sec = 1800.0
+
+[verifier]
+timeout_sec = 300.0

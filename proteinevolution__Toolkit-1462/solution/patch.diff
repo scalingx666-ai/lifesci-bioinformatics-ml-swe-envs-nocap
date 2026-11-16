@@ -1,0 +1,34 @@
+diff --git a/.git-blame-ignore-revs b/.git-blame-ignore-revs
+index 63343e64c..4be937d47 100644
+--- a/.git-blame-ignore-revs
++++ b/.git-blame-ignore-revs
+@@ -1,2 +1,5 @@
+ # Scala Steward: Reformat with scalafmt 3.5.8
+ 02c267f79ae7e76e0f2107d8048396cfc83467d5
++
++# Scala Steward: Reformat with scalafmt 3.6.0
++df858b0ea7cc4743ec9c78cee1486ad91de1dbd4
+diff --git a/.scalafmt.conf b/.scalafmt.conf
+index 6571ed650..906727e0d 100644
+--- a/.scalafmt.conf
++++ b/.scalafmt.conf
+@@ -13,5 +13,5 @@ optIn.breakChainOnFirstMethodDot = false
+ align.openParenDefnSite          = false
+ project.git                      = true
+ assumeStandardLibraryStripMargin = true
+-version                          = 3.5.9
++version                          = 3.6.0
+ runner.dialect                   = scala213
+diff --git a/modules/message/src/main/scala/de/proteinevolution/message/actors/WebSocketActor.scala b/modules/message/src/main/scala/de/proteinevolution/message/actors/WebSocketActor.scala
+index 1e2a08d38..e53882f4b 100644
+--- a/modules/message/src/main/scala/de/proteinevolution/message/actors/WebSocketActor.scala
++++ b/modules/message/src/main/scala/de/proteinevolution/message/actors/WebSocketActor.scala
+@@ -75,7 +75,7 @@ final class WebSocketActor @Inject() (
+         loadFuture.mapTo[UpdateLoad].map { response =>
+           out ! JsonObject(
+             "mutation" -> Json.fromString("SOCKET_UpdateLoad"),
+-            "load" -> Json.fromDoubleOrNull(response.load)
++            "load"     -> Json.fromDoubleOrNull(response.load)
+           ).asJson
+         }
+       case None =>

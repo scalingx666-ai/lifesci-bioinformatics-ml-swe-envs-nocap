@@ -1,0 +1,62 @@
+version = "1.0"
+
+[task]
+name = "default/proteinevolution__Toolkit-1370"
+description = "Update mockito-core to 4.3.0"
+
+[metadata]
+difficulty = "easy"
+category = "bugfix"
+keywords = [
+    "Toolkit",
+    "pr_diff",
+]
+
+[metadata.repo2env]
+pipeline = "pr_diff"
+pipeline_version = "0.3.0"
+repo = "proteinevolution/Toolkit"
+ref = "159551de324d4419e3e1b7408128bab5ea1e1fcc"
+reference = "https://github.com/proteinevolution/Toolkit/pull/1370"
+source_access = "auto"
+built_at = "2026-11-16T06:01:26.243712+00:00"
+reward_kinds = [
+    "diff_similarity",
+]
+spec_version = "0.2.0"
+content_hash = "sha256:9ff449496e7bc0bb8483f82464aeb1a5e43da0093ed0962362fedea38fbf8e18"
+
+[metadata.repo2env.pr_diff]
+pr_merged_at = "2022-01-25T08:53:32Z"
+diff_format = "unified"
+context_files = [
+    "project/Dependencies.scala",
+]
+
+[metadata.repo2env.reward_calibration]
+baseline_reward = 0.0
+loc_changed = 2
+difficulty = "trivial"
+
+[metadata.repo2env.evaluation]
+schema_version = "1"
+status = "unverified"
+stage = "generation"
+reason_codes = [
+    "validation_not_run",
+]
+detail = "Generated task; validation has not been established."
+provenance = "unknown"
+evidence = []
+
+[metadata.repo2env.reproducibility]
+mode = "local_only"
+image_ref = "python:3.12-slim"
+image_tag = "python:3.12-slim"
+image_visibility = "private"
+
+[agent]
+timeout_sec = 1800.0
+
+[verifier]
+timeout_sec = 300.0

@@ -1,0 +1,71 @@
+version = "1.0"
+
+[task]
+name = "default/rcedgar__reseek-7"
+description = "Attempting to reconcile dev and master"
+
+[metadata]
+difficulty = "large"
+category = "bugfix"
+keywords = [
+    "reseek",
+    "pr_diff",
+]
+
+[metadata.repo2env]
+pipeline = "pr_diff"
+pipeline_version = "0.3.0"
+repo = "rcedgar/reseek"
+ref = "782d5b9553a65c7c122560f931bea611304d1429"
+reference = "https://github.com/rcedgar/reseek/pull/7"
+source_access = "auto"
+built_at = "2026-11-16T04:43:34.478880+00:00"
+reward_kinds = [
+    "diff_similarity",
+]
+spec_version = "0.2.0"
+content_hash = "sha256:b3e4990728acb89608d82322a99312163901bc8bf15a43da3aba4e5c04a9b8b9"
+
+[metadata.repo2env.pr_diff]
+pr_merged_at = "2024-06-12T00:45:22Z"
+diff_format = "unified"
+context_files = [
+    ".gitignore",
+    "README.md",
+    "src/build_linux.py",
+    "src/cigar.cpp",
+    "src/gitver.txt",
+    "src/mx.h",
+    "src/myutils.cpp",
+    "src/objmgr.cpp",
+    "src/readhits.cpp",
+    "src/usage.h",
+]
+
+[metadata.repo2env.reward_calibration]
+baseline_reward = 0.0
+loc_changed = 244
+difficulty = "large"
+
+[metadata.repo2env.evaluation]
+schema_version = "1"
+status = "unverified"
+stage = "generation"
+reason_codes = [
+    "validation_not_run",
+]
+detail = "Generated task; validation has not been established."
+provenance = "unknown"
+evidence = []
+
+[metadata.repo2env.reproducibility]
+mode = "local_only"
+image_ref = "python:3.12-slim"
+image_tag = "python:3.12-slim"
+image_visibility = "private"
+
+[agent]
+timeout_sec = 1800.0
+
+[verifier]
+timeout_sec = 300.0

@@ -1,0 +1,52 @@
+diff --git a/.scalafmt.conf b/.scalafmt.conf
+index 615f576b22..a8990f0cef 100644
+--- a/.scalafmt.conf
++++ b/.scalafmt.conf
+@@ -13,5 +13,5 @@ optIn.breakChainOnFirstMethodDot = false
+ align.openParenDefnSite          = false
+ project.git                      = true
+ assumeStandardLibraryStripMargin = true
+-version                          = 3.5.0
++version                          = 3.5.1
+ runner.dialect                   = scala213
+diff --git a/modules/auth/src/main/scala/de/proteinevolution/auth/models/MailTemplate.scala b/modules/auth/src/main/scala/de/proteinevolution/auth/models/MailTemplate.scala
+index 4b70849276..794f8a8722 100644
+--- a/modules/auth/src/main/scala/de/proteinevolution/auth/models/MailTemplate.scala
++++ b/modules/auth/src/main/scala/de/proteinevolution/auth/models/MailTemplate.scala
+@@ -556,8 +556,8 @@ object MailTemplate {
+     val bodyText: String = {
+       s"""Dear ${userName()},
+          |we have noticed, that you have not logged in since ${user.dateLastLogin.format(
+-        ZonedDateTimeHelper.dateTimeFormatter
+-      )}.
++          ZonedDateTimeHelper.dateTimeFormatter
++        )}.
+          |To keep our system running smoothly and to keep the data we collect from our users to a minimum,
+          |we delete old user accounts.
+          |This is why your account will be deleted in $daysUntilDeletion days.
+diff --git a/modules/jobs/src/main/scala/de/proteinevolution/jobs/actors/JobActor.scala b/modules/jobs/src/main/scala/de/proteinevolution/jobs/actors/JobActor.scala
+index 3d01cb9551..53498c1bd9 100644
+--- a/modules/jobs/src/main/scala/de/proteinevolution/jobs/actors/JobActor.scala
++++ b/modules/jobs/src/main/scala/de/proteinevolution/jobs/actors/JobActor.scala
+@@ -586,7 +586,7 @@ class JobActor @Inject() (
+         val jobInCluster  = clusterJobIDs.contains(clusterData.sgeID)
+         log.info(
+           s"[JobActor[$jobActorNumber].PolledJobs] Job ${job.jobID} with sgeID ${clusterData.sgeID}: ${if (jobInCluster) "active"
+-          else "inactive"}"
++            else "inactive"}"
+         )
+         if ((!job.isFinished && !jobInCluster) || isOverDue(job) || sgeFailed(clusterData.sgeID, qStat))
+           self ! JobStateChanged(job.jobID, Error)
+diff --git a/modules/statistics/src/main/scala/de/proteinevolution/statistics/JobEventLog.scala b/modules/statistics/src/main/scala/de/proteinevolution/statistics/JobEventLog.scala
+index 928fcdfc92..d96f7fc237 100644
+--- a/modules/statistics/src/main/scala/de/proteinevolution/statistics/JobEventLog.scala
++++ b/modules/statistics/src/main/scala/de/proteinevolution/statistics/JobEventLog.scala
+@@ -51,7 +51,7 @@ case class JobEventLog(
+        |jobID: $jobID
+        |tool name: $toolName
+        |internalJob? ${if (internalJob) { "yes" }
+-    else { "no" }}
++      else { "no" }}
+        |events: ${events.mkString(",")}""".stripMargin
+   }
+ 

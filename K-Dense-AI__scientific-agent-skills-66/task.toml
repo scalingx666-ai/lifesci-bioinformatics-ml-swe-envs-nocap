@@ -1,0 +1,74 @@
+version = "1.0"
+
+[task]
+name = "default/K-Dense-AI__scientific-agent-skills-66"
+description = "Add parallel-web skill and update research-lookup"
+
+[metadata]
+difficulty = "large"
+category = "bugfix"
+keywords = [
+    "scientific-agent-skills",
+    "pr_diff",
+]
+
+[metadata.repo2env]
+pipeline = "pr_diff"
+pipeline_version = "0.3.0"
+repo = "K-Dense-AI/scientific-agent-skills"
+ref = "29c869326e92bc0da492f7f87bfedad1d9658a58"
+reference = "https://github.com/K-Dense-AI/scientific-agent-skills/pull/66"
+source_access = "auto"
+built_at = "2026-11-15T10:24:40.936927+00:00"
+reward_kinds = [
+    "diff_similarity",
+]
+spec_version = "0.2.0"
+content_hash = "sha256:2700044d2746c7453e71a8fd98b074a16f3e6cda50b75672194c172ccb690a23"
+
+[metadata.repo2env.pr_diff]
+pr_merged_at = "2026-03-03T15:47:29Z"
+diff_format = "unified"
+context_files = [
+    "scientific-skills/parallel-web/SKILL.md",
+    "scientific-skills/parallel-web/references/api_reference.md",
+    "scientific-skills/parallel-web/references/deep_research_guide.md",
+    "scientific-skills/parallel-web/references/extraction_patterns.md",
+    "scientific-skills/parallel-web/references/search_best_practices.md",
+    "scientific-skills/parallel-web/references/workflow_recipes.md",
+    "scientific-skills/parallel-web/scripts/parallel_web.py",
+    "scientific-skills/research-lookup/README.md",
+    "scientific-skills/research-lookup/SKILL.md",
+    "scientific-skills/research-lookup/examples.py",
+    "scientific-skills/research-lookup/lookup.py",
+    "scientific-skills/research-lookup/research_lookup.py",
+    "scientific-skills/research-lookup/scripts/research_lookup.py",
+]
+
+[metadata.repo2env.reward_calibration]
+baseline_reward = 0.0
+loc_changed = 4632
+difficulty = "large"
+
+[metadata.repo2env.evaluation]
+schema_version = "1"
+status = "unverified"
+stage = "generation"
+reason_codes = [
+    "validation_not_run",
+]
+detail = "Generated task; validation has not been established."
+provenance = "unknown"
+evidence = []
+
+[metadata.repo2env.reproducibility]
+mode = "local_only"
+image_ref = "python:3.12-slim"
+image_tag = "python:3.12-slim"
+image_visibility = "private"
+
+[agent]
+timeout_sec = 1800.0
+
+[verifier]
+timeout_sec = 300.0

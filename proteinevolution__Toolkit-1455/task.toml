@@ -1,0 +1,69 @@
+version = "1.0"
+
+[task]
+name = "default/proteinevolution__Toolkit-1455"
+description = "Import Google Fonts locally"
+
+[metadata]
+difficulty = "medium"
+category = "bugfix"
+keywords = [
+    "Toolkit",
+    "pr_diff",
+]
+
+[metadata.repo2env]
+pipeline = "pr_diff"
+pipeline_version = "0.3.0"
+repo = "proteinevolution/Toolkit"
+ref = "8d20b5c4fd9bb01cf0526f3f5711cb4539baca8e"
+reference = "https://github.com/proteinevolution/Toolkit/pull/1455"
+source_access = "auto"
+built_at = "2026-11-16T05:59:07.894757+00:00"
+reward_kinds = [
+    "diff_similarity",
+]
+spec_version = "0.2.0"
+content_hash = "sha256:cdc088e9e5dc2c0209e8e7178877e3be146d032245d8e76f75b8ba18819ed3af"
+
+[metadata.repo2env.pr_diff]
+pr_merged_at = "2022-10-04T11:01:31Z"
+diff_format = "unified"
+context_files = [
+    "frontend/index.html",
+    "frontend/src/App.vue",
+    "frontend/src/assets/fonts/NotoSans-Bold.ttf",
+    "frontend/src/assets/fonts/NotoSans-Italic.ttf",
+    "frontend/src/assets/fonts/NotoSans-Regular.ttf",
+    "frontend/src/assets/fonts/SourceSansPro-Bold.ttf",
+    "frontend/src/assets/fonts/SourceSansPro-Regular.ttf",
+    "frontend/src/assets/scss/_variables.scss",
+]
+
+[metadata.repo2env.reward_calibration]
+baseline_reward = 0.0
+loc_changed = 41
+difficulty = "medium"
+
+[metadata.repo2env.evaluation]
+schema_version = "1"
+status = "unverified"
+stage = "generation"
+reason_codes = [
+    "validation_not_run",
+]
+detail = "Generated task; validation has not been established."
+provenance = "unknown"
+evidence = []
+
+[metadata.repo2env.reproducibility]
+mode = "local_only"
+image_ref = "python:3.12-slim"
+image_tag = "python:3.12-slim"
+image_visibility = "private"
+
+[agent]
+timeout_sec = 1800.0
+
+[verifier]
+timeout_sec = 300.0

@@ -1,0 +1,51 @@
+diff --git a/.git-blame-ignore-revs b/.git-blame-ignore-revs
+new file mode 100644
+index 0000000000..63343e64c1
+--- /dev/null
++++ b/.git-blame-ignore-revs
+@@ -0,0 +1,2 @@
++# Scala Steward: Reformat with scalafmt 3.5.8
++02c267f79ae7e76e0f2107d8048396cfc83467d5
+diff --git a/.scalafmt.conf b/.scalafmt.conf
+index 2cce2061de..6b2cb15a16 100644
+--- a/.scalafmt.conf
++++ b/.scalafmt.conf
+@@ -13,5 +13,5 @@ optIn.breakChainOnFirstMethodDot = false
+ align.openParenDefnSite          = false
+ project.git                      = true
+ assumeStandardLibraryStripMargin = true
+-version                          = 3.5.2
++version                          = 3.5.8
+ runner.dialect                   = scala213
+diff --git a/modules/jobs/src/main/scala/de/proteinevolution/jobs/controllers/ProcessController.scala b/modules/jobs/src/main/scala/de/proteinevolution/jobs/controllers/ProcessController.scala
+index fa8a08208e..c96161ef8c 100644
+--- a/modules/jobs/src/main/scala/de/proteinevolution/jobs/controllers/ProcessController.scala
++++ b/modules/jobs/src/main/scala/de/proteinevolution/jobs/controllers/ProcessController.scala
+@@ -52,7 +52,7 @@ class ProcessController @Inject() (
+   }
+ 
+   def forwardAlignment(jobID: String): Action[ForwardingData] =
+-    userAction((circe.json[ForwardingData])).async { implicit request =>
++    userAction(circe.json[ForwardingData]).async { implicit request =>
+       jobDao.findJob(jobID).flatMap {
+         case Some(job) =>
+           if (job.isPublic || job.ownerID.equals(request.user.userID)) {
+diff --git a/modules/jobs/src/main/scala/de/proteinevolution/jobs/results/PSIBlastHSP.scala b/modules/jobs/src/main/scala/de/proteinevolution/jobs/results/PSIBlastHSP.scala
+index 3d2948e9d3..eee8ed4828 100644
+--- a/modules/jobs/src/main/scala/de/proteinevolution/jobs/results/PSIBlastHSP.scala
++++ b/modules/jobs/src/main/scala/de/proteinevolution/jobs/results/PSIBlastHSP.scala
+@@ -63,11 +63,11 @@ case class PSIBlastHSP(
+       "score"     -> score.asJson,
+       "bitScore"  -> bitScore.asJson,
+       "ident"     -> identity.asJson,
+-      "perIdent"  -> "%1.0f".format(((identity.toFloat / hit_len) * 100)).asJson,
++      "perIdent"  -> "%1.0f".format((identity.toFloat / hit_len) * 100).asJson,
+       "pos"       -> positive.asJson,
+-      "perPos"    -> "%1.0f".format(((positive.toFloat / hit_len) * 100)).asJson,
++      "perPos"    -> "%1.0f".format((positive.toFloat / hit_len) * 100).asJson,
+       "gap"       -> gaps.asJson,
+-      "perGap"    -> "%1.0f".format(((gaps.toFloat / hit_len) * 100)).asJson,
++      "perGap"    -> "%1.0f".format((gaps.toFloat / hit_len) * 100).asJson,
+       "refLen"    -> ref_len.asJson,
+       "hitLen"    -> hit_len.asJson,
+       "agree"     -> midLine.asJson,

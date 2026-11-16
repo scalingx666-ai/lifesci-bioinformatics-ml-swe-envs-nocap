@@ -1,0 +1,70 @@
+version = "1.0"
+
+[task]
+name = "default/BALL-Project__ball-579"
+description = "Move global changes from jupyter into master"
+
+[metadata]
+difficulty = "large"
+category = "bugfix"
+keywords = [
+    "ball",
+    "pr_diff",
+]
+
+[metadata.repo2env]
+pipeline = "pr_diff"
+pipeline_version = "0.3.0"
+repo = "BALL-Project/ball"
+ref = "8e9f34685b8aead59121c49d823c3c7e0defef52"
+reference = "https://github.com/BALL-Project/ball/pull/579"
+source_access = "auto"
+built_at = "2026-11-16T05:52:38.573843+00:00"
+reward_kinds = [
+    "diff_similarity",
+]
+spec_version = "0.2.0"
+content_hash = "sha256:6f7de569ff2160b3fe8fc5cff654dc445a7836a1b321bbeebbc636252f590435"
+
+[metadata.repo2env.pr_diff]
+pr_merged_at = "2016-04-15T12:47:57Z"
+diff_format = "unified"
+context_files = [
+    "cmake/FindPythonInterp.cmake",
+    "cmake/FindPythonLibs.cmake",
+    "include/BALL/DOCKING/COMMON/poseClustering.h",
+    "include/BALL/PYTHON/pyInterpreter.h",
+    "source/APPLICATIONS/TOOLS/ExtractClustersFromWardTree.C",
+    "source/APPLICATIONS/TOOLS/Trajectory2RigidTransformation.C",
+    "source/DOCKING/COMMON/poseClustering.C",
+    "source/EXTENSIONS/BALLPluginComponents.cmake",
+    "source/PYTHON/pyInterpreter.C",
+]
+
+[metadata.repo2env.reward_calibration]
+baseline_reward = 0.0
+loc_changed = 546
+difficulty = "large"
+
+[metadata.repo2env.evaluation]
+schema_version = "1"
+status = "unverified"
+stage = "generation"
+reason_codes = [
+    "validation_not_run",
+]
+detail = "Generated task; validation has not been established."
+provenance = "unknown"
+evidence = []
+
+[metadata.repo2env.reproducibility]
+mode = "local_only"
+image_ref = "python:3.12-slim"
+image_tag = "python:3.12-slim"
+image_visibility = "private"
+
+[agent]
+timeout_sec = 1800.0
+
+[verifier]
+timeout_sec = 300.0

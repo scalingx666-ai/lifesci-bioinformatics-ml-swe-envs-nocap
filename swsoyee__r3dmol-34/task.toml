@@ -1,0 +1,67 @@
+version = "1.0"
+
+[task]
+name = "default/swsoyee__r3dmol-34"
+description = "change to colorScheme = NULL fixing #33"
+
+[metadata]
+difficulty = "medium"
+category = "bugfix"
+keywords = [
+    "r3dmol",
+    "pr_diff",
+]
+
+[metadata.repo2env]
+pipeline = "pr_diff"
+pipeline_version = "0.3.0"
+repo = "swsoyee/r3dmol"
+ref = "9203d5812c67d453de23b62689f07f68a8909a08"
+reference = "https://github.com/swsoyee/r3dmol/pull/34"
+source_access = "auto"
+built_at = "2026-11-16T04:44:52.768479+00:00"
+reward_kinds = [
+    "diff_similarity",
+]
+spec_version = "0.2.0"
+content_hash = "sha256:0c611e6ab70faa9dd3a71b940471ece714d2dd2a3e131681994c66e09dae240a"
+
+[metadata.repo2env.pr_diff]
+pr_merged_at = "2021-05-14T15:45:07Z"
+diff_format = "unified"
+context_files = [
+    "NEWS.md",
+    "R/style.R",
+    "man/m_style_line.Rd",
+    "man/m_style_sphere.Rd",
+    "man/m_style_stick.Rd",
+    "man/m_style_surface.Rd",
+]
+
+[metadata.repo2env.reward_calibration]
+baseline_reward = 0.0
+loc_changed = 40
+difficulty = "medium"
+
+[metadata.repo2env.evaluation]
+schema_version = "1"
+status = "unverified"
+stage = "generation"
+reason_codes = [
+    "validation_not_run",
+]
+detail = "Generated task; validation has not been established."
+provenance = "unknown"
+evidence = []
+
+[metadata.repo2env.reproducibility]
+mode = "local_only"
+image_ref = "python:3.12-slim"
+image_tag = "python:3.12-slim"
+image_visibility = "private"
+
+[agent]
+timeout_sec = 1800.0
+
+[verifier]
+timeout_sec = 300.0

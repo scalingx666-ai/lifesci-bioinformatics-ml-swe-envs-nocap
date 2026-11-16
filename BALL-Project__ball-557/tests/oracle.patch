@@ -1,0 +1,39 @@
+diff --git a/source/PYTHON/EXTENSIONS/BALL/vector2.sip b/source/PYTHON/EXTENSIONS/BALL/vector2.sip
+index 5446cc48b3..44174fab23 100644
+--- a/source/PYTHON/EXTENSIONS/BALL/vector2.sip
++++ b/source/PYTHON/EXTENSIONS/BALL/vector2.sip
+@@ -62,7 +62,7 @@ class Vector2
+ %End
+ 
+ 	// ???? const Vector2& operator + () const throw();
+-	// ???? Vector2 operator - () const	throw();
++	Vector2 operator - () const	throw();
+ 	Vector2 operator + (const Vector2&) const throw();
+ 	Vector2 operator - (const Vector2&) const throw();
+ 	Vector2& operator += (const Vector2&) throw();
+diff --git a/source/PYTHON/EXTENSIONS/BALL/vector3.sip b/source/PYTHON/EXTENSIONS/BALL/vector3.sip
+index ded9b88bd4..cfdc4973d9 100644
+--- a/source/PYTHON/EXTENSIONS/BALL/vector3.sip
++++ b/source/PYTHON/EXTENSIONS/BALL/vector3.sip
+@@ -49,7 +49,7 @@ class Vector3
+ 
+   // float operator [] (Index) const;
+   // ???? const Vector3& operator + () const;
+-  // ???? Vector3 operator - () const;
++  Vector3 operator - () const;
+   Vector3& operator += (const Vector3&);
+   Vector3& operator -= (const Vector3&);
+  //???? Vector3& operator *= (float);
+diff --git a/source/PYTHON/EXTENSIONS/BALL/vector4.sip b/source/PYTHON/EXTENSIONS/BALL/vector4.sip
+index 1e3f7c849e..1b99f5e778 100644
+--- a/source/PYTHON/EXTENSIONS/BALL/vector4.sip
++++ b/source/PYTHON/EXTENSIONS/BALL/vector4.sip
+@@ -41,7 +41,7 @@ class Vector4
+ 
+   // float operator [] (Index) const;
+   // ???? Vector4 operator + () const;
+-  // ???? Vector4 operator - () const;
++  Vector4 operator - () const;
+   Vector4& operator += (const Vector4&);
+   Vector4& operator -= (const Vector4&);
+   Vector4 operator * (float);

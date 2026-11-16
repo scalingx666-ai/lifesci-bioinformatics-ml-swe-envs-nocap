@@ -1,0 +1,62 @@
+version = "1.0"
+
+[task]
+name = "default/proteinevolution__Toolkit-1260"
+description = "Update fs2-core, fs2-io to 3.0.5"
+
+[metadata]
+difficulty = "easy"
+category = "bugfix"
+keywords = [
+    "Toolkit",
+    "pr_diff",
+]
+
+[metadata.repo2env]
+pipeline = "pr_diff"
+pipeline_version = "0.3.0"
+repo = "proteinevolution/Toolkit"
+ref = "4b847977821c36ac01258667e402d217e924d457"
+reference = "https://github.com/proteinevolution/Toolkit/pull/1260"
+source_access = "auto"
+built_at = "2026-11-16T06:04:11.954143+00:00"
+reward_kinds = [
+    "diff_similarity",
+]
+spec_version = "0.2.0"
+content_hash = "sha256:4d1fec1bb6cfdf3ff51b0914bc87f1e6c648d38c4a0db8c4504cdbd699439d28"
+
+[metadata.repo2env.pr_diff]
+pr_merged_at = "2021-07-02T00:38:58Z"
+diff_format = "unified"
+context_files = [
+    "project/Dependencies.scala",
+]
+
+[metadata.repo2env.reward_calibration]
+baseline_reward = 0.0
+loc_changed = 4
+difficulty = "trivial"
+
+[metadata.repo2env.evaluation]
+schema_version = "1"
+status = "unverified"
+stage = "generation"
+reason_codes = [
+    "validation_not_run",
+]
+detail = "Generated task; validation has not been established."
+provenance = "unknown"
+evidence = []
+
+[metadata.repo2env.reproducibility]
+mode = "local_only"
+image_ref = "python:3.12-slim"
+image_tag = "python:3.12-slim"
+image_visibility = "private"
+
+[agent]
+timeout_sec = 1800.0
+
+[verifier]
+timeout_sec = 300.0

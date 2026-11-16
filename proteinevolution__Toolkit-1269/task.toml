@@ -1,0 +1,62 @@
+version = "1.0"
+
+[task]
+name = "default/proteinevolution__Toolkit-1269"
+description = "Update play2-reactivemongo to 1.0.6-play28"
+
+[metadata]
+difficulty = "easy"
+category = "bugfix"
+keywords = [
+    "Toolkit",
+    "pr_diff",
+]
+
+[metadata.repo2env]
+pipeline = "pr_diff"
+pipeline_version = "0.3.0"
+repo = "proteinevolution/Toolkit"
+ref = "0be46dd19edafe9cb3f09c8da8f5b3ab8dd0b6ef"
+reference = "https://github.com/proteinevolution/Toolkit/pull/1269"
+source_access = "auto"
+built_at = "2026-11-16T06:03:59.400841+00:00"
+reward_kinds = [
+    "diff_similarity",
+]
+spec_version = "0.2.0"
+content_hash = "sha256:f37a8282c181985c6d8e8cc63a26c7c328419727990c5bc405cb97e46c15e339"
+
+[metadata.repo2env.pr_diff]
+pr_merged_at = "2021-08-01T09:03:10Z"
+diff_format = "unified"
+context_files = [
+    "project/Dependencies.scala",
+]
+
+[metadata.repo2env.reward_calibration]
+baseline_reward = 0.0
+loc_changed = 2
+difficulty = "trivial"
+
+[metadata.repo2env.evaluation]
+schema_version = "1"
+status = "unverified"
+stage = "generation"
+reason_codes = [
+    "validation_not_run",
+]
+detail = "Generated task; validation has not been established."
+provenance = "unknown"
+evidence = []
+
+[metadata.repo2env.reproducibility]
+mode = "local_only"
+image_ref = "python:3.12-slim"
+image_tag = "python:3.12-slim"
+image_visibility = "private"
+
+[agent]
+timeout_sec = 1800.0
+
+[verifier]
+timeout_sec = 300.0

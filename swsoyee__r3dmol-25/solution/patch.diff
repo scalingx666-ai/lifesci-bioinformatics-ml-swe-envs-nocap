@@ -1,0 +1,438 @@
+diff --git a/NAMESPACE b/NAMESPACE
+index a8ab9b7..3a46c34 100644
+--- a/NAMESPACE
++++ b/NAMESPACE
+@@ -30,6 +30,7 @@ export(m_enable_fog)
+ export(m_fetch_pdb)
+ export(m_get_model)
+ export(m_glimpse)
++export(m_grid)
+ export(m_is_animated)
+ export(m_multi_resi_sel)
+ export(m_remove_all_labels)
+diff --git a/NEWS.md b/NEWS.md
+index ad5a597..8ca6b9e 100644
+--- a/NEWS.md
++++ b/NEWS.md
+@@ -2,6 +2,7 @@
+ 
+ ### Features
+ 
++* Add `m_grid()` to support multiple viewers ([#25](https://github.com/swsoyee/r3dmol/pull/25)).
+ * Quickly look at structures with `m_glimpse()`. Initializes the viewer with 
+ a range of useful defaults. Allows for quickly visually inspecting the structure
+ and further customization of the viewer to speed up setup.
+@@ -9,12 +10,9 @@ and further customization of the viewer to speed up setup.
+ more information.
+ * Add `speed` option for `m_spin()` and option for `keepH` in `m_add_model()` ([#13](https://github.com/swsoyee/r3dmol/pull/13)).
+ 
+-### Documentation
+-
+-* Add logo for `{r3dmol}` ([#16](https://github.com/swsoyee/r3dmol/pull/16)).
+-
+ ### Others
+ 
++* Add logo for `{r3dmol}` ([#16](https://github.com/swsoyee/r3dmol/pull/16)).
+ * Function `m_set_view_style()` is deprecated and replaced by `m_add_outline()`.
+ * Upgrade `3Dmol.js` to the latest version (v1.6.2) ([#12](https://github.com/swsoyee/r3dmol/pull/12)).
+ 
+diff --git a/R/grid.R b/R/grid.R
+new file mode 100644
+index 0000000..1cb3b71
+--- /dev/null
++++ b/R/grid.R
+@@ -0,0 +1,100 @@
++#' Create a grid of viewers that share a WebGL canvas
++#'
++#' @param viewer A list contains sub-viewers.
++#' @param element_id HTML string identifier.
++#' @param rows Number of rows in viewer grid.
++#' @param cols Number of columns in viewer grid.
++#' @param control_all Logical, simaultaneous mouse control of all windows in the
++#'  grid.
++#' @param viewer_config Viewer specification to apply to all subviewers.
++#' @param width Fixed width for combined viewer (in css units). Ignored when
++#' used in a Shiny app -- use the \code{width} parameter in
++#' \code{\link[r3dmol]{r3dmolOutput}}.
++#' It is not recommended to use this parameter because the widget knows how to
++#' adjust its width automatically.
++#' @param height Fixed height for combined viewer (in css units). It is
++#' recommended to not use this parameter since the widget knows how to adjust
++#' its height automatically.
++#'
++#' @return An \code{r3dmol} object (the output from \code{r3dmol()}).
++#' @export
++#'
++#' @examples
++#' library(r3dmol)
++#'
++#' m1 <- r3dmol() %>%
++#'   m_add_model(data = pdb_6zsl, format = "pdb") %>%
++#'   m_zoom_to()
++#'
++#' m2 <- m1 %>%
++#'   m_set_style(style = m_style_cartoon(color = "spectrum"))
++#'
++#' m3 <- m1 %>%
++#'   m_set_style(style = m_style_stick())
++#'
++#' m4 <- m1 %>%
++#'   m_set_style(style = m_style_sphere())
++#'
++#' m_grid(
++#'   viewer = list(m1, m2, m3, m4),
++#'   control_all = TRUE,
++#'   viewer_config = m_viewer_spec(
++#'     backgroundColor = "black"
++#'   )
++#' )
++m_grid <- function(viewer,
++                   element_id,
++                   rows = NULL,
++                   cols = NULL,
++                   control_all = TRUE,
++                   viewer_config = m_viewer_spec(),
++                   width = NULL,
++                   height = NULL) {
++  # TODO move it to utils and add test
++  if (missing(element_id)) {
++    element_id <- (sample(256, 10, replace = TRUE) - 1) %>%
++      as.hexmode() %>%
++      format(width = 2) %>%
++      paste(collapse = "")
++  }
++
++  # TODO move it to utils and add test
++  if (is.null(rows)) {
++    rows <- ceiling(sqrt(length(viewer)))
++  }
++
++  if (is.null(cols)) {
++    cols <- ceiling(length(viewer) / rows)
++  }
++
++  configs <- list(
++    rows = rows,
++    cols = cols,
++    control_all = control_all
++  )
++
++  x <- list(
++    viewer = viewer,
++    element_id = element_id,
++    configs = configs,
++    viewer_config = viewer_config,
++    api = "grid"
++  )
++
++  widget <- htmlwidgets::createWidget(
++    name = "r3dmol",
++    x,
++    width = width,
++    height = height,
++    package = "r3dmol",
++    elementId = element_id,
++    sizingPolicy = htmlwidgets::sizingPolicy(
++      defaultWidth = "100%",
++      knitr.figure = FALSE,
++      browser.fill = TRUE,
++      padding = 0
++    )
++  )
++
++  return(widget)
++}
+diff --git a/R/r3dmol.R b/R/r3dmol.R
+index c61a855..356a303 100644
+--- a/R/r3dmol.R
++++ b/R/r3dmol.R
+@@ -45,6 +45,7 @@ r3dmol <- function(id = NULL,
+                    width = NULL,
+                    height = NULL,
+                    elementId = NULL) {
++  # TODO move it to utils and add test
+   if (missing(id)) {
+     id <- (sample(256, 10, replace = TRUE) - 1) %>%
+       as.hexmode() %>%
+diff --git a/inst/htmlwidgets/r3dmol.js b/inst/htmlwidgets/r3dmol.js
+index 91d5068..750602b 100644
+--- a/inst/htmlwidgets/r3dmol.js
++++ b/inst/htmlwidgets/r3dmol.js
+@@ -52,6 +52,11 @@ HTMLWidgets.widget({
+       renderValue(x) {
+         // alias this
+         const that = this;
++
++        if (x.viewer) {
++          viewer = x.viewer;
++        }
++
+         if (!initialized) {
+           initialized = true;
+           // attach the widget to the DOM
+@@ -60,7 +65,22 @@ HTMLWidgets.widget({
+           $(el).css({
+             position: x.position || 'relative',
+           });
+-          viewer = $3Dmol.createViewer($(container), x.configs);
++          if (x.api === 'grid') {
++            const viewers = $3Dmol.createViewerGrid($(container), x.configs, x.viewer_config);
++            let index = 0;
++            for (let i = 0; i < x.configs.rows; i += 1) {
++              for (let j = 0; j < x.configs.cols; j += 1) {
++                x.viewer[index].x.viewer = viewers[i][j];
++                that.renderValue(x.viewer[index].x);
++                index += 1;
++              }
++            }
++          }
++          if (x.viewer) {
++            viewer = x.viewer;
++          } else {
++            viewer = $3Dmol.createViewer($(container), x.configs);
++          }
+         }
+         // set listeners to events and pass data back to Shiny
+         if (HTMLWidgets.shinyMode) {
+@@ -89,7 +109,11 @@ HTMLWidgets.widget({
+         }
+         // Auto render
+         if (isAutoRenderFunction.findIndex((element) => element === lastCallFunction) > -1) {
+-          viewer.render();
++          if (x.viewer) {
++            x.viewer.render();
++          } else {
++            viewer.render();
++          }
+         }
+       },
+ 
+diff --git a/man/m_grid.Rd b/man/m_grid.Rd
+new file mode 100644
+index 0000000..7c30ddc
+--- /dev/null
++++ b/man/m_grid.Rd
+@@ -0,0 +1,71 @@
++% Generated by roxygen2: do not edit by hand
++% Please edit documentation in R/grid.R
++\name{m_grid}
++\alias{m_grid}
++\title{Create a grid of viewers that share a WebGL canvas}
++\usage{
++m_grid(
++  viewer,
++  element_id,
++  rows = NULL,
++  cols = NULL,
++  control_all = TRUE,
++  viewer_config = m_viewer_spec(),
++  width = NULL,
++  height = NULL
++)
++}
++\arguments{
++\item{viewer}{A list contains sub-viewers.}
++
++\item{element_id}{HTML string identifier.}
++
++\item{rows}{Number of rows in viewer grid.}
++
++\item{cols}{Number of columns in viewer grid.}
++
++\item{control_all}{Logical, simaultaneous mouse control of all windows in the
++grid.}
++
++\item{viewer_config}{Viewer specification to apply to all subviewers.}
++
++\item{width}{Fixed width for combined viewer (in css units). Ignored when
++used in a Shiny app -- use the \code{width} parameter in
++\code{\link[r3dmol]{r3dmolOutput}}.
++It is not recommended to use this parameter because the widget knows how to
++adjust its width automatically.}
++
++\item{height}{Fixed height for combined viewer (in css units). It is
++recommended to not use this parameter since the widget knows how to adjust
++its height automatically.}
++}
++\value{
++An \code{r3dmol} object (the output from \code{r3dmol()}).
++}
++\description{
++Create a grid of viewers that share a WebGL canvas
++}
++\examples{
++library(r3dmol)
++
++m1 <- r3dmol() \%>\%
++  m_add_model(data = pdb_6zsl, format = "pdb") \%>\%
++  m_zoom_to()
++
++m2 <- m1 \%>\%
++  m_set_style(style = m_style_cartoon(color = "spectrum"))
++
++m3 <- m1 \%>\%
++  m_set_style(style = m_style_stick())
++
++m4 <- m1 \%>\%
++  m_set_style(style = m_style_sphere())
++
++m_grid(
++  viewer = list(m1, m2, m3, m4),
++  control_all = TRUE,
++  viewer_config = m_viewer_spec(
++    backgroundColor = "black"
++  )
++)
++}
+diff --git a/vignettes/r3dmol.Rmd b/vignettes/r3dmol.Rmd
+index 70724ca..ef7b1ad 100644
+--- a/vignettes/r3dmol.Rmd
++++ b/vignettes/r3dmol.Rmd
+@@ -1,7 +1,7 @@
+ ---
+ title: 'Introduction to r3dmol'
+ author: 'Wei Su'
+-date: '2021-02-05'
++date: '2021-03-08'
+ output:
+   # md_document:
+   #   pandoc_args: ["--wrap=preserve"]
+@@ -27,13 +27,13 @@ This is an R package that provides support for [`3Dmol.js`](https://3dmol.csb.pi
+ 
+ ```{r installation, eval=FALSE}
+ # install.packages("devtools")
+-devtools::install_github('swsoyee/r3dmol')
++devtools::install_github("swsoyee/r3dmol")
+ ```
+ 
+ ```{r demo}
+ library(r3dmol)
+ 
+-# Set up the initial viewer 
++# Set up the initial viewer
+ r3dmol(
+   viewer_spec = m_viewer_spec(
+     cartoonQuality = 10,
+@@ -44,21 +44,25 @@ r3dmol(
+   elementId = "demo"
+ ) %>%
+   # Add model to scene
+-  m_add_model(data = pdb_6zsl, format = "pdb") %>%  
++  m_add_model(data = pdb_6zsl, format = "pdb") %>%
+   # Zoom to encompass the whole scene
+   m_zoom_to() %>%
+   # Set style of structures
+-  m_set_style(style = m_style_cartoon(color = '#00cc96')) %>% 
++  m_set_style(style = m_style_cartoon(color = "#00cc96")) %>%
+   # Set style of specific selection (selecting by secondary)
+-  m_set_style(sel = m_sel(ss = 's'),                 
+-              style = m_style_cartoon(color = '#636efa', arrows = TRUE)) %>% 
++  m_set_style(
++    sel = m_sel(ss = "s"),
++    style = m_style_cartoon(color = "#636efa", arrows = TRUE)
++  ) %>%
+   # Style the alpha helix
+-  m_set_style(sel = m_sel(ss = 'h'),                 # Style alpha helix
+-              style = m_style_cartoon(color = '#ff7f0e')) %>%
++  m_set_style(
++    sel = m_sel(ss = "h"), # Style alpha helix
++    style = m_style_cartoon(color = "#ff7f0e")
++  ) %>%
+   # Rotate the scene by given angle on given axis
+-  m_rotate(angle = 90, axis = 'y') %>%
++  m_rotate(angle = 90, axis = "y") %>%
+   # Animate the scene by spinning it
+-  m_spin()                          
++  m_spin()
+ ```
+ 
+ ```{r xyz}
+@@ -70,14 +74,18 @@ H    -0.465975   -0.364992    0.807088    0.283368    0.257996   -0.583024
+ H    -0.465979   -0.364991   -0.807088    0.392764    0.342436    0.764260
+ "
+ 
+-r3dmol(width = 400,
+-       height = 400,
+-       backgroundColor = "0xeeeeee",
+-       id = "demo_xyz",
+-       elementId = "demo_xyz") %>%
+-  m_add_model(data = xyz,
+-              format = "xyz",
+-              options = list(vibrate = list(frames = 10, amplitude = 1))) %>%
++r3dmol(
++  width = 400,
++  height = 400,
++  backgroundColor = "0xeeeeee",
++  id = "demo_xyz",
++  elementId = "demo_xyz"
++) %>%
++  m_add_model(
++    data = xyz,
++    format = "xyz",
++    options = list(vibrate = list(frames = 10, amplitude = 1))
++  ) %>%
+   m_set_style(style = m_style_stick()) %>%
+   m_animate(list(loop = "backAndForth")) %>%
+   m_zoom_to()
+@@ -106,26 +114,55 @@ $$$$"
+ r3dmol(id = "demo_sdf", elementId = "demo_sdf") %>%
+   m_add_model(data = benz, format = "sdf") %>%
+   m_set_style(style = m_style_stick()) %>%
+-  m_set_style(sel = m_sel(model = 0), 
+-              style = m_style_stick(colorScheme = "cyanCarbon")) %>%
++  m_set_style(
++    sel = m_sel(model = 0),
++    style = m_style_stick(colorScheme = "cyanCarbon")
++  ) %>%
+   m_zoom_to()
+ ```
+ 
+-### Dynamic styles
++### Dynamic Styles
+ 
+ ```{r Dynamic styles}
+ r3dmol() %>%
+   m_add_model(data = pdb_1j72) %>%
+   m_set_style(style = m_style_cartoon(
+-      colorfunc = "
++    colorfunc = "
+         function(atom) {
+           return atom.resi % 2 == 0 ? 'white' : 'green';
+         }"
+-    )
+-  ) %>%
++  )) %>%
+   m_zoom_to()
+ ```
+ 
++### Multiple Viewers
++
++```{r multiple viewers}
++m1 <- r3dmol() %>%
++  m_add_model(data = pdb_6zsl, format = "pdb") %>%
++  m_zoom_to()
++
++m2 <- m1 %>%
++  m_set_style(style = m_style_cartoon(color = "spectrum"))
++
++m3 <- r3dmol() %>%
++  m_add_model(data = pdb_1j72, format = "pdb") %>%
++  m_set_style(style = m_style_stick()) %>%
++  m_zoom_to()
++
++m4 <- m3 %>%
++  m_set_style(style = m_style_sphere())
++
++m_grid(
++  viewer = list(m1, m2, m3, m4),
++  rows = 2,
++  cols = 2,
++  control_all = TRUE,
++  viewer_config = m_viewer_spec(
++    backgroundColor = "lightblue"
++  )
++)
++```
+ 
+ ## About `3Dmol.js`
+ 

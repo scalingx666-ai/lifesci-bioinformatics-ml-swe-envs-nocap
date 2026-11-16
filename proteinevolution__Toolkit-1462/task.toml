@@ -1,0 +1,64 @@
+version = "1.0"
+
+[task]
+name = "default/proteinevolution__Toolkit-1462"
+description = "Update scalafmt-core to 3.6.0"
+
+[metadata]
+difficulty = "small"
+category = "bugfix"
+keywords = [
+    "Toolkit",
+    "pr_diff",
+]
+
+[metadata.repo2env]
+pipeline = "pr_diff"
+pipeline_version = "0.3.0"
+repo = "proteinevolution/Toolkit"
+ref = "6fe04cba68e38a11204b6565357f53c2f107cd4f"
+reference = "https://github.com/proteinevolution/Toolkit/pull/1462"
+source_access = "auto"
+built_at = "2026-11-16T05:59:00.026679+00:00"
+reward_kinds = [
+    "diff_similarity",
+]
+spec_version = "0.2.0"
+content_hash = "sha256:3d08775cdbeae666a4b0a25c98a80656762b76da0e58e3eb3e7c58c7dba81abe"
+
+[metadata.repo2env.pr_diff]
+pr_merged_at = "2022-10-25T14:57:53Z"
+diff_format = "unified"
+context_files = [
+    ".git-blame-ignore-revs",
+    ".scalafmt.conf",
+    "modules/message/src/main/scala/de/proteinevolution/message/actors/WebSocketActor.scala",
+]
+
+[metadata.repo2env.reward_calibration]
+baseline_reward = 0.0
+loc_changed = 7
+difficulty = "small"
+
+[metadata.repo2env.evaluation]
+schema_version = "1"
+status = "unverified"
+stage = "generation"
+reason_codes = [
+    "validation_not_run",
+]
+detail = "Generated task; validation has not been established."
+provenance = "unknown"
+evidence = []
+
+[metadata.repo2env.reproducibility]
+mode = "local_only"
+image_ref = "python:3.12-slim"
+image_tag = "python:3.12-slim"
+image_visibility = "private"
+
+[agent]
+timeout_sec = 1800.0
+
+[verifier]
+timeout_sec = 300.0

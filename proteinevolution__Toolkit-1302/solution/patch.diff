@@ -1,0 +1,10 @@
+diff --git a/.scalafmt.conf b/.scalafmt.conf
+index 131fe52ef0..ca72208164 100644
+--- a/.scalafmt.conf
++++ b/.scalafmt.conf
+@@ -13,4 +13,4 @@ optIn.breakChainOnFirstMethodDot = false
+ align.openParenDefnSite          = false
+ project.git                      = true
+ assumeStandardLibraryStripMargin = true
+-version                          = 3.0.4
++version                          = 3.0.5

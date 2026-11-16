@@ -1,0 +1,102 @@
+diff --git a/pyscreener/args.py b/pyscreener/args.py
+index 97a1d39..6bb056c 100644
+--- a/pyscreener/args.py
++++ b/pyscreener/args.py
+@@ -4,6 +4,8 @@
+ 
+ from configargparse import ArgumentParser, ArgumentTypeError, Namespace
+ 
++from pyscreener.utils.utils import Reduction
++
+ __version__ = "1.2.0"
+ 
+ 
+@@ -161,21 +163,15 @@ def add_screen_args(parser: ArgumentParser):
+     parser.add_argument("-nc", "--ncpu", default=1, type=int)
+     parser.add_argument("--base-name", default="ligand")
+     parser.add_argument(
+-        "--score-mode",
++        "--reduction",
+         default="best",
+-        choices=("best", "avg", "boltzmann", "top-k"),
++        choices=set(r.name for r in Reduction),
+         help="The method used to calculate the score of a single docking run on a single receptor",
+     )
+     parser.add_argument(
+-        "--repeat-score-mode",
+-        default="best",
+-        choices=("best", "avg", "boltzmann", "top-k"),
+-        help="The method used to calculate the overall score from repeated docking runs",
+-    )
+-    parser.add_argument(
+-        "--ensemble-score-mode",
++        "--receptor-reduction",
+         default="best",
+-        choices=("best", "avg", "boltzmann", "top-k"),
++        choices=set(r.name for r in Reduction),
+         help="The method used to calculate the overall score from an ensemble of docking runs",
+     )
+     parser.add_argument(
+diff --git a/pyscreener/docking/screen.py b/pyscreener/docking/screen.py
+index 2651a98..6cddeb6 100644
+--- a/pyscreener/docking/screen.py
++++ b/pyscreener/docking/screen.py
+@@ -158,7 +158,7 @@ def __call__(
+             as input files
+         reduction : Optional[Reduction], default=None
+             the reduction to apply to multiple receptor scores for the same ligand. If None, use
+-            self.ensemble_reduction
++            self.receptor_reduction
+ 
+         Returns
+         -------
+diff --git a/pyscreener/docking/sim.py b/pyscreener/docking/sim.py
+index 811dfdb..8867c74 100644
+--- a/pyscreener/docking/sim.py
++++ b/pyscreener/docking/sim.py
+@@ -28,16 +28,15 @@ class Simulation:
+         the path under which input will be placed
+     out_path: Union[str, Path]
+         the path under which output will be placed
+-    score_mode : str
+-        the mode used to calculate a score for an individual docking
+-        calculation given multiple output scored conformations
++    reduction : str
++        the mode used to calculate a score for an individual docking calculation given multiple
++        output scored conformations
+     k : int
+         the number of top scores to use if calculating an average
+     prepared_ligand : Optional[Union[str, Path]]
+     prepared_receptor : Optional[Union[str, Path]]
+     result : Optional[Mapping]
+-        the result of the docking calculation. None if the calculation has not
+-        been performed yet.
++        the result of the docking calculation. None if the calculation has not been performed yet.
+ 
+     Parmeters
+     ---------
+@@ -48,7 +47,7 @@ class Simulation:
+     input_file : Optional[str], default=None
+     in_path : Union[str, Path], default='.'
+     out_path : Union[str, Path], default='.'
+-    score_mode : str, default=ScoreMode.BEST
++    reduction : str, default=ScoreMode.BEST
+     k : int, default=1
+     prepared_ligand : Optional[Union[str, Path]], default=None
+     prepared_receptor : Optional[Union[str, Path]], default=None
+diff --git a/pyscreener/main.py b/pyscreener/main.py
+index ae4eb97..a1b0f9a 100644
+--- a/pyscreener/main.py
++++ b/pyscreener/main.py
+@@ -73,9 +73,8 @@ def main():
+         args.ncpu,
+         args.base_name,
+         args.output_dir,
+-        args.score_mode,
+-        args.repeat_score_mode,
+-        args.ensemble_score_mode,
++        args.reduction,
++        args.receptor_reduction,
+         args.repeats,
+         args.k,
+         args.verbose,

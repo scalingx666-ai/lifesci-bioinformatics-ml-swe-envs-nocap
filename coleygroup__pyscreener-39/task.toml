@@ -1,0 +1,65 @@
+version = "1.0"
+
+[task]
+name = "default/coleygroup__pyscreener-39"
+description = "remove deprecated arguments"
+
+[metadata]
+difficulty = "medium"
+category = "bugfix"
+keywords = [
+    "pyscreener",
+    "pr_diff",
+]
+
+[metadata.repo2env]
+pipeline = "pr_diff"
+pipeline_version = "0.3.0"
+repo = "coleygroup/pyscreener"
+ref = "ed3637116842c5dfb9e350a773f21620377e7d28"
+reference = "https://github.com/coleygroup/pyscreener/pull/39"
+source_access = "auto"
+built_at = "2026-11-16T11:22:52.686052+00:00"
+reward_kinds = [
+    "diff_similarity",
+]
+spec_version = "0.2.0"
+content_hash = "sha256:07120bdc2dc1f22aaf02cb1c1ef01d09686e26b79935e3c56dad7b466b6cb96f"
+
+[metadata.repo2env.pr_diff]
+pr_merged_at = "2022-04-13T20:19:52Z"
+diff_format = "unified"
+context_files = [
+    "pyscreener/args.py",
+    "pyscreener/docking/screen.py",
+    "pyscreener/docking/sim.py",
+    "pyscreener/main.py",
+]
+
+[metadata.repo2env.reward_calibration]
+baseline_reward = 0.0
+loc_changed = 34
+difficulty = "medium"
+
+[metadata.repo2env.evaluation]
+schema_version = "1"
+status = "unverified"
+stage = "generation"
+reason_codes = [
+    "validation_not_run",
+]
+detail = "Generated task; validation has not been established."
+provenance = "unknown"
+evidence = []
+
+[metadata.repo2env.reproducibility]
+mode = "local_only"
+image_ref = "python:3.12-slim"
+image_tag = "python:3.12-slim"
+image_visibility = "private"
+
+[agent]
+timeout_sec = 1800.0
+
+[verifier]
+timeout_sec = 300.0

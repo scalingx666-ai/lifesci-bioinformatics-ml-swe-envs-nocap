@@ -1,0 +1,62 @@
+diff --git a/src/dbsearcher.cpp b/src/dbsearcher.cpp
+index 62295c6a..4396b7de 100644
+--- a/src/dbsearcher.cpp
++++ b/src/dbsearcher.cpp
+@@ -257,15 +257,11 @@ void DBSearcher::LoadDB(const string &DBFN)
+ 
+ bool DBSearcher::Reject(DSSAligner &DA, bool Up) const
+ 	{
+-	bool Evalue_ok = true;
+-	bool TS_ok = true;
+ 	if (!opt(scores_are_not_evalues) && DA.GetEvalue(Up) > m_MaxEvalue)
+-		Evalue_ok = false;
++		return true;
+ 	if (optset_mints && DA.GetNewTestStatistic(Up) < opt(mints))
+-		TS_ok = false;
+-	if (Evalue_ok || TS_ok)
+-		return false;
+-	return true;
++		return true;
++	return false;	
+ 	}
+ 
+ void DBSearcher::BaseOnAln(DSSAligner &DA, bool Up)
+diff --git a/src/myutils.cpp b/src/myutils.cpp
+index e14b871c..b45f664d 100755
+--- a/src/myutils.cpp
++++ b/src/myutils.cpp
+@@ -128,7 +128,33 @@ void GetStemName(const string &PathName, string &Stem)
+ 	GetBaseName(PathName, Base);
+ 	vector<string> Fields;
+ 	Split(Base, Fields, '.');
+-	Stem = Fields[0];
++
++	const uint n = SIZE(Fields);
++	if (n == 0)
++		{
++		Stem.clear();
++		return;
++		}
++	if (n == 1)
++		{
++		Stem = Fields[0];
++		return;
++		}
++
++	uint upto = n - 1;
++	if (Fields[n-1] == "gz" && n > 2)
++		upto = n - 2;
++
++	Stem.clear();
++	for (uint i = 0; i < upto; ++i)
++		{
++		if (i > 0)
++			Stem.push_back('.');
++		Stem += Fields[i];
++		}
++
++	if (Stem.empty())
++		Stem = Fields[0];
+ 	}
+ 
+ void GetExtFromPathName(const string &PathName, string &Ext)

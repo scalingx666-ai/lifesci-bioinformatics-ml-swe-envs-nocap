@@ -1,0 +1,69 @@
+version = "1.0"
+
+[task]
+name = "default/proteinevolution__Toolkit-1466"
+description = "Frontend dependency updates and jumpiness fix"
+
+[metadata]
+difficulty = "large"
+category = "bugfix"
+keywords = [
+    "Toolkit",
+    "pr_diff",
+]
+
+[metadata.repo2env]
+pipeline = "pr_diff"
+pipeline_version = "0.3.0"
+repo = "proteinevolution/Toolkit"
+ref = "e0d19c0bed7f7f5a3d0aa6af087414f667ef607a"
+reference = "https://github.com/proteinevolution/Toolkit/pull/1466"
+source_access = "auto"
+built_at = "2026-11-16T05:58:57.529734+00:00"
+reward_kinds = [
+    "diff_similarity",
+]
+spec_version = "0.2.0"
+content_hash = "sha256:8e98ad31db659832b57c5f12447edb55eb4ad2f7be68a6855e58bee5c6dd3785"
+
+[metadata.repo2env.pr_diff]
+pr_merged_at = "2022-11-12T16:22:32Z"
+diff_format = "unified"
+context_files = [
+    "build.sbt",
+    "frontend/package.json",
+    "frontend/src/components/jobs/result-tabs/NGL3DStructureView.vue",
+    "frontend/src/components/modals/TemplateStructureModal.vue",
+    "frontend/src/mixins/SearchResultTabMixin.ts",
+    "frontend/src/types/index.d.ts",
+    "frontend/yarn.lock",
+    "project/Dependencies.scala",
+]
+
+[metadata.repo2env.reward_calibration]
+baseline_reward = 0.0
+loc_changed = 1855
+difficulty = "large"
+
+[metadata.repo2env.evaluation]
+schema_version = "1"
+status = "unverified"
+stage = "generation"
+reason_codes = [
+    "validation_not_run",
+]
+detail = "Generated task; validation has not been established."
+provenance = "unknown"
+evidence = []
+
+[metadata.repo2env.reproducibility]
+mode = "local_only"
+image_ref = "python:3.12-slim"
+image_tag = "python:3.12-slim"
+image_visibility = "private"
+
+[agent]
+timeout_sec = 1800.0
+
+[verifier]
+timeout_sec = 300.0

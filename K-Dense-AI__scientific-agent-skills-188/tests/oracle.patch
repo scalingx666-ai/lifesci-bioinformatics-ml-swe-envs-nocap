@@ -1,0 +1,664 @@
+diff --git a/skills/citation-management/SKILL.md b/skills/citation-management/SKILL.md
+index 3c3668467..385a6eab0 100644
+--- a/skills/citation-management/SKILL.md
++++ b/skills/citation-management/SKILL.md
+@@ -4,7 +4,7 @@ description: Comprehensive citation management for academic research. Search Goo
+ allowed-tools: Read Write Edit Bash
+ license: MIT License
+ metadata:
+-  version: "1.0"
++  version: "1.1"
+   skill-author: K-Dense Inc.
+ ---
+ 
+@@ -214,6 +214,97 @@ python scripts/extract_metadata.py --input identifiers.txt --output citations.bi
+ - **Preprints**: repository (arXiv, bioRxiv), preprint ID
+ - **Additional**: abstract, keywords, URL
+ 
++### Phase 2.5: Metadata Enrichment via Web Search (MANDATORY)
++
++**Goal**: Detect and fill in any missing metadata fields using web search. This phase runs AFTER extraction and BEFORE formatting to ensure every BibTeX entry is complete.
++
++**Why This Is Critical**: Metadata extraction from APIs (CrossRef, PubMed, arXiv) sometimes returns incomplete records — missing volume, pages, issue number, or DOI. These gaps must be filled before the bibliography is considered ready.
++
++#### Step 1: Scan for Incomplete Entries
++
++After extracting metadata, scan the BibTeX file for entries missing key fields:
++
++**Fields to check per entry type:**
++
++| Entry Type | Must Have | Should Have |
++|------------|-----------|-------------|
++| @article | author, title, journal, year | volume, pages, number, doi |
++| @inproceedings | author, title, booktitle, year | pages, doi |
++| @book | author/editor, title, publisher, year | isbn, doi |
++| @misc | author, title, year | doi or url |
++
++Any `@article` entry missing `volume`, `pages`, or `doi` is considered **incomplete** and must be enriched.
++
++#### Step 2: Web Search for Missing Metadata
++
++For each incomplete entry, use the **parallel-web skill** to search for the missing information:
++
++**Option A — Search by title and author** (best for finding DOI):
++```bash
++parallel-cli search "FIRST_AUTHOR TITLE JOURNAL_NAME volume pages DOI" \
++  --json --max-results 10 \
++  -o sources/search_citation_CITATIONKEY.json
++```
++
++**Option B — Extract from DOI page** (best when DOI is known but volume/pages missing):
++```bash
++parallel-cli extract "https://doi.org/10.XXXX/YYYY" --json \
++  --objective "extract complete citation metadata: volume, issue, pages, publication date" \
++  -o sources/extract_doi_CITATIONKEY.json
++```
++
++**Option C — Search CrossRef API directly** (programmatic, fast):
++```bash
++parallel-cli search "crossref DOI metadata FIRST_AUTHOR TITLE" \
++  --json --max-results 10 \
++  -o sources/search_crossref_CITATIONKEY.json
++```
++
++**Option D — Search Google Scholar** (fallback for hard-to-find papers):
++```bash
++parallel-cli search "google scholar FIRST_AUTHOR TITLE YEAR complete citation" \
++  --json --max-results 10 \
++  -o sources/search_scholar_CITATIONKEY.json
++```
++
++#### Step 3: Update BibTeX Entries
++
++After finding the missing metadata:
++
++1. Open `references.bib`
++2. Add the missing fields to the incomplete entry
++3. Verify the found metadata is consistent with existing fields (same author, title, year)
++4. Log each fix:
++   ```
++   [HH:MM:SS] METADATA ENRICHED: [CitationKey] - added volume={X}, pages={Y--Z}, doi={10.XXX/YYY} ✅
++   ```
++
++#### Step 4: Handle Unfindable Metadata
++
++If metadata genuinely cannot be found after web search (very old paper, obscure conference, etc.):
++
++1. Add a `note` field to the BibTeX entry explaining the gap:
++   ```bibtex
++   note = {Volume and pages not available — published online only}
++   ```
++2. Log the exception:
++   ```
++   [HH:MM:SS] METADATA INCOMPLETE: [CitationKey] - pages unavailable (online-only publication) ⚠️
++   ```
++3. These exceptions should be rare — most modern papers have complete metadata findable via web search.
++
++#### Quick Reference: Common Missing Fields and Where to Find Them
++
++| Missing Field | Best Search Strategy |
++|---------------|---------------------|
++| DOI | Search "AUTHOR TITLE DOI" via parallel-cli search |
++| Volume | Extract from DOI page or search "JOURNAL YEAR TITLE volume" |
++| Pages | Extract from DOI page or search publisher website |
++| Issue/Number | Extract from DOI page or CrossRef |
++| Publisher | Search "JOURNAL publisher" or check journal website |
++
++---
++
+ ### Phase 3: BibTeX Formatting
+ 
+ **Goal**: Generate clean, properly formatted BibTeX entries.
+@@ -310,13 +401,21 @@ python scripts/format_bibtex.py references.bib \
+ # Validate BibTeX file
+ python scripts/validate_citations.py references.bib
+ 
+-# Validate and fix common issues
+-python scripts/validate_citations.py references.bib \
+-  --auto-fix \
+-  --output validated_references.bib
++# Validate against a venue standard (e.g., Nature, NeurIPS, Literature Review)
++python scripts/validate_citations.py references.bib --venue nature
++python scripts/validate_citations.py references.bib --venue neurips
++python scripts/validate_citations.py references.bib --venue review
++
++# Validate with custom minimum citation count
++python scripts/validate_citations.py references.bib --min-count 40
++
++# Check references against a written manuscript file (detect missing or unused citations)
++python scripts/validate_citations.py references.bib --manuscript paper.md
+ 
+ # Generate detailed validation report
+ python scripts/validate_citations.py references.bib \
++  --venue nature \
++  --manuscript paper.md \
+   --report validation_report.json \
+   --verbose
+ ```
+@@ -380,6 +479,39 @@ python scripts/validate_citations.py references.bib \
+ }
+ ```
+ 
++#### Citation Count Standards by Venue
++
++**Citations must always be high in number based on standards for journal and conference publications in the venue of choice or recommendation.** Never settle for a sparse reference list; establish an authoritative, rich context with dense, verified citations.
++
++| Venue Type | Target Citation Count |
++|------------|----------------------|
++| High-impact multidisciplinary journals (Nature, Science, Cell) | **35-50+** |
++| ML / CS conferences (NeurIPS, ICML, ICLR, CVPR, ACL) | **30-45+** |
++| Comprehensive literature reviews / market research reports | **40-65+** |
++| Medical journals (NEJM, Lancet, JAMA) | **30-45+** |
++
++Always adjust the citation target upward depending on standard density and practices of the target venue. Avoid 'lazy' citation over-repetition — do not repeatedly cite the same 1 or 2 papers to support multiple unrelated claims; draw from a diverse, high-quality set of reputable references.
++
++Enforce these standards programmatically with `validate_citations.py --venue <venue>` or `--min-count <N>`.
++
++#### Mandatory Post-Writing Reference Checks (Non-Negotiable)
++
++Once the entire scientific report or paper has been drafted and written, perform a comprehensive post-writing verification of all citations before compiling the final deliverables:
++
++1. **Verify No Missing or Unresolved Citations**: Check the draft or compiled document to ensure that every in-text citation correctly resolves to a reference in `references.bib`. There must be ZERO broken citation keys, missing identifiers, or unresolved references (e.g., `[?]` or `[citation needed]`).
++2. **Verify No Unused (Dangling) Bibliography Entries**: Check that every entry in `references.bib` is actually cited in the body of the report. Remove any unused entries to keep the bibliography perfectly clean.
++3. **Verify Citation Quantity Against Target Standards**: Ensure the final citation count meets or exceeds the high standard of the chosen or recommended venue (see table above). If the count is below standard, perform additional literature search first, find high-quality papers, and integrate them into appropriate sections.
++4. **Verify Metadata Completeness**: Confirm that all cited entries contain complete, fully-verified fields (all author names, complete journal/conference names, exact year, volume, issue, page range, and valid DOI).
++
++Run all of these checks in one command:
++
++```bash
++python scripts/validate_citations.py references.bib \
++  --venue <venue> \
++  --manuscript paper.md \
++  --report post_writing_check.json
++```
++
+ ### Phase 5: Integration with Writing Workflow
+ 
+ #### Building References for Manuscripts
+@@ -657,14 +789,15 @@ python scripts/extract_metadata.py \
+ 
+ ### validate_citations.py
+ 
+-Validate BibTeX entries for accuracy and completeness.
++Validate BibTeX entries for accuracy, completeness, citation count standard compliance, and manuscript integration.
+ 
+ **Features**:
+ - DOI verification via doi.org and CrossRef
+ - Required field checking
+ - Duplicate detection
+ - Format validation
+-- Auto-fix common issues
++- **Publication standard citation count checks** against specified venues (Nature, NeurIPS, review, etc.) or custom thresholds.
++- **Mandatory post-writing checks** matching manuscript citations (Markdown or LaTeX) with defined BibTeX entries to detect unresolved/missing or unused references.
+ - Detailed reporting
+ 
+ **Usage**:
+@@ -672,19 +805,23 @@ Validate BibTeX entries for accuracy and completeness.
+ # Basic validation
+ python scripts/validate_citations.py references.bib
+ 
+-# With auto-fix
+-python scripts/validate_citations.py references.bib \
+-  --auto-fix \
+-  --output fixed_references.bib
++# Validate against a venue standard (e.g., Nature, NeurIPS, Literature Review)
++python scripts/validate_citations.py references.bib --venue nature
++python scripts/validate_citations.py references.bib --venue neurips
++python scripts/validate_citations.py references.bib --venue review
++
++# Validate with custom minimum citation count
++python scripts/validate_citations.py references.bib --min-count 40
+ 
+-# Detailed validation report
++# Check references against a written manuscript file (detect missing or unused citations)
++python scripts/validate_citations.py references.bib --manuscript paper.md
++
++# Combined full validation
+ python scripts/validate_citations.py references.bib \
++  --venue nature \
++  --manuscript paper.md \
+   --report validation_report.json \
+   --verbose
+-
+-# Only check DOIs
+-python scripts/validate_citations.py references.bib \
+-  --check-dois-only
+ ```
+ 
+ ### format_bibtex.py
+@@ -857,8 +994,8 @@ python scripts/doi_to_bibtex.py 10.1038/nature12345 --clipboard
+ 5. **Duplicate entries**: Same paper cited multiple times with different keys
+    - **Solution**: Use duplicate detection in validation
+ 
+-6. **Missing required fields**: Incomplete BibTeX entries
+-   - **Solution**: Validate and ensure all required fields present
++6. **Missing required fields**: Incomplete BibTeX entries (volume, pages, DOI missing)
++   - **Solution**: Run Phase 2.5 metadata enrichment — web search for every missing field before proceeding. NEVER leave an @article entry without volume, pages, and DOI.
+ 
+ 7. **Outdated preprints**: Citing preprint when published version exists
+    - **Solution**: Check if preprints have been published, update to journal version
+diff --git a/skills/citation-management/references/citation_validation.md b/skills/citation-management/references/citation_validation.md
+index e3ed54142..ea0c21ee9 100644
+--- a/skills/citation-management/references/citation_validation.md
++++ b/skills/citation-management/references/citation_validation.md
+@@ -740,19 +740,59 @@ title = {Study of H\textsubscript{2}O}  % H₂O
+ % Or use UTF-8 with proper LaTeX packages
+ ```
+ 
+-### Issue 3: Incomplete Extraction
++### Issue 3: Incomplete Extraction (REQUIRES WEB SEARCH)
+ 
+-**Problem**: Extracted metadata missing fields.
++**Problem**: Extracted metadata missing fields (volume, pages, DOI, issue number).
+ 
+ **Cause**:
+-- Source doesn't provide all metadata
++- Source API doesn't provide all metadata
+ - Extraction error
+-- Incomplete record
+-
+-**Solution**:
+-1. Check original article
+-2. Manually add missing fields
+-3. Use alternative source (PubMed vs CrossRef)
++- Incomplete database record
++- Online-first publication without final pagination
++
++**Solution — MANDATORY web search to fill gaps**:
++
++1. **Identify the missing fields** by scanning the BibTeX entry for empty or absent `volume`, `pages`, `number`, `doi` fields.
++
++2. **Search for the missing metadata using web search** (parallel-web skill):
++   ```bash
++   # Search by author + title to find complete citation info
++   parallel-cli search "AUTHOR_NAME PAPER_TITLE JOURNAL volume pages DOI" \
++     --json --max-results 10 \
++     -o sources/search_citation_CITATIONKEY.json
++   ```
++
++3. **If DOI is known, extract from DOI resolver page**:
++   ```bash
++   parallel-cli extract "https://doi.org/DOI_HERE" --json \
++     --objective "extract volume, issue number, page range, publication date" \
++     -o sources/extract_doi_CITATIONKEY.json
++   ```
++
++4. **If DOI is unknown, search for it**:
++   ```bash
++   parallel-cli search "AUTHOR_NAME PAPER_TITLE JOURNAL_NAME DOI" \
++     --json --max-results 10 \
++     -o sources/search_find_doi_CITATIONKEY.json
++   ```
++
++5. **Try alternative metadata sources**:
++   - CrossRef API (via DOI): Most reliable for volume/pages
++   - PubMed (via PMID): Good for biomedical papers
++   - Google Scholar: Fallback for hard-to-find papers
++   - Publisher website: Last resort
++
++6. **Update the BibTeX entry** with the found metadata and log:
++   ```
++   [HH:MM:SS] METADATA ENRICHED: [CitationKey] - added volume, pages, doi ✅
++   ```
++
++7. **If truly unfindable** (rare), add a note field:
++   ```bibtex
++   note = {Complete pagination not yet assigned — online-first publication}
++   ```
++
++**CRITICAL**: Never leave an `@article` entry without `volume`, `pages`, and `doi` unless you have exhausted all search options and documented the reason.
+ 
+ ### Issue 4: Cannot Find Duplicate
+ 
+diff --git a/skills/citation-management/scripts/validate_citations.py b/skills/citation-management/scripts/validate_citations.py
+index b248f4c43..ba764faf6 100755
+--- a/skills/citation-management/scripts/validate_citations.py
++++ b/skills/citation-management/scripts/validate_citations.py
+@@ -300,13 +300,54 @@ def detect_duplicates(self, entries: List[Dict]) -> List[Dict]:
+         
+         return duplicates
+     
+-    def validate_file(self, filepath: str, check_dois: bool = False) -> Dict:
++    def parse_manuscript_citations(self, filepath: str) -> List[str]:
++        """
++        Parse a manuscript file (Markdown or LaTeX) and extract all cited keys.
++        
++        Args:
++            filepath: Path to manuscript file
++            
++        Returns:
++            List of cited citation keys
++        """
++        try:
++            with open(filepath, 'r', encoding='utf-8') as f:
++                content = f.read()
++        except Exception as e:
++            print(f'Error reading manuscript file {filepath}: {e}', file=sys.stderr)
++            return []
++        
++        cited_keys = set()
++        
++        # 1. LaTeX citations: \cite{key1, key2}, \citep{key}, \citet{key}, etc.
++        latex_matches = re.findall(r'\\cite[a-z]*\*?\{([^}]+)\}', content)
++        for match in latex_matches:
++            keys = [k.strip() for k in match.split(',')]
++            for key in keys:
++                if key:
++                    cited_keys.add(key)
++                    
++        # 2. Markdown / Pandoc citations: @key or [@key1; @key2]
++        # Match @ followed by valid citation key chars (alphanumeric, -, _, :, .)
++        # Avoid email addresses, twitter handles, etc. by requiring that @ is not preceded by alphanumeric/dot/dash/underscore
++        md_matches = re.findall(r'(?<![a-zA-Z0-9_.-])@([a-zA-Z0-9_\-:]+)', content)
++        for key in md_matches:
++            # Exclude common false positives
++            if key and not key.isdigit():
++                cited_keys.add(key)
++                
++        return list(cited_keys)
++
++    def validate_file(self, filepath: str, check_dois: bool = False, min_count: Optional[int] = None, venue: Optional[str] = None, manuscript_filepath: Optional[str] = None) -> Dict:
+         """
+         Validate entire BibTeX file.
+         
+         Args:
+             filepath: Path to BibTeX file
+             check_dois: Whether to verify DOIs (slow)
++            min_count: Optional minimum citation count to enforce
++            venue: Optional venue type to check against standards
++            manuscript_filepath: Optional path to manuscript to cross-check citations
+             
+         Returns:
+             Validation report dictionary
+@@ -316,10 +357,19 @@ def validate_file(self, filepath: str, check_dois: bool = False) -> Dict:
+         
+         if not entries:
+             return {
++                'filepath': filepath,
+                 'total_entries': 0,
+-                'errors': [],
++                'valid_entries': 0,
++                'errors': [{
++                    'type': 'empty_bibtex_file',
++                    'severity': 'high',
++                    'message': f'BibTeX file {filepath} has no valid entries.'
++                }],
+                 'warnings': [],
+-                'duplicates': []
++                'duplicates': [],
++                'venue_standard_checked': venue,
++                'min_count_checked': min_count,
++                'manuscript_results': {'checked': False}
+             }
+         
+         print(f'Found {len(entries)} entries', file=sys.stderr)
+@@ -365,13 +415,139 @@ def validate_file(self, filepath: str, check_dois: bool = False) -> Dict:
+         
+         all_errors.extend(doi_errors)
+         
++        # Count and Venue verification logic
++        count_errors = []
++        count_warnings = []
++        
++        target_min = None
++        target_max = None
++        venue_name = None
++        
++        self.venue_standards = {
++            'nature': (35, 50, 'Nature'),
++            'science': (35, 50, 'Science'),
++            'cell': (35, 50, 'Cell'),
++            'multidisciplinary': (35, 50, 'High-impact Multidisciplinary Journal'),
++            'neurips': (30, 45, 'NeurIPS'),
++            'icml': (30, 45, 'ICML'),
++            'iclr': (30, 45, 'ICLR'),
++            'cvpr': (30, 45, 'CVPR'),
++            'acl': (30, 45, 'ACL'),
++            'ml_cs_conf': (30, 45, 'ML/CS Conference'),
++            'review': (40, 65, 'Comprehensive Literature Review'),
++            'market_research': (40, 65, 'Market Research Report'),
++            'literature_review': (40, 65, 'Literature Review / Market Research'),
++            'nejm': (30, 45, 'NEJM'),
++            'lancet': (30, 45, 'The Lancet'),
++            'jama': (30, 45, 'JAMA'),
++            'medical': (30, 45, 'Medical Journal')
++        }
++        
++        if venue:
++            v_lower = venue.lower().strip()
++            if v_lower in self.venue_standards:
++                target_min, target_max, venue_name = self.venue_standards[v_lower]
++            else:
++                print(f"Warning: Unknown venue '{venue}'. Supported venues are: {', '.join(self.venue_standards.keys())}", file=sys.stderr)
++        
++        if min_count is not None:
++            target_min = min_count
++            venue_name = f"Custom threshold (min: {min_count})"
++            target_max = None
++            
++        total_count = len(entries)
++        if target_min is not None:
++            # Determine critical threshold (e.g. 70% of target minimum)
++            critical_min = int(target_min * 0.7)
++            if critical_min < 1:
++                critical_min = 1
++                
++            if total_count < critical_min:
++                count_errors.append({
++                    'type': 'critically_low_citation_count',
++                    'severity': 'high',
++                    'message': f'Total citation entries count ({total_count}) is critically low for {venue_name or "specified standard"}. Expected at least {target_min} citations.'
++                })
++            elif total_count < target_min:
++                count_warnings.append({
++                    'type': 'low_citation_count',
++                    'severity': 'medium',
++                    'message': f'Total citation entries count ({total_count}) is below the recommended standard for {venue_name or "specified standard"}. Expected {target_min}-{target_max or "+"} citations.'
++                })
++        
++        # Manuscript checking logic
++        manuscript_results = {
++            'checked': False,
++            'manuscript_filepath': None,
++            'cited_keys': [],
++            'missing_keys': [],
++            'unused_keys': []
++        }
++        
++        if manuscript_filepath:
++            manuscript_results['checked'] = True
++            manuscript_results['manuscript_filepath'] = manuscript_filepath
++            
++            # Parse cited keys
++            cited_keys = self.parse_manuscript_citations(manuscript_filepath)
++            manuscript_results['cited_keys'] = cited_keys
++            
++            bib_keys = {entry['key'] for entry in entries}
++            
++            # Missing references: cited in manuscript but not defined in BibTeX
++            missing_keys = [key for key in cited_keys if key not in bib_keys]
++            manuscript_results['missing_keys'] = missing_keys
++            for key in missing_keys:
++                all_errors.append({
++                    'type': 'unresolved_citation',
++                    'entry': key,
++                    'severity': 'high',
++                    'message': f'Unresolved citation: Key "@{key}" is cited in manuscript "{manuscript_filepath}" but not defined in the BibTeX file.'
++                })
++                
++            # Unused references: defined in BibTeX but not cited in manuscript
++            unused_keys = [key for key in bib_keys if key not in cited_keys]
++            manuscript_results['unused_keys'] = unused_keys
++            for key in unused_keys:
++                all_warnings.append({
++                    'type': 'unused_citation',
++                    'entry': key,
++                    'severity': 'medium',
++                    'message': f'Unused citation: Reference "{key}" is defined in the BibTeX file but not cited in the manuscript.'
++                })
++                
++            # Check the count of ACTUALLY used citations
++            actual_count = len(cited_keys) - len(missing_keys)
++            if target_min is not None:
++                critical_min = int(target_min * 0.7)
++                if critical_min < 1:
++                    critical_min = 1
++                if actual_count < critical_min:
++                    count_errors.append({
++                        'type': 'critically_low_manuscript_citation_count',
++                        'severity': 'high',
++                        'message': f'The number of cited references in the manuscript ({actual_count}) is critically low for {venue_name or "specified standard"}. Expected at least {target_min} actually cited references.'
++                    })
++                elif actual_count < target_min:
++                    count_warnings.append({
++                        'type': 'low_manuscript_citation_count',
++                        'severity': 'medium',
++                        'message': f'The number of cited references in the manuscript ({actual_count}) is below the recommended standard for {venue_name or "specified standard"}. Expected {target_min}-{target_max or "+"} cited references.'
++                    })
++        
++        all_errors.extend(count_errors)
++        all_warnings.extend(count_warnings)
++        
+         return {
+             'filepath': filepath,
+             'total_entries': len(entries),
+             'valid_entries': len(entries) - len([e for e in all_errors if e['severity'] == 'high']),
+             'errors': all_errors,
+             'warnings': all_warnings,
+-            'duplicates': duplicates
++            'duplicates': duplicates,
++            'venue_standard_checked': venue,
++            'min_count_checked': min_count,
++            'manuscript_results': manuscript_results
+         }
+     
+     def _extract_year_crossref(self, message: Dict) -> str:
+@@ -437,18 +613,52 @@ def main():
+         help='Show detailed output'
+     )
+     
++    parser.add_argument(
++        '--min-count',
++        type=int,
++        help='Enforce a minimum number of citation entries'
++    )
++    
++    parser.add_argument(
++        '--venue',
++        help='Enforce citation standards for a specific venue (e.g. nature, neurips, review)'
++    )
++    
++    parser.add_argument(
++        '--manuscript',
++        help='Path to manuscript file (Markdown or LaTeX) to check for unresolved or unused citations'
++    )
++    
+     args = parser.parse_args()
+     
+     # Validate file
+     validator = CitationValidator()
+-    report = validator.validate_file(args.file, check_dois=args.check_dois)
++    report = validator.validate_file(
++        args.file, 
++        check_dois=args.check_dois,
++        min_count=args.min_count,
++        venue=args.venue,
++        manuscript_filepath=args.manuscript
++    )
+     
+     # Print summary
+     print('\n' + '='*60)
+     print('CITATION VALIDATION REPORT')
+     print('='*60)
+     print(f'\nFile: {args.file}')
+-    print(f'Total entries: {report["total_entries"]}')
++    if report.get('venue_standard_checked'):
++        print(f'Venue Standard: {report["venue_standard_checked"]}')
++    if report.get('min_count_checked') is not None:
++        print(f'Required Min Count: {report["min_count_checked"]}')
++    print(f'Total entries in BibTeX: {report["total_entries"]}')
++    
++    m_res = report.get('manuscript_results', {})
++    if m_res.get('checked'):
++        print(f'Manuscript checked: {m_res["manuscript_filepath"]}')
++        print(f'  Actual unique citations in manuscript: {len(m_res["cited_keys"])}')
++        print(f'  Missing/unresolved: {len(m_res["missing_keys"])}')
++        print(f'  Unused in bib file: {len(m_res["unused_keys"])}')
++        
+     print(f'Valid entries: {report["valid_entries"]}')
+     print(f'Errors: {len(report["errors"])}')
+     print(f'Warnings: {len(report["warnings"])}')
+@@ -466,7 +676,7 @@ def main():
+                 print(f'  Severity: {error["severity"]}')
+     
+     # Print warnings
+-    if report['warnings'] and args.verbose:
++    if report['warnings'] and (args.verbose or report.get('venue_standard_checked') or report.get('min_count_checked') is not None or m_res.get('checked')):
+         print('\n' + '-'*60)
+         print('WARNINGS (should fix):')
+         print('-'*60)
+@@ -487,8 +697,9 @@ def main():
+             json.dump(report, f, indent=2)
+         print(f'\nDetailed report saved to: {args.report}')
+     
+-    # Exit with error code if there are errors
+-    if report['errors']:
++    # Exit with error code if there are high-severity errors
++    has_high_errors = any(e.get('severity') == 'high' for e in report['errors'])
++    if has_high_errors:
+         sys.exit(1)
+ 
+ 
+diff --git a/skills/literature-review/SKILL.md b/skills/literature-review/SKILL.md
+index 99a3975a7..4e03cea94 100644
+--- a/skills/literature-review/SKILL.md
++++ b/skills/literature-review/SKILL.md
+@@ -4,7 +4,7 @@ description: Conduct comprehensive, systematic literature reviews using multiple
+ allowed-tools: Read Write Edit Bash
+ license: MIT license
+ metadata:
+-  version: "1.0"
++  version: "1.1"
+   skill-author: K-Dense Inc.
+ ---
+ 
+@@ -618,6 +618,17 @@ This skill works seamlessly with other scientific skills:
+ ### Writing Skills
+ - **brand-guidelines**: Apply institutional branding to PDF
+ - **internal-comms**: Adapt review for different audiences
++- **venue-templates**: Access venue-specific writing style guides when preparing reviews for publication
++
++### Venue-Specific Writing Styles
++
++When preparing a literature review for a specific journal, consult the **venue-templates** skill for writing style guidance:
++- `venue_writing_styles.md`: Master style comparison across venues
++- `nature_science_style.md`: Nature/Science flowing abstract style, story-driven structure
++- `cell_press_style.md`: Cell Press graphical abstracts, Highlights format
++- `medical_journal_styles.md`: NEJM/Lancet/JAMA structured abstracts, PRISMA compliance
++
++These guides help adapt your review's tone, abstract format, and structure to match the target venue's expectations.
+ 
+ ## Resources
+ 
+diff --git a/skills/peer-review/SKILL.md b/skills/peer-review/SKILL.md
+index 2ce09fa62..b7acd6e85 100644
+--- a/skills/peer-review/SKILL.md
++++ b/skills/peer-review/SKILL.md
+@@ -4,7 +4,7 @@ description: Structured manuscript/grant review with checklist-based evaluation.
+ allowed-tools: Read Write Edit Bash
+ license: MIT license
+ metadata:
+-  version: "1.0"
++  version: "1.1"
+   skill-author: K-Dense Inc.
+ ---
+ 
+@@ -25,6 +25,8 @@ This skill should be used when:
+ - Checking compliance with reporting guidelines (CONSORT, STROBE, PRISMA)
+ - Providing constructive feedback on scientific writing
+ 
++**Related Resource:** The **venue-templates** skill provides `reviewer_expectations.md` with detailed guidance on what reviewers look for at different venues (Nature/Science, Cell Press, medical journals, ML conferences). Use this to calibrate your review standards to the target venue.
++
+ ## Visual Enhancement with Scientific Schematics
+ 
+ **When creating documents with this skill, always consider adding scientific diagrams and schematics to enhance visual communication.**

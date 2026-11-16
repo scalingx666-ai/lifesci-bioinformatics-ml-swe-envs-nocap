@@ -1,0 +1,57 @@
+diff --git a/.gitattributes b/.gitattributes
+index 7e2c98b59..b059d63ef 100644
+--- a/.gitattributes
++++ b/.gitattributes
+@@ -10,3 +10,4 @@
+ *.jpg binary
+ *.exe binary
+ *.msi binary
++*.ttf binary
+diff --git a/frontend/src/App.vue b/frontend/src/App.vue
+index 923402418..30d6cf698 100644
+--- a/frontend/src/App.vue
++++ b/frontend/src/App.vue
+@@ -303,14 +303,14 @@ $themeColor: $primary;
+ }
+ 
+ @font-face {
+-    font-family: 'Source Sans Pro';
+-    src: url('./assets/fonts/SourceSansPro-Regular.ttf');
++    font-family: 'Source Code Pro';
++    src: url('./assets/fonts/SourceCodePro-Regular.ttf');
+     font-weight: 400;
+ }
+ 
+ @font-face {
+-    font-family: 'Source Sans Pro';
+-    src: url('./assets/fonts/SourceSansPro-Bold.ttf');
++    font-family: 'Source Code Pro';
++    src: url('./assets/fonts/SourceCodePro-Bold.ttf');
+     font-weight: 700;
+ }
+ 
+diff --git a/frontend/src/assets/fonts/NotoSans-Bold.ttf b/frontend/src/assets/fonts/NotoSans-Bold.ttf
+index a24f7f3c9..3e68bc241 100644
+Binary files a/frontend/src/assets/fonts/NotoSans-Bold.ttf and b/frontend/src/assets/fonts/NotoSans-Bold.ttf differ
+diff --git a/frontend/src/assets/fonts/NotoSans-Italic.ttf b/frontend/src/assets/fonts/NotoSans-Italic.ttf
+index fc80314b9..eedc5e459 100644
+Binary files a/frontend/src/assets/fonts/NotoSans-Italic.ttf and b/frontend/src/assets/fonts/NotoSans-Italic.ttf differ
+diff --git a/frontend/src/assets/fonts/NotoSans-Regular.ttf b/frontend/src/assets/fonts/NotoSans-Regular.ttf
+index 335004615..973bc2ed3 100644
+Binary files a/frontend/src/assets/fonts/NotoSans-Regular.ttf and b/frontend/src/assets/fonts/NotoSans-Regular.ttf differ
+diff --git a/frontend/src/assets/fonts/SourceCodePro-Bold.ttf b/frontend/src/assets/fonts/SourceCodePro-Bold.ttf
+new file mode 100644
+index 000000000..e034f7017
+Binary files /dev/null and b/frontend/src/assets/fonts/SourceCodePro-Bold.ttf differ
+diff --git a/frontend/src/assets/fonts/SourceCodePro-Regular.ttf b/frontend/src/assets/fonts/SourceCodePro-Regular.ttf
+new file mode 100644
+index 000000000..daad8745c
+Binary files /dev/null and b/frontend/src/assets/fonts/SourceCodePro-Regular.ttf differ
+diff --git a/frontend/src/assets/fonts/SourceSansPro-Bold.ttf b/frontend/src/assets/fonts/SourceSansPro-Bold.ttf
+deleted file mode 100644
+index 5a3aedca7..000000000
+Binary files a/frontend/src/assets/fonts/SourceSansPro-Bold.ttf and /dev/null differ
+diff --git a/frontend/src/assets/fonts/SourceSansPro-Regular.ttf b/frontend/src/assets/fonts/SourceSansPro-Regular.ttf
+deleted file mode 100644
+index c4ad74d9a..000000000
+Binary files a/frontend/src/assets/fonts/SourceSansPro-Regular.ttf and /dev/null differ

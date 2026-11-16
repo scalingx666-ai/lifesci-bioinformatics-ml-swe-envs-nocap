@@ -1,0 +1,72 @@
+version = "1.0"
+
+[task]
+name = "default/coleygroup__pyscreener-30"
+description = "Feat/versioning"
+
+[metadata]
+difficulty = "large"
+category = "bugfix"
+keywords = [
+    "pyscreener",
+    "pr_diff",
+]
+
+[metadata.repo2env]
+pipeline = "pr_diff"
+pipeline_version = "0.3.0"
+repo = "coleygroup/pyscreener"
+ref = "d8d2b3156da86f5af040b7213c91aeafd66146d8"
+reference = "https://github.com/coleygroup/pyscreener/pull/30"
+source_access = "auto"
+built_at = "2026-11-16T11:22:58.995510+00:00"
+reward_kinds = [
+    "diff_similarity",
+]
+spec_version = "0.2.0"
+content_hash = "sha256:d47a20af617450529626a01b938c7a313d59e566fa13c98fb79b8c73b9b7c141"
+
+[metadata.repo2env.pr_diff]
+pr_merged_at = "2022-02-25T20:54:54Z"
+diff_format = "unified"
+context_files = [
+    ".bumpversion.cfg",
+    ".gitignore",
+    "MANIFEST.in",
+    "pyproject.toml",
+    "pyscreener/__init__.py",
+    "pyscreener/_version.py",
+    "pyscreener/args.py",
+    "setup.cfg",
+    "setup.py",
+    "tests/5WIU.pdb",
+    "versioneer.py",
+]
+
+[metadata.repo2env.reward_calibration]
+baseline_reward = 0.0
+loc_changed = 8740
+difficulty = "large"
+
+[metadata.repo2env.evaluation]
+schema_version = "1"
+status = "unverified"
+stage = "generation"
+reason_codes = [
+    "validation_not_run",
+]
+detail = "Generated task; validation has not been established."
+provenance = "unknown"
+evidence = []
+
+[metadata.repo2env.reproducibility]
+mode = "local_only"
+image_ref = "python:3.12-slim"
+image_tag = "python:3.12-slim"
+image_visibility = "private"
+
+[agent]
+timeout_sec = 1800.0
+
+[verifier]
+timeout_sec = 300.0

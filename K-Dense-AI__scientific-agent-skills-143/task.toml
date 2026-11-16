@@ -1,0 +1,68 @@
+version = "1.0"
+
+[task]
+name = "default/K-Dense-AI__scientific-agent-skills-143"
+description = "feat: add Exa AI-powered search tool"
+
+[metadata]
+difficulty = "large"
+category = "bugfix"
+keywords = [
+    "scientific-agent-skills",
+    "pr_diff",
+]
+
+[metadata.repo2env]
+pipeline = "pr_diff"
+pipeline_version = "0.3.0"
+repo = "K-Dense-AI/scientific-agent-skills"
+ref = "25e1c0f5696f8f219069acfe70856a4a3d316397"
+reference = "https://github.com/K-Dense-AI/scientific-agent-skills/pull/143"
+source_access = "auto"
+built_at = "2026-11-15T10:23:26.848408+00:00"
+reward_kinds = [
+    "diff_similarity",
+]
+spec_version = "0.2.0"
+content_hash = "sha256:39e2aa49075e80ee9f676edd100e336e599160115aa16507d19b1ea98cfdf98c"
+
+[metadata.repo2env.pr_diff]
+pr_merged_at = "2026-05-06T21:06:12Z"
+diff_format = "unified"
+context_files = [
+    "docs/scientific-skills.md",
+    "scientific-skills/exa-search/SKILL.md",
+    "scientific-skills/exa-search/references/web-extract.md",
+    "scientific-skills/exa-search/references/web-search.md",
+    "scientific-skills/exa-search/scripts/exa_extract.py",
+    "scientific-skills/exa-search/scripts/exa_search.py",
+    "scientific-skills/exa-search/tests/test_exa_search.py",
+]
+
+[metadata.repo2env.reward_calibration]
+baseline_reward = 0.0
+loc_changed = 781
+difficulty = "large"
+
+[metadata.repo2env.evaluation]
+schema_version = "1"
+status = "unverified"
+stage = "generation"
+reason_codes = [
+    "validation_not_run",
+]
+detail = "Generated task; validation has not been established."
+provenance = "unknown"
+evidence = []
+
+[metadata.repo2env.reproducibility]
+mode = "local_only"
+image_ref = "python:3.12-slim"
+image_tag = "python:3.12-slim"
+image_visibility = "private"
+
+[agent]
+timeout_sec = 1800.0
+
+[verifier]
+timeout_sec = 300.0

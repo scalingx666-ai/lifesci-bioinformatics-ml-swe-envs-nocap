@@ -1,0 +1,62 @@
+version = "1.0"
+
+[task]
+name = "default/proteinevolution__Toolkit-1439"
+description = "Update scalafmt-core to 3.5.9"
+
+[metadata]
+difficulty = "easy"
+category = "bugfix"
+keywords = [
+    "Toolkit",
+    "pr_diff",
+]
+
+[metadata.repo2env]
+pipeline = "pr_diff"
+pipeline_version = "0.3.0"
+repo = "proteinevolution/Toolkit"
+ref = "313791d3f31b110e8a53536dccb788705fb637df"
+reference = "https://github.com/proteinevolution/Toolkit/pull/1439"
+source_access = "auto"
+built_at = "2026-11-16T05:59:36.145216+00:00"
+reward_kinds = [
+    "diff_similarity",
+]
+spec_version = "0.2.0"
+content_hash = "sha256:b2205fdf11e325e19f3fc2afe65bd6d1acde58dbb9ce2d7c4adce247b1a0ac74"
+
+[metadata.repo2env.pr_diff]
+pr_merged_at = "2022-08-15T12:50:18Z"
+diff_format = "unified"
+context_files = [
+    ".scalafmt.conf",
+]
+
+[metadata.repo2env.reward_calibration]
+baseline_reward = 0.0
+loc_changed = 2
+difficulty = "trivial"
+
+[metadata.repo2env.evaluation]
+schema_version = "1"
+status = "unverified"
+stage = "generation"
+reason_codes = [
+    "validation_not_run",
+]
+detail = "Generated task; validation has not been established."
+provenance = "unknown"
+evidence = []
+
+[metadata.repo2env.reproducibility]
+mode = "local_only"
+image_ref = "python:3.12-slim"
+image_tag = "python:3.12-slim"
+image_visibility = "private"
+
+[agent]
+timeout_sec = 1800.0
+
+[verifier]
+timeout_sec = 300.0

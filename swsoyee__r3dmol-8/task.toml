@@ -1,0 +1,65 @@
+version = "1.0"
+
+[task]
+name = "default/swsoyee__r3dmol-8"
+description = "fix m_sel() issue causing null selections"
+
+[metadata]
+difficulty = "medium"
+category = "bugfix"
+keywords = [
+    "r3dmol",
+    "pr_diff",
+]
+
+[metadata.repo2env]
+pipeline = "pr_diff"
+pipeline_version = "0.3.0"
+repo = "swsoyee/r3dmol"
+ref = "b2d03937f960b2198dba0d91f348d25f82673068"
+reference = "https://github.com/swsoyee/r3dmol/pull/8"
+source_access = "auto"
+built_at = "2026-11-16T04:45:11.543599+00:00"
+reward_kinds = [
+    "diff_similarity",
+]
+spec_version = "0.2.0"
+content_hash = "sha256:b824de360b44c3cef16ce0e21736753df7161ff2137e645a4ccc0e01f78f22f8"
+
+[metadata.repo2env.pr_diff]
+pr_merged_at = "2021-02-04T05:39:24Z"
+diff_format = "unified"
+context_files = [
+    "R/sel.R",
+    "R/view_options.R",
+    "man/m_sel.Rd",
+    "man/m_viewer_spec.Rd",
+]
+
+[metadata.repo2env.reward_calibration]
+baseline_reward = 0.0
+loc_changed = 28
+difficulty = "medium"
+
+[metadata.repo2env.evaluation]
+schema_version = "1"
+status = "unverified"
+stage = "generation"
+reason_codes = [
+    "validation_not_run",
+]
+detail = "Generated task; validation has not been established."
+provenance = "unknown"
+evidence = []
+
+[metadata.repo2env.reproducibility]
+mode = "local_only"
+image_ref = "python:3.12-slim"
+image_tag = "python:3.12-slim"
+image_visibility = "private"
+
+[agent]
+timeout_sec = 1800.0
+
+[verifier]
+timeout_sec = 300.0

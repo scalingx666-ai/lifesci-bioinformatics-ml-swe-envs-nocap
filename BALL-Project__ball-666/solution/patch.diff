@@ -1,0 +1,209 @@
+diff --git a/.planning/v1.7-USER-FEEDBACK-GATE.md b/.planning/v1.7-USER-FEEDBACK-GATE.md
+index fddb54fdc9..055842b131 100644
+--- a/.planning/v1.7-USER-FEEDBACK-GATE.md
++++ b/.planning/v1.7-USER-FEEDBACK-GATE.md
+@@ -71,18 +71,20 @@ User-reported during initial inspection of the v1.7.0-rc1 build:
+ 
+ ### UFG-02 — Rendering issues in macOS interface
+ **Severity:** 🚨 CRITICAL (potential RC1 blocker)
+-**Symptom:** Rendering glitches in the BALLView macOS UI (specifics from user TBD — could be widget chrome, GL canvas border, dock decoration, Inspector animation).
+-**Likely root cause candidates:**
+-- Phase 999.40 ThemeManager QSS rules applied to widgets that don't expect them on macOS (where native Cocoa rendering normally takes over)
+-- Phase 999.42 palette-removal sweep removed `<palette>` blocks from .ui files where the palette WAS doing useful work on macOS specifically
+-- Phase 999.44 InspectorSection `QPropertyAnimation` 160ms OutCubic on `maximumHeight` may cause flicker on Retina (was flagged as IMPORTANT I-4 in adversarial review but deferred)
+-- Phase 999.45 WorkspaceManager's `restoreState()` may interact badly with the QOpenGLWidget scene container under macOS-specific dock-layout behavior
+-**Investigation surface:**
+-- User needs to capture screenshots / video of the specific glitches
+-- macOS-specific overrides in QSS (`*[platform="macos"]` selectors if any)
+-- `source/VIEW/KERNEL/theme/theme-neutral.qss`
+-- Phase 999.42 SEMANTIC-COLOR-AUDIT.md
+-**Triage:** without specific glitch description, can't bound fix scope. **Need user to elaborate.**
++**Status:** ✅ FIXED for rc2 — commits `8b1ff967cb`, `5cb1a2d353`, `ca8aeab32f`.
++**Reported:** v1.7.0-rc1 macOS smoke triage.
++**Symptom:** Rendering glitches in BALLView macOS UI: dialog buttons missing native Aqua chrome (no focus ring / pressed state), local menubar widget consuming layout space despite the global Cocoa menu being active, toolbar rendered as a separate strip with drag handles instead of the native unified-title-and-toolbar look.
++**Confirmed root causes:**
++1. Bare-selector QSS rules in `theme-neutral.qss` (`QPushButton`, `QToolButton`, `QMenuBar`) override QMacStyle entirely on macOS for every top-level window — dialogs lose their native Aqua chrome.
++2. `setUnifiedTitleAndToolBarOnMac(true)` was never called — Handover §09-cross-platform.md row 30 requires it for the native NSToolbar look.
++3. Comment drift in `main.C` referenced removed `BALL_UI_V2` build flag (999.48 §8.7).
++4. `Qt::AA_DontCreateNativeWidgetSiblings` (set for the Qt WebEngine-in-DockWidget fix) has an undocumented Qt 6 / Apple Silicon caveat: it can cause GL drawable flicker on QOpenGLWidget reparenting.
++**Fixes landed:**
++- `fix(ufg-02/qss-scoping)` — scope `QPushButton`/`QToolButton` to `QMainWindow ...` descendants and `QMenuBar` to `QMainWindow > QMenuBar`. Dialogs keep QMacStyle, main window keeps the theme. (`8b1ff967cb`)
++- `fix(ufg-02/unified-toolbar+native-siblings)` — add `setUnifiedTitleAndToolBarOnMac(true)` in `Mainframe::show()` under `Q_OS_MACOS`. Also documents the macOS Qt 6 GL-flicker caveat on `AA_DontCreateNativeWidgetSiblings` (WebEngine still requires it via VIEW/WIDGETS/HTMLPage + HTMLView + EXTENSIONS plugins). (`5cb1a2d353`)
++- `fix(ufg-02/stale-comment)` — drop `BALL_UI_V2` reference from ThemeManager init comment. (`ca8aeab32f`)
++**Verified:** macOS-arm64 smoke build green; bare-selector grep returns only `QMainWindow`, `QMenu`, `QStatusBar`, `QGroupBox`, `QLineEdit`, `QComboBox` (all intentional — see commit message rationale). UFG-05 fix at `sectionHeader.C:52` still in place + not regressed.
++**Deferred to v1.7.x:** Optional `theme-neutral-macos.qss` overlay file loaded under `Q_OS_MACOS` for platform-specific rules that DO want to style certain widgets — overkill for rc2.
+ 
+ ### UFG-04 — Inspector tab labels truncated
+ 
+diff --git a/source/APPLICATIONS/BALLVIEW/main.C b/source/APPLICATIONS/BALLVIEW/main.C
+index fc61659ba1..4fec45093d 100644
+--- a/source/APPLICATIONS/BALLVIEW/main.C
++++ b/source/APPLICATIONS/BALLVIEW/main.C
+@@ -108,13 +108,14 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, PSTR cmd_line, int)
+ 
+ 	QApplication application(argc, argv);
+ 
+-	// === Phase 999.40: ThemeManager init (BALL_UI_V2 build flag) ===========
+-	// Apply the neutral QSS stylesheet immediately after QApplication ctor
+-	// and BEFORE any widgets are constructed so the first paint is themed.
+-	// Single neutral theme per maintainer-Q3 — Handover Phase 0.
+-	// No-op when BALL_UI_V2 is OFF (the default in v1.7).
++	// === Phase 999.40 / 999.48: ThemeManager init =========================
++	// Apply the neutral QSS stylesheet immediately after the QApplication
++	// ctor and BEFORE any widgets are constructed so the first paint is
++	// themed. Single neutral theme per maintainer-Q3 — Handover Phase 0.
++	// Phase 999.48 §8.7 removed the BALL_UI_V2 build flag: ThemeManager
++	// init is now unconditional and the neutral theme is always active.
+ 	BALL::VIEW::ThemeManager::instance().init(&application);
+-	// === end Phase 999.40 ==================================================
++	// === end ThemeManager init =============================================
+ 
+ #ifdef Q_OS_MACOS
+ 	// Resolve BALL_DATA_PATH for the macOS .app bundle.
+diff --git a/source/APPLICATIONS/BALLVIEW/mainframe.C b/source/APPLICATIONS/BALLVIEW/mainframe.C
+index 21ffc49136..29f2a5d21e 100644
+--- a/source/APPLICATIONS/BALLVIEW/mainframe.C
++++ b/source/APPLICATIONS/BALLVIEW/mainframe.C
+@@ -94,7 +94,23 @@ namespace BALL
+ 			, welcome_screen_(0)                  // Phase 999.47 §7.1
+ 			, whats_new_shown_this_launch_(false) // Phase 999.47 §7.6
+ 	{
+-		// Fixes a major problem with Qt WebEngine 5.5 when being used in a DockWidget
++		// Fixes a major problem with Qt WebEngine 5.x when being used in
++		// a DockWidget (issue from the 999.40-era investigation; still
++		// relevant — Qt WebEngine remains a runtime dependency via
++		// VIEW/WIDGETS/HTMLPage + HTMLView and the EXTENSIONS plugins
++		// PresentaBALL / Jupyter / BALLaxy).
++		//
++		// macOS caveat (Qt 6 / Apple Silicon): Qt::AA_DontCreateNativeWidgetSiblings
++		// is known to interact poorly with QOpenGLWidget reparenting on
++		// Qt 6 — the GL drawable can flicker (drop briefly) during dock
++		// reflow or central-widget swap because the native NSView for the
++		// GL surface is recreated rather than the sibling QWidget being
++		// promoted to native. The flicker is cosmetic, brief, and only
++		// fires on layout changes that move the Scene across docks
++		// (rare in normal use). Removing the attribute would re-trigger
++		// the WebEngine-in-DockWidget rendering corruption, so we accept
++		// the GL flicker as the lesser evil for v1.7. Revisit after the
++		// Phase 4b Qt 6 / QtWebEngineCore audit.
+ 		qApp->setAttribute(Qt::AA_DontCreateNativeWidgetSiblings);
+ 
+ 		registerThis();
+@@ -901,6 +917,18 @@ namespace BALL
+ 			tb->setIconSize(QSize(BALL::VIEW::Theme::kIconToolbar,
+ 			                      BALL::VIEW::Theme::kIconToolbar));
+ 			addToolBar(Qt::TopToolBarArea, tb);
++
++			// UFG-02 (Fix 2): opt into the macOS unified title-and-toolbar
++			// chrome. Without this, the toolbar renders as a separate
++			// strip with visible drag handles below the title bar instead
++			// of the native translucent NSToolbar look that integrates
++			// with the window's title bar. Handover §09-cross-platform.md
++			// row 30 explicitly requires this on macOS. No-op on other
++			// platforms (the Qt header still declares the method for ABI
++			// symmetry but the implementation is a stub off-mac).
++			#ifdef Q_OS_MACOS
++				setUnifiedTitleAndToolBarOnMac(true);
++			#endif
+ 		}
+ 
+ 		MainControl::show();
+diff --git a/source/VIEW/KERNEL/theme/theme-neutral.qss b/source/VIEW/KERNEL/theme/theme-neutral.qss
+index e1119c9433..160e55139c 100644
+--- a/source/VIEW/KERNEL/theme/theme-neutral.qss
++++ b/source/VIEW/KERNEL/theme/theme-neutral.qss
+@@ -59,18 +59,26 @@ QMainWindow QToolBar::separator {
+     margin: 4px 4px;
+ }
+ 
+-QMenuBar {
++/* UFG-02 (Fix 1): scope QMenuBar to a direct child of QMainWindow so we
++ * don't override macOS's global app menu styling. On macOS the menubar
++ * widget is reparented into the system menu and the local in-window one
++ * is hidden; scoping the rule to `QMainWindow > QMenuBar` keeps the
++ * Linux/Windows in-window menubar styled while leaving Cocoa's global
++ * menu untouched. The previous bare `QMenuBar` rule fought QMacStyle
++ * and produced a styled-but-invisible local menubar that consumed
++ * layout space on macOS. */
++QMainWindow > QMenuBar {
+     background-color: #efeff1;
+     color: #1a1c1f;
+     border-bottom: 1px solid #e1e3e8;
+ }
+ 
+-QMenuBar::item {
++QMainWindow > QMenuBar::item {
+     background: transparent;
+     padding: 4px 8px;
+ }
+ 
+-QMenuBar::item:selected {
++QMainWindow > QMenuBar::item:selected {
+     background-color: #e7efff;
+     color: #1a1c1f;
+ }
+@@ -147,7 +155,16 @@ QGroupBox::title {
+     background-color: #f7f7f8;
+ }
+ 
+-QPushButton {
++/* UFG-02 (Fix 1): scope QPushButton / QToolButton rules to widgets that
++ * live inside the QMainWindow chrome (toolbar, docks, inspector). Bare
++ * `QPushButton` / `QToolButton` selectors override QMacStyle entirely
++ * for every dialog top-level on macOS, killing native focus rings,
++ * pressed states, and the rounded Aqua button look. Dialogs (Preferences,
++ * About, MolecularFileDialog, PubChem, etc.) open as separate top-level
++ * windows — not descendants of any QMainWindow — so this scoping leaves
++ * them on QMacStyle while the main window's toolbar/dock buttons stay
++ * themed for visual consistency on all platforms. */
++QMainWindow QPushButton {
+     background-color: #ffffff;
+     color: #1a1c1f;
+     border: 1px solid #e1e3e8;
+@@ -156,24 +173,24 @@ QPushButton {
+     min-height: 20px;
+ }
+ 
+-QPushButton:hover {
++QMainWindow QPushButton:hover {
+     background-color: #efeff1;
+ }
+ 
+-QPushButton:pressed {
++QMainWindow QPushButton:pressed {
+     background-color: #e7efff;
+ }
+ 
+-QPushButton:default {
++QMainWindow QPushButton:default {
+     border: 1px solid #2a6fdb;
+ }
+ 
+-QPushButton:disabled {
++QMainWindow QPushButton:disabled {
+     color: #7a7f87;
+     background-color: #f7f7f8;
+ }
+ 
+-QToolButton {
++QMainWindow QToolButton {
+     background-color: transparent;
+     color: #1a1c1f;
+     border: 1px solid transparent;
+@@ -181,13 +198,13 @@ QToolButton {
+     padding: 4px;
+ }
+ 
+-QToolButton:hover {
++QMainWindow QToolButton:hover {
+     background-color: #ffffff;
+     border-color: #e1e3e8;
+ }
+ 
+-QToolButton:checked,
+-QToolButton:pressed {
++QMainWindow QToolButton:checked,
++QMainWindow QToolButton:pressed {
+     background-color: #e7efff;
+     border-color: #e1e3e8;
+ }

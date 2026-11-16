@@ -1,0 +1,13 @@
+diff --git a/project/Dependencies.scala b/project/Dependencies.scala
+index 9b3d3fe31..78f1c2155 100644
+--- a/project/Dependencies.scala
++++ b/project/Dependencies.scala
+@@ -4,7 +4,7 @@ import sbt._
+ object Dependencies {
+ 
+   val akkaVersion = "2.6.19"
+-  val circeV      = "0.14.1"
++  val circeV      = "0.14.2"
+ 
+   lazy val commonDeps: Seq[ModuleID] = Seq(
+     ws,

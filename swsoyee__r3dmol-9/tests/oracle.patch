@@ -1,0 +1,134 @@
+diff --git a/R/add.R b/R/add.R
+index 598e336..52946f3 100644
+--- a/R/add.R
++++ b/R/add.R
+@@ -33,8 +33,8 @@
+ #'   m_zoom_to()
+ #' @export
+ m_add_style <- function(id,
+-                        sel = m_sel(),
+-                        style = m_style_cartoon()) {
++                        style = m_style_cartoon(),
++                        sel = m_sel()) {
+   if (missing(style)) {
+     stop("The `style` argument must be passed.")
+   }
+diff --git a/R/bio3d.R b/R/bio3d.R
+index da02daf..21326cf 100644
+--- a/R/bio3d.R
++++ b/R/bio3d.R
+@@ -19,7 +19,14 @@
+ #'   m_zoom_to()
+ #' @export
+ m_bio3d <- function(pdb) {
+-  utils::capture.output(bio3d::write.pdb(pdb = pdb, file = ""))
++  # register temporary file for writing to disk
++  temp <- tempfile()
++  # will delete temp file after funciton completes
++  on.exit(unlink(temp))
++  # write specified pdb to disk as the temp file
++  bio3d::write.pdb(pdb = pdb, file = temp)
++  # read written .pdb for passing to m_add_model*() functions.
++  readLines(temp)
+ }
+ 
+ #' Fetch Structure from PDB
+@@ -56,7 +63,7 @@ m_fetch_pdb <- function(pdb, save.pdb = FALSE, path = NULL) {
+     pdb <- bio3d::read.pdb(bio3d::get.pdb(pdb, path = path))
+ 
+     ## Read PDB file, then write directly to console.
+-    utils::capture.output(bio3d::write.pdb(pdb, file = ""))
++    m_bio3d(pdb)
+   } else if (save.pdb == F) {
+ 
+     ## Pulls pdb data from online PDB database, without saving to local drive.
+diff --git a/R/sel.R b/R/sel.R
+index e92a3f6..fa7dadf 100644
+--- a/R/sel.R
++++ b/R/sel.R
+@@ -73,19 +73,19 @@ m_sel <- function(
+ 
+   ## Create the list of values from inputs
+   m_sel <- list(
++    resi = resi,
++    resn = resn,
++    chain = chain,
+     model = model,
+-    bonds = bonds,
+-    invert = invert,
+     byres = byres,
+     expand = expand,
+-    resn = resn,
++    bonds = bonds,
+     elem = elem,
+-    chain = chain,
+-    resi = resi,
+     atom = atom,
+     bonds = bonds,
+     ss = ss,
+     b = b,
++    invert = invert,
+     clickable = clickable,
+     callback = callback,
+     invert = invert
+diff --git a/R/set.R b/R/set.R
+index b68da35..d8357e4 100644
+--- a/R/set.R
++++ b/R/set.R
+@@ -20,8 +20,8 @@
+ #'   m_zoom_to()
+ #' @export
+ m_set_style <- function(id,
+-                        sel = m_sel(),
+-                        style = m_style_cartoon()) {
++                        style = m_style_cartoon(),
++                        sel = m_sel()) {
+   if (missing(style)) {
+     stop("The `style` argument must be passed.")
+   }
+diff --git a/man/m_add_style.Rd b/man/m_add_style.Rd
+index 5289d45..367a9a3 100644
+--- a/man/m_add_style.Rd
++++ b/man/m_add_style.Rd
+@@ -4,15 +4,15 @@
+ \alias{m_add_style}
+ \title{Overwrite Previous Style}
+ \usage{
+-m_add_style(id, sel = m_sel(), style = m_style_cartoon())
++m_add_style(id, style = m_style_cartoon(), sel = m_sel())
+ }
+ \arguments{
+ \item{id}{R3dmol \code{id} or a \code{r3dmol} object (the output from
+ \code{r3dmol()})}
+ 
+-\item{sel}{Atom selection specification with \code{m_sel()}}
+-
+ \item{style}{Style spec to apply to specified atoms using m_style_*()}
++
++\item{sel}{Atom selection specification with \code{m_sel()}}
+ }
+ \value{
+ R3dmol \code{id} or a \code{r3dmol} object (the output from
+diff --git a/man/m_set_style.Rd b/man/m_set_style.Rd
+index 430cf5d..150daea 100644
+--- a/man/m_set_style.Rd
++++ b/man/m_set_style.Rd
+@@ -4,15 +4,15 @@
+ \alias{m_set_style}
+ \title{Add Style to Selection}
+ \usage{
+-m_set_style(id, sel = m_sel(), style = m_style_cartoon())
++m_set_style(id, style = m_style_cartoon(), sel = m_sel())
+ }
+ \arguments{
+ \item{id}{R3dmol \code{id} or a \code{r3dmol} object (the output from
+ \code{r3dmol()})}
+ 
+-\item{sel}{Atom selection specification with \code{m_sel()}}
+-
+ \item{style}{Style spec to apply to specified atoms using m_style_*()}
++
++\item{sel}{Atom selection specification with \code{m_sel()}}
+ }
+ \value{
+ R3dmol \code{id} or a \code{r3dmol} object (the output from

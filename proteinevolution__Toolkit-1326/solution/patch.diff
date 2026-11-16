@@ -1,0 +1,11 @@
+diff --git a/.scalafmt.conf b/.scalafmt.conf
+index 1f3b290437..3be618aecf 100644
+--- a/.scalafmt.conf
++++ b/.scalafmt.conf
+@@ -13,5 +13,5 @@ optIn.breakChainOnFirstMethodDot = false
+ align.openParenDefnSite          = false
+ project.git                      = true
+ assumeStandardLibraryStripMargin = true
+-version                          = 3.1.1
++version                          = 3.1.2
+ runner.dialect                   = scala213

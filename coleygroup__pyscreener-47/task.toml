@@ -1,0 +1,66 @@
+version = "1.0"
+
+[task]
+name = "default/coleygroup__pyscreener-47"
+description = "Feat/ray bump"
+
+[metadata]
+difficulty = "small"
+category = "bugfix"
+keywords = [
+    "pyscreener",
+    "pr_diff",
+]
+
+[metadata.repo2env]
+pipeline = "pr_diff"
+pipeline_version = "0.3.0"
+repo = "coleygroup/pyscreener"
+ref = "80e2a3ca932852406c5ac8539834da417d4f66d9"
+reference = "https://github.com/coleygroup/pyscreener/pull/47"
+source_access = "auto"
+built_at = "2026-11-16T11:22:45.803527+00:00"
+reward_kinds = [
+    "diff_similarity",
+]
+spec_version = "0.2.0"
+content_hash = "sha256:62d2d0e33c433bc14eb2bffe90bcc718294d2899b78e4485ba82a27c0bc32404"
+
+[metadata.repo2env.pr_diff]
+pr_merged_at = "2022-12-14T18:38:18Z"
+diff_format = "unified"
+context_files = [
+    "environment.yml",
+    "pyscreener/docking/dock/runner.py",
+    "pyscreener/docking/screen.py",
+    "pyscreener/docking/vina/runner.py",
+    "setup.cfg",
+]
+
+[metadata.repo2env.reward_calibration]
+baseline_reward = 0.0
+loc_changed = 14
+difficulty = "small"
+
+[metadata.repo2env.evaluation]
+schema_version = "1"
+status = "unverified"
+stage = "generation"
+reason_codes = [
+    "validation_not_run",
+]
+detail = "Generated task; validation has not been established."
+provenance = "unknown"
+evidence = []
+
+[metadata.repo2env.reproducibility]
+mode = "local_only"
+image_ref = "python:3.12-slim"
+image_tag = "python:3.12-slim"
+image_visibility = "private"
+
+[agent]
+timeout_sec = 1800.0
+
+[verifier]
+timeout_sec = 300.0

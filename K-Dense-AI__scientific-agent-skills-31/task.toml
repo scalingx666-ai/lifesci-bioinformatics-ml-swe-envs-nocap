@@ -1,0 +1,63 @@
+version = "1.0"
+
+[task]
+name = "default/K-Dense-AI__scientific-agent-skills-31"
+description = "Add patentsview api key for patent search api"
+
+[metadata]
+difficulty = "medium"
+category = "bugfix"
+keywords = [
+    "scientific-agent-skills",
+    "pr_diff",
+]
+
+[metadata.repo2env]
+pipeline = "pr_diff"
+pipeline_version = "0.3.0"
+repo = "K-Dense-AI/scientific-agent-skills"
+ref = "a7221bb237df8c6a95e6f0e91c650ca250775e1f"
+reference = "https://github.com/K-Dense-AI/scientific-agent-skills/pull/31"
+source_access = "auto"
+built_at = "2026-11-15T10:25:35.774626+00:00"
+reward_kinds = [
+    "diff_similarity",
+]
+spec_version = "0.2.0"
+content_hash = "sha256:43e6f0f1393674ee7f6020fefad4434b6562308ef385a8d5148c80998a5797c9"
+
+[metadata.repo2env.pr_diff]
+pr_merged_at = "2026-01-09T16:57:22Z"
+diff_format = "unified"
+context_files = [
+    "scientific-skills/uspto-database/SKILL.md",
+    "scientific-skills/uspto-database/scripts/patent_search.py",
+]
+
+[metadata.repo2env.reward_calibration]
+baseline_reward = 0.0
+loc_changed = 22
+difficulty = "medium"
+
+[metadata.repo2env.evaluation]
+schema_version = "1"
+status = "unverified"
+stage = "generation"
+reason_codes = [
+    "validation_not_run",
+]
+detail = "Generated task; validation has not been established."
+provenance = "unknown"
+evidence = []
+
+[metadata.repo2env.reproducibility]
+mode = "local_only"
+image_ref = "python:3.12-slim"
+image_tag = "python:3.12-slim"
+image_visibility = "private"
+
+[agent]
+timeout_sec = 1800.0
+
+[verifier]
+timeout_sec = 300.0

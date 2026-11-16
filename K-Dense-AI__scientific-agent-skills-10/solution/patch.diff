@@ -1,0 +1,2440 @@
+diff --git a/.claude-plugin/marketplace.json b/.claude-plugin/marketplace.json
+index 3956baf6a..cfb0aa14f 100644
+--- a/.claude-plugin/marketplace.json
++++ b/.claude-plugin/marketplace.json
+@@ -7,7 +7,7 @@
+   },
+   "metadata": {
+     "description": "Claude scientific skills from K-Dense Inc",
+-    "version": "2.3.0"
++    "version": "2.4.0"
+   },
+   "plugins": [
+     {
+@@ -16,6 +16,7 @@
+       "source": "./",
+       "strict": false,
+       "skills": [
++        "./scientific-skills/adaptyv",
+         "./scientific-skills/aeon",
+         "./scientific-skills/anndata",
+         "./scientific-skills/arboreto",
+diff --git a/README.md b/README.md
+index 76f69bef0..e170a6e6e 100644
+--- a/README.md
++++ b/README.md
+@@ -1,9 +1,9 @@
+ # Claude Scientific Skills
+ 
+ [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE.md)
+-[![Skills](https://img.shields.io/badge/Skills-120-brightgreen.svg)](#whats-included)
++[![Skills](https://img.shields.io/badge/Skills-121-brightgreen.svg)](#whats-included)
+ 
+-A comprehensive collection of **120+ ready-to-use scientific skills** for Claude, created by the K-Dense team. Transform Claude into your AI research assistant capable of executing complex multi-step scientific workflows across biology, chemistry, medicine, and beyond.
++A comprehensive collection of **121+ ready-to-use scientific skills** for Claude, created by the K-Dense team. Transform Claude into your AI research assistant capable of executing complex multi-step scientific workflows across biology, chemistry, medicine, and beyond.
+ 
+ These skills enable Claude to seamlessly work with specialized scientific libraries, databases, and tools across multiple scientific domains:
+ - 🧬 Bioinformatics & Genomics - Sequence analysis, single-cell RNA-seq, gene regulatory networks, variant annotation, phylogenetic analysis
+@@ -32,7 +32,7 @@ These skills enable Claude to seamlessly work with specialized scientific librar
+ 
+ ## 📦 What's Included
+ 
+-This repository provides **120+ scientific skills** organized into the following categories:
++This repository provides **121+ scientific skills** organized into the following categories:
+ 
+ - **26+ Scientific Databases** - Direct API access to OpenAlex, PubMed, ChEMBL, UniProt, COSMIC, ClinicalTrials.gov, and more
+ - **50+ Python Packages** - RDKit, Scanpy, PyTorch Lightning, scikit-learn, BioPython, and others
+@@ -78,7 +78,7 @@ Each skill includes:
+ - **Multi-Step Workflows** - Execute complex pipelines with a single prompt
+ 
+ ### 🎯 **Comprehensive Coverage**
+-- **120+ Skills** - Extensive coverage across all major scientific domains
++- **121+ Skills** - Extensive coverage across all major scientific domains
+ - **26+ Databases** - Direct access to OpenAlex, PubMed, ChEMBL, UniProt, COSMIC, and more
+ - **50+ Python Packages** - RDKit, Scanpy, PyTorch Lightning, scikit-learn, and others
+ 
+@@ -401,8 +401,9 @@ This repository contains **120+ scientific skills** organized across multiple do
+ - Multi-omics: BIOMNI, Denario, HypoGeniC
+ - Data management: LaminDB
+ 
+-#### 🧬 **Protein Engineering & Design** (1 skill)
++#### 🧬 **Protein Engineering & Design** (2 skills)
+ - Protein language models: ESM
++- Cloud laboratory platform: Adaptyv (automated protein testing and validation)
+ 
+ #### 📚 **Scientific Communication** (9+ skills)
+ - Literature: OpenAlex, PubMed, Literature Review
+diff --git a/docs/scientific-skills.md b/docs/scientific-skills.md
+index 1c2e6e740..ec6c1f8a3 100644
+--- a/docs/scientific-skills.md
++++ b/docs/scientific-skills.md
+@@ -96,6 +96,7 @@
+ - **PyHealth** - Comprehensive healthcare AI toolkit for developing, testing, and deploying machine learning models with clinical data. Provides specialized tools for electronic health records (EHR), physiological signals, medical imaging, and clinical text analysis. Key features include: 10+ healthcare datasets (MIMIC-III/IV, eICU, OMOP, sleep EEG, COVID-19 CXR), 20+ predefined clinical prediction tasks (mortality, hospital readmission, length of stay, drug recommendation, sleep staging, EEG analysis), 33+ models (Logistic Regression, MLP, CNN, RNN, Transformer, GNN, plus healthcare-specific models like RETAIN, SafeDrug, GAMENet, StageNet), comprehensive data processing (sequence processors, signal processors, medical code translation between ICD-9/10, NDC, RxNorm, ATC systems), training/evaluation utilities (Trainer class, fairness metrics, calibration, uncertainty quantification), and interpretability tools (attention visualization, SHAP, ChEFER). 3x faster than pandas for healthcare data processing. Use cases: ICU mortality prediction, hospital readmission risk assessment, safe medication recommendation with drug-drug interaction constraints, sleep disorder diagnosis from EEG signals, medical code standardization and translation, clinical text to ICD coding, length of stay estimation, and any clinical ML application requiring interpretability, fairness assessment, and calibrated predictions for healthcare deployment
+ 
+ ### Protein Engineering & Design
++- **Adaptyv** - Cloud laboratory platform for automated protein testing and validation. Submit protein sequences via API or web interface and receive experimental results in approximately 21 days. Supports multiple assay types including binding assays (biolayer interferometry for protein-target interactions, KD/kon/koff measurements), expression testing (quantify protein expression levels in E. coli, mammalian, yeast, or insect cells), thermostability measurements (DSF and CD for Tm determination and thermal stability profiling), and enzyme activity assays (kinetic parameters, substrate specificity, inhibitor testing). Includes computational optimization tools for pre-screening sequences: NetSolP/SoluProt for solubility prediction, SolubleMPNN for sequence redesign to improve expression, ESM for sequence likelihood scoring, ipTM (AlphaFold-Multimer) for interface stability assessment, and pSAE for aggregation risk quantification. Platform features automated workflows from expression through purification to assay execution with quality control, webhook notifications for experiment completion, batch submission support for high-throughput screening, and comprehensive results with kinetic parameters, confidence metrics, and raw data access. Use cases: antibody affinity maturation, therapeutic protein developability assessment, enzyme engineering and optimization, protein stability improvement, AI-driven protein design validation, library screening for expression and function, lead optimization with experimental feedback, and integration of computational design with wet-lab validation in iterative design-build-test-learn cycles
+ - **ESM (Evolutionary Scale Modeling)** - State-of-the-art protein language models from EvolutionaryScale for protein design, structure prediction, and representation learning. Includes ESM3 (1.4B-98B parameter multimodal generative models for simultaneous reasoning across sequence, structure, and function with chain-of-thought generation, inverse folding, and function-conditioned design) and ESM C (300M-6B parameter efficient embedding models 3x faster than ESM2 for similarity analysis, classification, and feature extraction). Supports local inference with open weights and cloud-based Forge API for scalable batch processing. Use cases: novel protein design, structure prediction from sequence, sequence design from structure, protein embeddings, function annotation, variant generation, and directed evolution workflows
+ 
+ ### Machine Learning & Deep Learning
+diff --git a/scientific-skills/adaptyv/SKILL.md b/scientific-skills/adaptyv/SKILL.md
+new file mode 100644
+index 000000000..7fa94a1ea
+--- /dev/null
++++ b/scientific-skills/adaptyv/SKILL.md
+@@ -0,0 +1,114 @@
++---
++name: adaptyv
++description: Cloud laboratory platform for automated protein testing and validation. Use when designing proteins and needing experimental validation including binding assays, expression testing, thermostability measurements, enzyme activity assays, or protein sequence optimization. Also use for submitting experiments via API, tracking experiment status, downloading results, optimizing protein sequences for better expression using computational tools (NetSolP, SoluProt, SolubleMPNN, ESM), or managing protein design workflows with wet-lab validation.
++---
++
++# Adaptyv
++
++Adaptyv is a cloud laboratory platform that provides automated protein testing and validation services. Submit protein sequences via API or web interface and receive experimental results in approximately 21 days.
++
++## Quick Start
++
++### Authentication Setup
++
++Adaptyv requires API authentication. Set up your credentials:
++
++1. Contact support@adaptyvbio.com to request API access (platform is in alpha/beta)
++2. Receive your API access token
++3. Set environment variable:
++
++```bash
++export ADAPTYV_API_KEY="your_api_key_here"
++```
++
++Or create a `.env` file:
++
++```
++ADAPTYV_API_KEY=your_api_key_here
++```
++
++### Installation
++
++Install the required package using uv:
++
++```bash
++uv pip install requests python-dotenv
++```
++
++### Basic Usage
++
++Submit protein sequences for testing:
++
++```python
++import os
++import requests
++from dotenv import load_dotenv
++
++load_dotenv()
++
++api_key = os.getenv("ADAPTYV_API_KEY")
++base_url = "https://kq5jp7qj7wdqklhsxmovkzn4l40obksv.lambda-url.eu-central-1.on.aws"
++
++headers = {
++    "Authorization": f"Bearer {api_key}",
++    "Content-Type": "application/json"
++}
++
++# Submit experiment
++response = requests.post(
++    f"{base_url}/experiments",
++    headers=headers,
++    json={
++        "sequences": ">protein1\nMKVLWALLGLLGAA...",
++        "experiment_type": "binding",
++        "webhook_url": "https://your-webhook.com/callback"
++    }
++)
++
++experiment_id = response.json()["experiment_id"]
++```
++
++## Available Experiment Types
++
++Adaptyv supports multiple assay types:
++
++- **Binding assays** - Test protein-target interactions using biolayer interferometry
++- **Expression testing** - Measure protein expression levels
++- **Thermostability** - Characterize protein thermal stability
++- **Enzyme activity** - Assess enzymatic function
++
++See `reference/experiments.md` for detailed information on each experiment type and workflows.
++
++## Protein Sequence Optimization
++
++Before submitting sequences, optimize them for better expression and stability:
++
++**Common issues to address:**
++- Unpaired cysteines that create unwanted disulfides
++- Excessive hydrophobic regions causing aggregation
++- Poor solubility predictions
++
++**Recommended tools:**
++- NetSolP / SoluProt - Initial solubility filtering
++- SolubleMPNN - Sequence redesign for improved solubility
++- ESM - Sequence likelihood scoring
++- ipTM - Interface stability assessment
++- pSAE - Hydrophobic exposure quantification
++
++See `reference/protein_optimization.md` for detailed optimization workflows and tool usage.
++
++## API Reference
++
++For complete API documentation including all endpoints, request/response formats, and authentication details, see `reference/api_reference.md`.
++
++## Examples
++
++For concrete code examples covering common use cases (experiment submission, status tracking, result retrieval, batch processing), see `reference/examples.md`.
++
++## Important Notes
++
++- Platform is currently in alpha/beta phase with features subject to change
++- Not all platform features are available via API yet
++- Results typically delivered in ~21 days
++- Contact support@adaptyvbio.com for access requests or questions
++- Suitable for high-throughput AI-driven protein design workflows
+diff --git a/scientific-skills/adaptyv/reference/api_reference.md b/scientific-skills/adaptyv/reference/api_reference.md
+new file mode 100644
+index 000000000..0d4346c8b
+--- /dev/null
++++ b/scientific-skills/adaptyv/reference/api_reference.md
+@@ -0,0 +1,308 @@
++# Adaptyv API Reference
++
++## Base URL
++
++```
++https://kq5jp7qj7wdqklhsxmovkzn4l40obksv.lambda-url.eu-central-1.on.aws
++```
++
++## Authentication
++
++All API requests require bearer token authentication in the request header:
++
++```
++Authorization: Bearer YOUR_API_KEY
++```
++
++To obtain API access:
++1. Contact support@adaptyvbio.com
++2. Request API access during alpha/beta period
++3. Receive your personal access token
++
++Store your API key securely:
++- Use environment variables: `ADAPTYV_API_KEY`
++- Never commit API keys to version control
++- Use `.env` files with `.gitignore` for local development
++
++## Endpoints
++
++### Experiments
++
++#### Create Experiment
++
++Submit protein sequences for experimental testing.
++
++**Endpoint:** `POST /experiments`
++
++**Request Body:**
++```json
++{
++  "sequences": ">protein1\nMKVLWALLGLLGAA...\n>protein2\nMATGVLWALLG...",
++  "experiment_type": "binding|expression|thermostability|enzyme_activity",
++  "target_id": "optional_target_identifier",
++  "webhook_url": "https://your-webhook.com/callback",
++  "metadata": {
++    "project": "optional_project_name",
++    "notes": "optional_notes"
++  }
++}
++```
++
++**Sequence Format:**
++- FASTA format with headers
++- Multiple sequences supported
++- Standard amino acid codes
++
++**Response:**
++```json
++{
++  "experiment_id": "exp_abc123xyz",
++  "status": "submitted",
++  "created_at": "2025-11-24T10:00:00Z",
++  "estimated_completion": "2025-12-15T10:00:00Z"
++}
++```
++
++#### Get Experiment Status
++
++Check the current status of an experiment.
++
++**Endpoint:** `GET /experiments/{experiment_id}`
++
++**Response:**
++```json
++{
++  "experiment_id": "exp_abc123xyz",
++  "status": "submitted|processing|completed|failed",
++  "created_at": "2025-11-24T10:00:00Z",
++  "updated_at": "2025-11-25T14:30:00Z",
++  "progress": {
++    "stage": "sequencing|expression|assay|analysis",
++    "percentage": 45
++  }
++}
++```
++
++**Status Values:**
++- `submitted` - Experiment received and queued
++- `processing` - Active testing in progress
++- `completed` - Results available for download
++- `failed` - Experiment encountered an error
++
++#### List Experiments
++
++Retrieve all experiments for your organization.
++
++**Endpoint:** `GET /experiments`
++
++**Query Parameters:**
++- `status` - Filter by status (optional)
++- `limit` - Number of results per page (default: 50)
++- `offset` - Pagination offset (default: 0)
++
++**Response:**
++```json
++{
++  "experiments": [
++    {
++      "experiment_id": "exp_abc123xyz",
++      "status": "completed",
++      "experiment_type": "binding",
++      "created_at": "2025-11-24T10:00:00Z"
++    }
++  ],
++  "total": 150,
++  "limit": 50,
++  "offset": 0
++}
++```
++
++### Results
++
++#### Get Experiment Results
++
++Download results from a completed experiment.
++
++**Endpoint:** `GET /experiments/{experiment_id}/results`
++
++**Response:**
++```json
++{
++  "experiment_id": "exp_abc123xyz",
++  "results": [
++    {
++      "sequence_id": "protein1",
++      "measurements": {
++        "kd": 1.2e-9,
++        "kon": 1.5e5,
++        "koff": 1.8e-4
++      },
++      "quality_metrics": {
++        "confidence": "high",
++        "r_squared": 0.98
++      }
++    }
++  ],
++  "download_urls": {
++    "raw_data": "https://...",
++    "analysis_package": "https://...",
++    "report": "https://..."
++  }
++}
++```
++
++### Targets
++
++#### Search Target Catalog
++
++Search the ACROBiosystems antigen catalog.
++
++**Endpoint:** `GET /targets`
++
++**Query Parameters:**
++- `search` - Search term (protein name, UniProt ID, etc.)
++- `species` - Filter by species
++- `category` - Filter by category
++
++**Response:**
++```json
++{
++  "targets": [
++    {
++      "target_id": "tgt_12345",
++      "name": "Human PD-L1",
++      "species": "Homo sapiens",
++      "uniprot_id": "Q9NZQ7",
++      "availability": "in_stock|custom_order",
++      "price_usd": 450
++    }
++  ]
++}
++```
++
++#### Request Custom Target
++
++Request an antigen not in the standard catalog.
++
++**Endpoint:** `POST /targets/request`
++
++**Request Body:**
++```json
++{
++  "target_name": "Custom target name",
++  "uniprot_id": "optional_uniprot_id",
++  "species": "species_name",
++  "notes": "Additional requirements"
++}
++```
++
++### Organization
++
++#### Get Credits Balance
++
++Check your organization's credit balance and usage.
++
++**Endpoint:** `GET /organization/credits`
++
++**Response:**
++```json
++{
++  "balance": 10000,
++  "currency": "USD",
++  "usage_this_month": 2500,
++  "experiments_remaining": 22
++}
++```
++
++## Webhooks
++
++Configure webhook URLs to receive notifications when experiments complete.
++
++**Webhook Payload:**
++```json
++{
++  "event": "experiment.completed",
++  "experiment_id": "exp_abc123xyz",
++  "status": "completed",
++  "timestamp": "2025-12-15T10:00:00Z",
++  "results_url": "/experiments/exp_abc123xyz/results"
++}
++```
++
++**Webhook Events:**
++- `experiment.submitted` - Experiment received
++- `experiment.started` - Processing began
++- `experiment.completed` - Results available
++- `experiment.failed` - Error occurred
++
++**Security:**
++- Verify webhook signatures (details provided during onboarding)
++- Use HTTPS endpoints only
++- Respond with 200 OK to acknowledge receipt
++
++## Error Handling
++
++**Error Response Format:**
++```json
++{
++  "error": {
++    "code": "invalid_sequence",
++    "message": "Sequence contains invalid amino acid codes",
++    "details": {
++      "sequence_id": "protein1",
++      "position": 45,
++      "character": "X"
++    }
++  }
++}
++```
++
++**Common Error Codes:**
++- `authentication_failed` - Invalid or missing API key
++- `invalid_sequence` - Malformed FASTA or invalid amino acids
++- `insufficient_credits` - Not enough credits for experiment
++- `target_not_found` - Specified target ID doesn't exist
++- `rate_limit_exceeded` - Too many requests
++- `experiment_not_found` - Invalid experiment ID
++- `internal_error` - Server-side error
++
++## Rate Limits
++
++- 100 requests per minute per API key
++- 1000 experiments per day per organization
++- Batch submissions encouraged for large-scale testing
++
++When rate limited, response includes:
++```
++HTTP 429 Too Many Requests
++Retry-After: 60
++```
++
++## Best Practices
++
++1. **Use webhooks** for long-running experiments instead of polling
++2. **Batch sequences** when submitting multiple variants
++3. **Cache results** to avoid redundant API calls
++4. **Implement retry logic** with exponential backoff
++5. **Monitor credits** to avoid experiment failures
++6. **Validate sequences** locally before submission
++7. **Use descriptive metadata** for better experiment tracking
++
++## API Versioning
++
++The API is currently in alpha/beta. Breaking changes may occur but will be:
++- Announced via email to registered users
++- Documented in the changelog
++- Supported with migration guides
++
++Current version is reflected in response headers:
++```
++X-API-Version: alpha-2025-11
++```
++
++## Support
++
++For API issues or questions:
++- Email: support@adaptyvbio.com
++- Documentation updates: https://docs.adaptyvbio.com
++- Report bugs with experiment IDs and request details
+diff --git a/scientific-skills/adaptyv/reference/examples.md b/scientific-skills/adaptyv/reference/examples.md
+new file mode 100644
+index 000000000..2efe1067d
+--- /dev/null
++++ b/scientific-skills/adaptyv/reference/examples.md
+@@ -0,0 +1,913 @@
++# Code Examples
++
++## Setup and Authentication
++
++### Basic Setup
++
++```python
++import os
++import requests
++from dotenv import load_dotenv
++
++# Load environment variables
++load_dotenv()
++
++# Configuration
++API_KEY = os.getenv("ADAPTYV_API_KEY")
++BASE_URL = "https://kq5jp7qj7wdqklhsxmovkzn4l40obksv.lambda-url.eu-central-1.on.aws"
++
++# Standard headers
++HEADERS = {
++    "Authorization": f"Bearer {API_KEY}",
++    "Content-Type": "application/json"
++}
++
++def check_api_connection():
++    """Verify API connection and credentials"""
++    try:
++        response = requests.get(f"{BASE_URL}/organization/credits", headers=HEADERS)
++        response.raise_for_status()
++        print("✓ API connection successful")
++        print(f"  Credits remaining: {response.json()['balance']}")
++        return True
++    except requests.exceptions.HTTPError as e:
++        print(f"✗ API authentication failed: {e}")
++        return False
++```
++
++### Environment Setup
++
++Create a `.env` file:
++```bash
++ADAPTYV_API_KEY=your_api_key_here
++```
++
++Install dependencies:
++```bash
++uv pip install requests python-dotenv
++```
++
++## Experiment Submission
++
++### Submit Single Sequence
++
++```python
++def submit_single_experiment(sequence, experiment_type="binding", target_id=None):
++    """
++    Submit a single protein sequence for testing
++
++    Args:
++        sequence: Amino acid sequence string
++        experiment_type: Type of experiment (binding, expression, thermostability, enzyme_activity)
++        target_id: Optional target identifier for binding assays
++
++    Returns:
++        Experiment ID and status
++    """
++
++    # Format as FASTA
++    fasta_content = f">protein_sequence\n{sequence}\n"
++
++    payload = {
++        "sequences": fasta_content,
++        "experiment_type": experiment_type
++    }
++
++    if target_id:
++        payload["target_id"] = target_id
++
++    response = requests.post(
++        f"{BASE_URL}/experiments",
++        headers=HEADERS,
++        json=payload
++    )
++
++    response.raise_for_status()
++    result = response.json()
++
++    print(f"✓ Experiment submitted")
++    print(f"  Experiment ID: {result['experiment_id']}")
++    print(f"  Status: {result['status']}")
++    print(f"  Estimated completion: {result['estimated_completion']}")
++
++    return result
++
++# Example usage
++sequence = "MKVLWAALLGLLGAAAAFPAVTSAVKPYKAAVSAAVSKPYKAAVSAAVSKPYK"
++experiment = submit_single_experiment(sequence, experiment_type="expression")
++```
++
++### Submit Multiple Sequences (Batch)
++
++```python
++def submit_batch_experiment(sequences_dict, experiment_type="binding", metadata=None):
++    """
++    Submit multiple protein sequences in a single batch
++
++    Args:
++        sequences_dict: Dictionary of {name: sequence}
++        experiment_type: Type of experiment
++        metadata: Optional dictionary of additional information
++
++    Returns:
++        Experiment details
++    """
++
++    # Format all sequences as FASTA
++    fasta_content = ""
++    for name, sequence in sequences_dict.items():
++        fasta_content += f">{name}\n{sequence}\n"
++
++    payload = {
++        "sequences": fasta_content,
++        "experiment_type": experiment_type
++    }
++
++    if metadata:
++        payload["metadata"] = metadata
++
++    response = requests.post(
++        f"{BASE_URL}/experiments",
++        headers=HEADERS,
++        json=payload
++    )
++
++    response.raise_for_status()
++    result = response.json()
++
++    print(f"✓ Batch experiment submitted")
++    print(f"  Experiment ID: {result['experiment_id']}")
++    print(f"  Sequences: {len(sequences_dict)}")
++    print(f"  Status: {result['status']}")
++
++    return result
++
++# Example usage
++sequences = {
++    "variant_1": "MKVLWAALLGLLGAAA...",
++    "variant_2": "MKVLSAALLGLLGAAA...",
++    "variant_3": "MKVLAAALLGLLGAAA...",
++    "wildtype": "MKVLWAALLGLLGAAA..."
++}
++
++metadata = {
++    "project": "antibody_optimization",
++    "round": 3,
++    "notes": "Testing solubility-optimized variants"
++}
++
++experiment = submit_batch_experiment(sequences, "expression", metadata)
++```
++
++### Submit with Webhook Notification
++
++```python
++def submit_with_webhook(sequences_dict, experiment_type, webhook_url):
++    """
++    Submit experiment with webhook for completion notification
++
++    Args:
++        sequences_dict: Dictionary of {name: sequence}
++        experiment_type: Type of experiment
++        webhook_url: URL to receive notification when complete
++    """
++
++    fasta_content = ""
++    for name, sequence in sequences_dict.items():
++        fasta_content += f">{name}\n{sequence}\n"
++
++    payload = {
++        "sequences": fasta_content,
++        "experiment_type": experiment_type,
++        "webhook_url": webhook_url
++    }
++
++    response = requests.post(
++        f"{BASE_URL}/experiments",
++        headers=HEADERS,
++        json=payload
++    )
++
++    response.raise_for_status()
++    result = response.json()
++
++    print(f"✓ Experiment submitted with webhook")
++    print(f"  Experiment ID: {result['experiment_id']}")
++    print(f"  Webhook: {webhook_url}")
++
++    return result
++
++# Example
++webhook_url = "https://your-server.com/adaptyv-webhook"
++experiment = submit_with_webhook(sequences, "binding", webhook_url)
++```
++
++## Tracking Experiments
++
++### Check Experiment Status
++
++```python
++def check_experiment_status(experiment_id):
++    """
++    Get current status of an experiment
++
++    Args:
++        experiment_id: Experiment identifier
++
++    Returns:
++        Status information
++    """
++
++    response = requests.get(
++        f"{BASE_URL}/experiments/{experiment_id}",
++        headers=HEADERS
++    )
++
++    response.raise_for_status()
++    status = response.json()
++
++    print(f"Experiment: {experiment_id}")
++    print(f"  Status: {status['status']}")
++    print(f"  Created: {status['created_at']}")
++    print(f"  Updated: {status['updated_at']}")
++
++    if 'progress' in status:
++        print(f"  Progress: {status['progress']['percentage']}%")
++        print(f"  Current stage: {status['progress']['stage']}")
++
++    return status
++
++# Example
++status = check_experiment_status("exp_abc123xyz")
++```
++
++### List All Experiments
++
++```python
++def list_experiments(status_filter=None, limit=50):
++    """
++    List experiments with optional status filtering
++
++    Args:
++        status_filter: Filter by status (submitted, processing, completed, failed)
++        limit: Maximum number of results
++
++    Returns:
++        List of experiments
++    """
++
++    params = {"limit": limit}
++    if status_filter:
++        params["status"] = status_filter
++
++    response = requests.get(
++        f"{BASE_URL}/experiments",
++        headers=HEADERS,
++        params=params
++    )
++
++    response.raise_for_status()
++    result = response.json()
++
++    print(f"Found {result['total']} experiments")
++    for exp in result['experiments']:
++        print(f"  {exp['experiment_id']}: {exp['status']} ({exp['experiment_type']})")
++
++    return result['experiments']
++
++# Example - list all completed experiments
++completed_experiments = list_experiments(status_filter="completed")
++```
++
++### Poll Until Complete
++
++```python
++import time
++
++def wait_for_completion(experiment_id, check_interval=3600):
++    """
++    Poll experiment status until completion
++
++    Args:
++        experiment_id: Experiment identifier
++        check_interval: Seconds between status checks (default: 1 hour)
++
++    Returns:
++        Final status
++    """
++
++    print(f"Monitoring experiment {experiment_id}...")
++
++    while True:
++        status = check_experiment_status(experiment_id)
++
++        if status['status'] == 'completed':
++            print("✓ Experiment completed!")
++            return status
++        elif status['status'] == 'failed':
++            print("✗ Experiment failed")
++            return status
++
++        print(f"  Status: {status['status']} - checking again in {check_interval}s")
++        time.sleep(check_interval)
++
++# Example (not recommended - use webhooks instead!)
++# status = wait_for_completion("exp_abc123xyz", check_interval=3600)
++```
++
++## Retrieving Results
++
++### Download Experiment Results
++
++```python
++import json
++
++def download_results(experiment_id, output_dir="results"):
++    """
++    Download and parse experiment results
++
++    Args:
++        experiment_id: Experiment identifier
++        output_dir: Directory to save results
++
++    Returns:
++        Parsed results data
++    """
++
++    # Get results
++    response = requests.get(
++        f"{BASE_URL}/experiments/{experiment_id}/results",
++        headers=HEADERS
++    )
++
++    response.raise_for_status()
++    results = response.json()
++
++    # Save results JSON
++    os.makedirs(output_dir, exist_ok=True)
++    output_file = f"{output_dir}/{experiment_id}_results.json"
++
++    with open(output_file, 'w') as f:
++        json.dump(results, f, indent=2)
++
++    print(f"✓ Results downloaded: {output_file}")
++    print(f"  Sequences tested: {len(results['results'])}")
++
++    # Download raw data if available
++    if 'download_urls' in results:
++        for data_type, url in results['download_urls'].items():
++            print(f"  {data_type} available at: {url}")
++
++    return results
++
++# Example
++results = download_results("exp_abc123xyz")
++```
++
++### Parse Binding Results
++
++```python
++import pandas as pd
++
++def parse_binding_results(results):
++    """
++    Parse binding assay results into DataFrame
++
++    Args:
++        results: Results dictionary from API
++
++    Returns:
++        pandas DataFrame with organized results
++    """
++
++    data = []
++    for result in results['results']:
++        row = {
++            'sequence_id': result['sequence_id'],
++            'kd': result['measurements']['kd'],
++            'kd_error': result['measurements']['kd_error'],
++            'kon': result['measurements']['kon'],
++            'koff': result['measurements']['koff'],
++            'confidence': result['quality_metrics']['confidence'],
++            'r_squared': result['quality_metrics']['r_squared']
++        }
++        data.append(row)
++
++    df = pd.DataFrame(data)
++
++    # Sort by affinity (lower KD = stronger binding)
++    df = df.sort_values('kd')
++
++    print("Top 5 binders:")
++    print(df.head())
++
++    return df
++
++# Example
++experiment_id = "exp_abc123xyz"
++results = download_results(experiment_id)
++binding_df = parse_binding_results(results)
++
++# Export to CSV
++binding_df.to_csv(f"{experiment_id}_binding_results.csv", index=False)
++```
++
++### Parse Expression Results
++
++```python
++def parse_expression_results(results):
++    """
++    Parse expression testing results into DataFrame
++
++    Args:
++        results: Results dictionary from API
++
++    Returns:
++        pandas DataFrame with organized results
++    """
++
++    data = []
++    for result in results['results']:
++        row = {
++            'sequence_id': result['sequence_id'],
++            'yield_mg_per_l': result['measurements']['total_yield_mg_per_l'],
++            'soluble_fraction': result['measurements']['soluble_fraction_percent'],
++            'purity': result['measurements']['purity_percent'],
++            'percentile': result['ranking']['percentile']
++        }
++        data.append(row)
++
++    df = pd.DataFrame(data)
++
++    # Sort by yield
++    df = df.sort_values('yield_mg_per_l', ascending=False)
++
++    print(f"Mean yield: {df['yield_mg_per_l'].mean():.2f} mg/L")
++    print(f"Top performer: {df.iloc[0]['sequence_id']} ({df.iloc[0]['yield_mg_per_l']:.2f} mg/L)")
++
++    return df
++
++# Example
++results = download_results("exp_expression123")
++expression_df = parse_expression_results(results)
++```
++
++## Target Catalog
++
++### Search for Targets
++
++```python
++def search_targets(query, species=None, category=None):
++    """
++    Search the antigen catalog
++
++    Args:
++        query: Search term (protein name, UniProt ID, etc.)
++        species: Optional species filter
++        category: Optional category filter
++
++    Returns:
++        List of matching targets
++    """
++
++    params = {"search": query}
++    if species:
++        params["species"] = species
++    if category:
++        params["category"] = category
++
++    response = requests.get(
++        f"{BASE_URL}/targets",
++        headers=HEADERS,
++        params=params
++    )
++
++    response.raise_for_status()
++    targets = response.json()['targets']
++
++    print(f"Found {len(targets)} targets matching '{query}':")
++    for target in targets:
++        print(f"  {target['target_id']}: {target['name']}")
++        print(f"    Species: {target['species']}")
++        print(f"    Availability: {target['availability']}")
++        print(f"    Price: ${target['price_usd']}")
++
++    return targets
++
++# Example
++targets = search_targets("PD-L1", species="Homo sapiens")
++```
++
++### Request Custom Target
++
++```python
++def request_custom_target(target_name, uniprot_id=None, species=None, notes=None):
++    """
++    Request a custom antigen not in the standard catalog
++
++    Args:
++        target_name: Name of the target protein
++        uniprot_id: Optional UniProt identifier
++        species: Species name
++        notes: Additional requirements or notes
++
++    Returns:
++        Request confirmation
++    """
++
++    payload = {
++        "target_name": target_name,
++        "species": species
++    }
++
++    if uniprot_id:
++        payload["uniprot_id"] = uniprot_id
++    if notes:
++        payload["notes"] = notes
++
++    response = requests.post(
++        f"{BASE_URL}/targets/request",
++        headers=HEADERS,
++        json=payload
++    )
++
++    response.raise_for_status()
++    result = response.json()
++
++    print(f"✓ Custom target request submitted")
++    print(f"  Request ID: {result['request_id']}")
++    print(f"  Status: {result['status']}")
++
++    return result
++
++# Example
++request = request_custom_target(
++    target_name="Novel receptor XYZ",
++    uniprot_id="P12345",
++    species="Mus musculus",
++    notes="Need high purity for structural studies"
++)
++```
++
++## Complete Workflows
++
++### End-to-End Binding Assay
++
++```python
++def complete_binding_workflow(sequences_dict, target_id, project_name):
++    """
++    Complete workflow: submit sequences, track, and retrieve binding results
++
++    Args:
++        sequences_dict: Dictionary of {name: sequence}
++        target_id: Target identifier from catalog
++        project_name: Project name for metadata
++
++    Returns:
++        DataFrame with binding results
++    """
++
++    print("=== Starting Binding Assay Workflow ===")
++
++    # Step 1: Submit experiment
++    print("\n1. Submitting experiment...")
++    metadata = {
++        "project": project_name,
++        "target": target_id
++    }
++
++    experiment = submit_batch_experiment(
++        sequences_dict,
++        experiment_type="binding",
++        metadata=metadata
++    )
++
++    experiment_id = experiment['experiment_id']
++
++    # Step 2: Save experiment info
++    print("\n2. Saving experiment details...")
++    with open(f"{experiment_id}_info.json", 'w') as f:
++        json.dump(experiment, f, indent=2)
++
++    print(f"✓ Experiment {experiment_id} submitted")
++    print("  Results will be available in ~21 days")
++    print("  Use webhook or poll status for updates")
++
++    # Note: In practice, wait for completion before this step
++    # print("\n3. Waiting for completion...")
++    # status = wait_for_completion(experiment_id)
++
++    # print("\n4. Downloading results...")
++    # results = download_results(experiment_id)
++
++    # print("\n5. Parsing results...")
++    # df = parse_binding_results(results)
++
++    # return df
++
++    return experiment_id
++
++# Example
++antibody_variants = {
++    "variant_1": "EVQLVESGGGLVQPGG...",
++    "variant_2": "EVQLVESGGGLVQPGS...",
++    "variant_3": "EVQLVESGGGLVQPGA...",
++    "wildtype": "EVQLVESGGGLVQPGG..."
++}
++
++experiment_id = complete_binding_workflow(
++    antibody_variants,
++    target_id="tgt_pdl1_human",
++    project_name="antibody_affinity_maturation"
++)
++```
++
++### Optimization + Testing Pipeline
++
++```python
++# Combine computational optimization with experimental testing
++
++def optimization_and_testing_pipeline(initial_sequences, experiment_type="expression"):
++    """
++    Complete pipeline: optimize sequences computationally, then submit for testing
++
++    Args:
++        initial_sequences: Dictionary of {name: sequence}
++        experiment_type: Type of experiment
++
++    Returns:
++        Experiment ID for tracking
++    """
++
++    print("=== Optimization and Testing Pipeline ===")
++
++    # Step 1: Computational optimization
++    print("\n1. Computational optimization...")
++    from protein_optimization import complete_optimization_pipeline
++
++    optimized = complete_optimization_pipeline(initial_sequences)
++
++    print(f"✓ Optimization complete")
++    print(f"  Started with: {len(initial_sequences)} sequences")
++    print(f"  Optimized to: {len(optimized)} sequences")
++
++    # Step 2: Select top candidates
++    print("\n2. Selecting top candidates for testing...")
++    top_candidates = optimized[:50]  # Top 50
++
++    sequences_to_test = {
++        seq_data['name']: seq_data['sequence']
++        for seq_data in top_candidates
++    }
++
++    # Step 3: Submit for experimental validation
++    print("\n3. Submitting to Adaptyv...")
++    metadata = {
++        "optimization_method": "computational_pipeline",
++        "initial_library_size": len(initial_sequences),
++        "computational_scores": [s['combined'] for s in top_candidates]
++    }
++
++    experiment = submit_batch_experiment(
++        sequences_to_test,
++        experiment_type=experiment_type,
++        metadata=metadata
++    )
++
++    print(f"✓ Pipeline complete")
++    print(f"  Experiment ID: {experiment['experiment_id']}")
++
++    return experiment['experiment_id']
++
++# Example
++initial_library = {
++    f"variant_{i}": generate_random_sequence()
++    for i in range(1000)
++}
++
++experiment_id = optimization_and_testing_pipeline(
++    initial_library,
++    experiment_type="expression"
++)
++```
++
++### Batch Result Analysis
++
++```python
++def analyze_multiple_experiments(experiment_ids):
++    """
++    Download and analyze results from multiple experiments
++
++    Args:
++        experiment_ids: List of experiment identifiers
++
++    Returns:
++        Combined DataFrame with all results
++    """
++
++    all_results = []
++
++    for exp_id in experiment_ids:
++        print(f"Processing {exp_id}...")
++
++        # Download results
++        results = download_results(exp_id, output_dir=f"results/{exp_id}")
++
++        # Parse based on experiment type
++        exp_type = results.get('experiment_type', 'unknown')
++
++        if exp_type == 'binding':
++            df = parse_binding_results(results)
++            df['experiment_id'] = exp_id
++            all_results.append(df)
++
++        elif exp_type == 'expression':
++            df = parse_expression_results(results)
++            df['experiment_id'] = exp_id
++            all_results.append(df)
++
++    # Combine all results
++    combined_df = pd.concat(all_results, ignore_index=True)
++
++    print(f"\n✓ Analysis complete")
++    print(f"  Total experiments: {len(experiment_ids)}")
++    print(f"  Total sequences: {len(combined_df)}")
++
++    return combined_df
++
++# Example
++experiment_ids = [
++    "exp_round1_abc",
++    "exp_round2_def",
++    "exp_round3_ghi"
++]
++
++all_data = analyze_multiple_experiments(experiment_ids)
++all_data.to_csv("combined_results.csv", index=False)
++```
++
++## Error Handling
++
++### Robust API Wrapper
++
++```python
++import time
++from requests.exceptions import RequestException, HTTPError
++
++def api_request_with_retry(method, url, max_retries=3, backoff_factor=2, **kwargs):
++    """
++    Make API request with retry logic and error handling
++
++    Args:
++        method: HTTP method (GET, POST, etc.)
++        url: Request URL
++        max_retries: Maximum number of retry attempts
++        backoff_factor: Exponential backoff multiplier
++        **kwargs: Additional arguments for requests
++
++    Returns:
++        Response object
++
++    Raises:
++        RequestException: If all retries fail
++    """
++
++    for attempt in range(max_retries):
++        try:
++            response = requests.request(method, url, **kwargs)
++            response.raise_for_status()
++            return response
++
++        except HTTPError as e:
++            if e.response.status_code == 429:  # Rate limit
++                wait_time = backoff_factor ** attempt
++                print(f"Rate limited. Waiting {wait_time}s...")
++                time.sleep(wait_time)
++                continue
++
++            elif e.response.status_code >= 500:  # Server error
++                if attempt < max_retries - 1:
++                    wait_time = backoff_factor ** attempt
++                    print(f"Server error. Retrying in {wait_time}s...")
++                    time.sleep(wait_time)
++                    continue
++                else:
++                    raise
++
++            else:  # Client error (4xx) - don't retry
++                error_data = e.response.json() if e.response.content else {}
++                print(f"API Error: {error_data.get('error', {}).get('message', str(e))}")
++                raise
++
++        except RequestException as e:
++            if attempt < max_retries - 1:
++                wait_time = backoff_factor ** attempt
++                print(f"Request failed. Retrying in {wait_time}s...")
++                time.sleep(wait_time)
++                continue
++            else:
++                raise
++
++    raise RequestException(f"Failed after {max_retries} attempts")
++
++# Example usage
++response = api_request_with_retry(
++    "POST",
++    f"{BASE_URL}/experiments",
++    headers=HEADERS,
++    json={"sequences": fasta_content, "experiment_type": "binding"}
++)
++```
++
++## Utility Functions
++
++### Validate FASTA Format
++
++```python
++def validate_fasta(fasta_string):
++    """
++    Validate FASTA format and sequences
++
++    Args:
++        fasta_string: FASTA-formatted string
++
++    Returns:
++        Tuple of (is_valid, error_message)
++    """
++
++    lines = fasta_string.strip().split('\n')
++
++    if not lines:
++        return False, "Empty FASTA content"
++
++    if not lines[0].startswith('>'):
++        return False, "FASTA must start with header line (>)"
++
++    valid_amino_acids = set("ACDEFGHIKLMNPQRSTVWY")
++    current_header = None
++
++    for i, line in enumerate(lines):
++        if line.startswith('>'):
++            if not line[1:].strip():
++                return False, f"Line {i+1}: Empty header"
++            current_header = line[1:].strip()
++
++        else:
++            if current_header is None:
++                return False, f"Line {i+1}: Sequence before header"
++
++            sequence = line.strip().upper()
++            invalid = set(sequence) - valid_amino_acids
++
++            if invalid:
++                return False, f"Line {i+1}: Invalid amino acids: {invalid}"
++
++    return True, None
++
++# Example
++fasta = ">protein1\nMKVLWAALLG\n>protein2\nMATGVLWALG"
++is_valid, error = validate_fasta(fasta)
++
++if is_valid:
++    print("✓ FASTA format valid")
++else:
++    print(f"✗ FASTA validation failed: {error}")
++```
++
++### Format Sequences to FASTA
++
++```python
++def sequences_to_fasta(sequences_dict):
++    """
++    Convert dictionary of sequences to FASTA format
++
++    Args:
++        sequences_dict: Dictionary of {name: sequence}
++
++    Returns:
++        FASTA-formatted string
++    """
++
++    fasta_content = ""
++    for name, sequence in sequences_dict.items():
++        # Clean sequence (remove whitespace, ensure uppercase)
++        clean_seq = ''.join(sequence.split()).upper()
++
++        # Validate
++        is_valid, error = validate_fasta(f">{name}\n{clean_seq}")
++        if not is_valid:
++            raise ValueError(f"Invalid sequence '{name}': {error}")
++
++        fasta_content += f">{name}\n{clean_seq}\n"
++
++    return fasta_content
++
++# Example
++sequences = {
++    "var1": "MKVLWAALLG",
++    "var2": "MATGVLWALG"
++}
++
++fasta = sequences_to_fasta(sequences)
++print(fasta)
++```
+diff --git a/scientific-skills/adaptyv/reference/experiments.md b/scientific-skills/adaptyv/reference/experiments.md
+new file mode 100644
+index 000000000..4f0acb68b
+--- /dev/null
++++ b/scientific-skills/adaptyv/reference/experiments.md
+@@ -0,0 +1,360 @@
++# Experiment Types and Workflows
++
++## Overview
++
++Adaptyv provides multiple experimental assay types for comprehensive protein characterization. Each experiment type has specific applications, workflows, and data outputs.
++
++## Binding Assays
++
++### Description
++
++Measure protein-target interactions using biolayer interferometry (BLI), a label-free technique that monitors biomolecular binding in real-time.
++
++### Use Cases
++
++- Antibody-antigen binding characterization
++- Receptor-ligand interaction analysis
++- Protein-protein interaction studies
++- Affinity maturation screening
++- Epitope binning experiments
++
++### Technology: Biolayer Interferometry (BLI)
++
++BLI measures the interference pattern of reflected light from two surfaces:
++- **Reference layer** - Biosensor tip surface
++- **Biological layer** - Accumulated bound molecules
++
++As molecules bind, the optical thickness increases, causing a wavelength shift proportional to binding.
++
++**Advantages:**
++- Label-free detection
++- Real-time kinetics
++- High-throughput compatible
++- Works in crude samples
++- Minimal sample consumption
++
++### Measured Parameters
++
++**Kinetic constants:**
++- **KD** - Equilibrium dissociation constant (binding affinity)
++- **kon** - Association rate constant (binding speed)
++- **koff** - Dissociation rate constant (unbinding speed)
++
++**Typical ranges:**
++- Strong binders: KD < 1 nM
++- Moderate binders: KD = 1-100 nM
++- Weak binders: KD > 100 nM
++
++### Workflow
++
++1. **Sequence submission** - Provide protein sequences in FASTA format
++2. **Expression** - Proteins expressed in appropriate host system
++3. **Purification** - Automated purification protocols
++4. **BLI assay** - Real-time binding measurements against specified targets
++5. **Analysis** - Kinetic curve fitting and quality assessment
++6. **Results delivery** - Binding parameters with confidence metrics
++
++### Sample Requirements
++
++- Protein sequence (standard amino acid codes)
++- Target specification (from catalog or custom request)
++- Buffer conditions (standard or custom)
++- Expected concentration range (optional, improves assay design)
++
++### Results Format
++
++```json
++{
++  "sequence_id": "antibody_variant_1",
++  "target": "Human PD-L1",
++  "measurements": {
++    "kd": 2.5e-9,
++    "kd_error": 0.3e-9,
++    "kon": 1.8e5,
++    "kon_error": 0.2e5,
++    "koff": 4.5e-4,
++    "koff_error": 0.5e-4
++  },
++  "quality_metrics": {
++    "confidence": "high|medium|low",
++    "r_squared": 0.97,
++    "chi_squared": 0.02,
++    "flags": []
++  },
++  "raw_data_url": "https://..."
++}
++```
++
++## Expression Testing
++
++### Description
++
++Quantify protein expression levels in various host systems to assess producibility and optimize sequences for manufacturing.
++
++### Use Cases
++
++- Screening variants for high expression
++- Optimizing codon usage
++- Identifying expression bottlenecks
++- Selecting candidates for scale-up
++- Comparing expression systems
++
++### Host Systems
++
++Available expression platforms:
++- **E. coli** - Rapid, cost-effective, prokaryotic system
++- **Mammalian cells** - Native post-translational modifications
++- **Yeast** - Eukaryotic system with simpler growth requirements
++- **Insect cells** - Alternative eukaryotic platform
++
++### Measured Parameters
++
++- **Total protein yield** (mg/L culture)
++- **Soluble fraction** (percentage)
++- **Purity** (after initial purification)
++- **Expression time course** (optional)
++
++### Workflow
++
++1. **Sequence submission** - Provide protein sequences
++2. **Construct generation** - Cloning into expression vectors
++3. **Expression** - Culture in specified host system
++4. **Quantification** - Protein measurement via multiple methods
++5. **Analysis** - Expression level comparison and ranking
++6. **Results delivery** - Yield data and recommendations
++
++### Results Format
++
++```json
++{
++  "sequence_id": "variant_1",
++  "host_system": "E. coli",
++  "measurements": {
++    "total_yield_mg_per_l": 25.5,
++    "soluble_fraction_percent": 78,
++    "purity_percent": 92
++  },
++  "ranking": {
++    "percentile": 85,
++    "notes": "High expression, good solubility"
++  }
++}
++```
++
++## Thermostability Testing
++
++### Description
++
++Measure protein thermal stability to assess structural integrity, predict shelf-life, and identify stabilizing mutations.
++
++### Use Cases
++
++- Selecting thermally stable variants
++- Formulation development
++- Shelf-life prediction
++- Stability-driven protein engineering
++- Quality control screening
++
++### Measurement Techniques
++
++**Differential Scanning Fluorimetry (DSF):**
++- Monitors protein unfolding via fluorescent dye binding
++- Determines melting temperature (Tm)
++- High-throughput capable
++
++**Circular Dichroism (CD):**
++- Secondary structure analysis
++- Thermal unfolding curves
++- Reversibility assessment
++
++### Measured Parameters
++
++- **Tm** - Melting temperature (midpoint of unfolding)
++- **ΔH** - Enthalpy of unfolding
++- **Aggregation temperature** (Tagg)
++- **Reversibility** - Refolding after heating
++
++### Workflow
++
++1. **Sequence submission** - Provide protein sequences
++2. **Expression and purification** - Standard protocols
++3. **Thermostability assay** - Temperature gradient analysis
++4. **Data analysis** - Curve fitting and parameter extraction
++5. **Results delivery** - Stability metrics with ranking
++
++### Results Format
++
++```json
++{
++  "sequence_id": "variant_1",
++  "measurements": {
++    "tm_celsius": 68.5,
++    "tm_error": 0.5,
++    "tagg_celsius": 72.0,
++    "reversibility_percent": 85
++  },
++  "quality_metrics": {
++    "curve_quality": "excellent",
++    "cooperativity": "two-state"
++  }
++}
++```
++
++## Enzyme Activity Assays
++
++### Description
++
++Measure enzymatic function including substrate turnover, catalytic efficiency, and inhibitor sensitivity.
++
++### Use Cases
++
++- Screening enzyme variants for improved activity
++- Substrate specificity profiling
++- Inhibitor testing
++- pH and temperature optimization
++- Mechanistic studies
++
++### Assay Types
++
++**Continuous assays:**
++- Chromogenic substrates
++- Fluorogenic substrates
++- Real-time monitoring
++
++**Endpoint assays:**
++- HPLC quantification
++- Mass spectrometry
++- Colorimetric detection
++
++### Measured Parameters
++
++**Kinetic parameters:**
++- **kcat** - Turnover number (catalytic rate constant)
++- **KM** - Michaelis constant (substrate affinity)
++- **kcat/KM** - Catalytic efficiency
++- **IC50** - Inhibitor concentration for 50% inhibition
++
++**Activity metrics:**
++- Specific activity (units/mg protein)
++- Relative activity vs. reference
++- Substrate specificity profile
++
++### Workflow
++
++1. **Sequence submission** - Provide enzyme sequences
++2. **Expression and purification** - Optimized for activity retention
++3. **Activity assay** - Substrate turnover measurements
++4. **Kinetic analysis** - Michaelis-Menten fitting
++5. **Results delivery** - Kinetic parameters and rankings
++
++### Results Format
++
++```json
++{
++  "sequence_id": "enzyme_variant_1",
++  "substrate": "substrate_name",
++  "measurements": {
++    "kcat_per_second": 125,
++    "km_micromolar": 45,
++    "kcat_km": 2.8,
++    "specific_activity": 180
++  },
++  "quality_metrics": {
++    "confidence": "high",
++    "r_squared": 0.99
++  },
++  "ranking": {
++    "relative_activity": 1.8,
++    "improvement_vs_wildtype": "80%"
++  }
++}
++```
++
++## Experiment Design Best Practices
++
++### Sequence Submission
++
++1. **Use clear identifiers** - Name sequences descriptively
++2. **Include controls** - Submit wild-type or reference sequences
++3. **Batch similar variants** - Group related sequences in single submission
++4. **Validate sequences** - Check for errors before submission
++
++### Sample Size
++
++- **Pilot studies** - 5-10 sequences to test feasibility
++- **Library screening** - 50-500 sequences for variant exploration
++- **Focused optimization** - 10-50 sequences for fine-tuning
++- **Large-scale campaigns** - 500+ sequences for ML-driven design
++
++### Quality Control
++
++Adaptyv includes automated QC steps:
++- Expression verification before assay
++- Replicate measurements for reliability
++- Positive/negative controls in each batch
++- Statistical validation of results
++
++### Timeline Expectations
++
++**Standard turnaround:** ~21 days from submission to results
++
++**Timeline breakdown:**
++- Construct generation: 3-5 days
++- Expression: 5-7 days
++- Purification: 2-3 days
++- Assay execution: 3-5 days
++- Analysis and QC: 2-3 days
++
++**Factors affecting timeline:**
++- Custom targets (add 1-2 weeks)
++- Novel assay development (add 2-4 weeks)
++- Large batch sizes (may add 1 week)
++
++### Cost Optimization
++
++1. **Batch submissions** - Lower per-sequence cost
++2. **Standard targets** - Catalog antigens are faster/cheaper
++3. **Standard conditions** - Custom buffers add cost
++4. **Computational pre-filtering** - Submit only promising candidates
++
++## Combining Experiment Types
++
++For comprehensive protein characterization, combine multiple assays:
++
++**Therapeutic antibody development:**
++1. Binding assay → Identify high-affinity binders
++2. Expression testing → Select manufacturable candidates
++3. Thermostability → Ensure formulation stability
++
++**Enzyme engineering:**
++1. Activity assay → Screen for improved catalysis
++2. Expression testing → Ensure producibility
++3. Thermostability → Validate industrial robustness
++
++**Sequential vs. Parallel:**
++- **Sequential** - Use results from early assays to filter candidates
++- **Parallel** - Run all assays simultaneously for faster results
++
++## Data Integration
++
++Results integrate with computational workflows:
++
++1. **Download raw data** via API
++2. **Parse results** into standardized format
++3. **Feed into ML models** for next-round design
++4. **Track experiments** with metadata tags
++5. **Visualize trends** across design iterations
++
++## Support and Troubleshooting
++
++**Common issues:**
++- Low expression → Consider sequence optimization (see protein_optimization.md)
++- Poor binding → Verify target specification and expected range
++- Variable results → Check sequence quality and controls
++- Incomplete data → Contact support with experiment ID
++
++**Getting help:**
++- Email: support@adaptyvbio.com
++- Include experiment ID and specific question
++- Provide context (design goals, expected results)
++- Response time: <24 hours for active experiments
+diff --git a/scientific-skills/adaptyv/reference/protein_optimization.md b/scientific-skills/adaptyv/reference/protein_optimization.md
+new file mode 100644
+index 000000000..54b844064
+--- /dev/null
++++ b/scientific-skills/adaptyv/reference/protein_optimization.md
+@@ -0,0 +1,637 @@
++# Protein Sequence Optimization
++
++## Overview
++
++Before submitting protein sequences for experimental testing, use computational tools to optimize sequences for improved expression, solubility, and stability. This pre-screening reduces experimental costs and increases success rates.
++
++## Common Protein Expression Problems
++
++### 1. Unpaired Cysteines
++
++**Problem:**
++- Unpaired cysteines form unwanted disulfide bonds
++- Leads to aggregation and misfolding
++- Reduces expression yield and stability
++
++**Solution:**
++- Remove unpaired cysteines unless functionally necessary
++- Pair cysteines appropriately for structural disulfides
++- Replace with serine or alanine in non-critical positions
++
++**Example:**
++```python
++# Check for cysteine pairs
++from Bio.Seq import Seq
++
++def check_cysteines(sequence):
++    cys_count = sequence.count('C')
++    if cys_count % 2 != 0:
++        print(f"Warning: Odd number of cysteines ({cys_count})")
++    return cys_count
++```
++
++### 2. Excessive Hydrophobicity
++
++**Problem:**
++- Long hydrophobic patches promote aggregation
++- Exposed hydrophobic residues drive protein clumping
++- Poor solubility in aqueous buffers
++
++**Solution:**
++- Maintain balanced hydropathy profiles
++- Use short, flexible linkers between domains
++- Reduce surface-exposed hydrophobic residues
++
++**Metrics:**
++- Kyte-Doolittle hydropathy plots
++- GRAVY score (Grand Average of Hydropathy)
++- pSAE (percent Solvent-Accessible hydrophobic residues)
++
++### 3. Low Solubility
++
++**Problem:**
++- Proteins precipitate during expression or purification
++- Inclusion body formation
++- Difficult downstream processing
++
++**Solution:**
++- Use solubility prediction tools for pre-screening
++- Apply sequence optimization algorithms
++- Add solubilizing tags if needed
++
++## Computational Tools for Optimization
++
++### NetSolP - Initial Solubility Screening
++
++**Purpose:** Fast solubility prediction for filtering sequences.
++
++**Method:** Machine learning model trained on E. coli expression data.
++
++**Usage:**
++```python
++# Install: uv pip install requests
++import requests
++
++def predict_solubility_netsolp(sequence):
++    """Predict protein solubility using NetSolP web service"""
++    url = "https://services.healthtech.dtu.dk/services/NetSolP-1.0/api/predict"
++
++    data = {
++        "sequence": sequence,
++        "format": "fasta"
++    }
++
++    response = requests.post(url, data=data)
++    return response.json()
++
++# Example
++sequence = "MKVLWAALLGLLGAAA..."
++result = predict_solubility_netsolp(sequence)
++print(f"Solubility score: {result['score']}")
++```
++
++**Interpretation:**
++- Score > 0.5: Likely soluble
++- Score < 0.5: Likely insoluble
++- Use for initial filtering before more expensive predictions
++
++**When to use:**
++- First-pass filtering of large libraries
++- Quick validation of designed sequences
++- Prioritizing sequences for experimental testing
++
++### SoluProt - Comprehensive Solubility Prediction
++
++**Purpose:** Advanced solubility prediction with higher accuracy.
++
++**Method:** Deep learning model incorporating sequence and structural features.
++
++**Usage:**
++```python
++# Install: uv pip install soluprot
++from soluprot import predict_solubility
++
++def screen_variants_soluprot(sequences):
++    """Screen multiple sequences for solubility"""
++    results = []
++    for name, seq in sequences.items():
++        score = predict_solubility(seq)
++        results.append({
++            'name': name,
++            'sequence': seq,
++            'solubility_score': score,
++            'predicted_soluble': score > 0.6
++        })
++    return results
++
++# Example
++sequences = {
++    'variant_1': 'MKVLW...',
++    'variant_2': 'MATGV...'
++}
++
++results = screen_variants_soluprot(sequences)
++soluble_variants = [r for r in results if r['predicted_soluble']]
++```
++
++**Interpretation:**
++- Score > 0.6: High solubility confidence
++- Score 0.4-0.6: Uncertain, may need optimization
++- Score < 0.4: Likely problematic
++
++**When to use:**
++- After initial NetSolP filtering
++- When higher prediction accuracy is needed
++- Before committing to expensive synthesis/testing
++
++### SolubleMPNN - Sequence Redesign
++
++**Purpose:** Redesign protein sequences to improve solubility while maintaining function.
++
++**Method:** Graph neural network that suggests mutations to increase solubility.
++
++**Usage:**
++```python
++# Install: uv pip install soluble-mpnn
++from soluble_mpnn import optimize_sequence
++
++def optimize_for_solubility(sequence, structure_pdb=None):
++    """
++    Redesign sequence for improved solubility
++
++    Args:
++        sequence: Original amino acid sequence
++        structure_pdb: Optional PDB file for structure-aware design
++
++    Returns:
++        Optimized sequence variants ranked by predicted solubility
++    """
++
++    variants = optimize_sequence(
++        sequence=sequence,
++        structure=structure_pdb,
++        num_variants=10,
++        temperature=0.1  # Lower = more conservative mutations
++    )
++
++    return variants
++
++# Example
++original_seq = "MKVLWAALLGLLGAAA..."
++optimized_variants = optimize_for_solubility(original_seq)
++
++for i, variant in enumerate(optimized_variants):
++    print(f"Variant {i+1}:")
++    print(f"  Sequence: {variant['sequence']}")
++    print(f"  Solubility score: {variant['solubility_score']}")
++    print(f"  Mutations: {variant['mutations']}")
++```
++
++**Design strategy:**
++- **Conservative** (temperature=0.1): Minimal changes, safer
++- **Moderate** (temperature=0.3): Balance between change and safety
++- **Aggressive** (temperature=0.5): More mutations, higher risk
++
++**When to use:**
++- Primary tool for sequence optimization
++- Default starting point for improving problematic sequences
++- Generating diverse soluble variants
++
++**Best practices:**
++- Generate 10-50 variants per sequence
++- Use structure information when available (improves accuracy)
++- Validate key functional residues are preserved
++- Test multiple temperature settings
++
++### ESM (Evolutionary Scale Modeling) - Sequence Likelihood
++
++**Purpose:** Assess how "natural" a protein sequence appears based on evolutionary patterns.
++
++**Method:** Protein language model trained on millions of natural sequences.
++
++**Usage:**
++```python
++# Install: uv pip install fair-esm
++import torch
++from esm import pretrained
++
++def score_sequence_esm(sequence):
++    """
++    Calculate ESM likelihood score for sequence
++    Higher scores indicate more natural/stable sequences
++    """
++
++    model, alphabet = pretrained.esm2_t33_650M_UR50D()
++    batch_converter = alphabet.get_batch_converter()
++
++    data = [("protein", sequence)]
++    _, _, batch_tokens = batch_converter(data)
++
++    with torch.no_grad():
++        results = model(batch_tokens, repr_layers=[33])
++        token_logprobs = results["logits"].log_softmax(dim=-1)
++
++    # Calculate perplexity as sequence quality metric
++    sequence_score = token_logprobs.mean().item()
++
++    return sequence_score
++
++# Example - Compare variants
++sequences = {
++    'original': 'MKVLW...',
++    'optimized_1': 'MKVLS...',
++    'optimized_2': 'MKVLA...'
++}
++
++for name, seq in sequences.items():
++    score = score_sequence_esm(seq)
++    print(f"{name}: ESM score = {score:.3f}")
++```
++
++**Interpretation:**
++- Higher scores → More "natural" sequence
++- Use to avoid unlikely mutations
++- Balance with functional requirements
++
++**When to use:**
++- Filtering synthetic designs
++- Comparing SolubleMPNN variants
++- Ensuring sequences aren't too artificial
++- Avoiding expression bottlenecks
++
++**Integration with design:**
++```python
++def rank_variants_by_esm(variants):
++    """Rank protein variants by ESM likelihood"""
++    scored = []
++    for v in variants:
++        esm_score = score_sequence_esm(v['sequence'])
++        v['esm_score'] = esm_score
++        scored.append(v)
++
++    # Sort by combined solubility and ESM score
++    scored.sort(
++        key=lambda x: x['solubility_score'] * x['esm_score'],
++        reverse=True
++    )
++
++    return scored
++```
++
++### ipTM - Interface Stability (AlphaFold-Multimer)
++
++**Purpose:** Assess protein-protein interface stability and binding confidence.
++
++**Method:** Interface predicted TM-score from AlphaFold-Multimer predictions.
++
++**Usage:**
++```python
++# Requires AlphaFold-Multimer installation
++# Or use ColabFold for easier access
++
++def predict_interface_stability(protein_a_seq, protein_b_seq):
++    """
++    Predict interface stability using AlphaFold-Multimer
++
++    Returns ipTM score: higher = more stable interface
++    """
++    from colabfold import run_alphafold_multimer
++
++    sequences = {
++        'chainA': protein_a_seq,
++        'chainB': protein_b_seq
++    }
++
++    result = run_alphafold_multimer(sequences)
++
++    return {
++        'ipTM': result['iptm'],
++        'pTM': result['ptm'],
++        'pLDDT': result['plddt']
++    }
++
++# Example for antibody-antigen binding
++antibody_seq = "EVQLVESGGGLVQPGG..."
++antigen_seq = "MKVLWAALLGLLGAAA..."
++
++stability = predict_interface_stability(antibody_seq, antigen_seq)
++print(f"Interface pTM: {stability['ipTM']:.3f}")
++
++# Interpretation
++if stability['ipTM'] > 0.7:
++    print("High confidence interface")
++elif stability['ipTM'] > 0.5:
++    print("Moderate confidence interface")
++else:
++    print("Low confidence interface - may need redesign")
++```
++
++**Interpretation:**
++- ipTM > 0.7: Strong predicted interface
++- ipTM 0.5-0.7: Moderate interface confidence
++- ipTM < 0.5: Weak interface, consider redesign
++
++**When to use:**
++- Antibody-antigen design
++- Protein-protein interaction engineering
++- Validating binding interfaces
++- Comparing interface variants
++
++### pSAE - Solvent-Accessible Hydrophobic Residues
++
++**Purpose:** Quantify exposed hydrophobic residues that promote aggregation.
++
++**Method:** Calculates percentage of solvent-accessible surface area (SASA) occupied by hydrophobic residues.
++
++**Usage:**
++```python
++# Requires structure (PDB file or AlphaFold prediction)
++# Install: uv pip install biopython
++
++from Bio.PDB import PDBParser, DSSP
++import numpy as np
++
++def calculate_psae(pdb_file):
++    """
++    Calculate percent Solvent-Accessible hydrophobic residues (pSAE)
++
++    Lower pSAE = better solubility
++    """
++
++    parser = PDBParser(QUIET=True)
++    structure = parser.get_structure('protein', pdb_file)
++
++    # Run DSSP to get solvent accessibility
++    model = structure[0]
++    dssp = DSSP(model, pdb_file, acc_array='Wilke')
++
++    hydrophobic = ['ALA', 'VAL', 'ILE', 'LEU', 'MET', 'PHE', 'TRP', 'PRO']
++
++    total_sasa = 0
++    hydrophobic_sasa = 0
++
++    for residue in dssp:
++        res_name = residue[1]
++        rel_accessibility = residue[3]
++
++        total_sasa += rel_accessibility
++        if res_name in hydrophobic:
++            hydrophobic_sasa += rel_accessibility
++
++    psae = (hydrophobic_sasa / total_sasa) * 100
++
++    return psae
++
++# Example
++pdb_file = "protein_structure.pdb"
++psae_score = calculate_psae(pdb_file)
++print(f"pSAE: {psae_score:.2f}%")
++
++# Interpretation
++if psae_score < 25:
++    print("Good solubility expected")
++elif psae_score < 35:
++    print("Moderate solubility")
++else:
++    print("High aggregation risk")
++```
++
++**Interpretation:**
++- pSAE < 25%: Low aggregation risk
++- pSAE 25-35%: Moderate risk
++- pSAE > 35%: High aggregation risk
++
++**When to use:**
++- Analyzing designed structures
++- Post-AlphaFold validation
++- Identifying aggregation hotspots
++- Guiding surface mutations
++
++## Recommended Optimization Workflow
++
++### Step 1: Initial Screening (Fast)
++
++```python
++def initial_screening(sequences):
++    """
++    Quick first-pass filtering using NetSolP
++    Filters out obviously problematic sequences
++    """
++    passed = []
++    for name, seq in sequences.items():
++        netsolp_score = predict_solubility_netsolp(seq)
++        if netsolp_score > 0.5:
++            passed.append((name, seq))
++
++    return passed
++```
++
++### Step 2: Detailed Assessment (Moderate)
++
++```python
++def detailed_assessment(filtered_sequences):
++    """
++    More thorough analysis with SoluProt and ESM
++    Ranks sequences by multiple criteria
++    """
++    results = []
++    for name, seq in filtered_sequences:
++        soluprot_score = predict_solubility(seq)
++        esm_score = score_sequence_esm(seq)
++
++        combined_score = soluprot_score * 0.7 + esm_score * 0.3
++
++        results.append({
++            'name': name,
++            'sequence': seq,
++            'soluprot': soluprot_score,
++            'esm': esm_score,
++            'combined': combined_score
++        })
++
++    results.sort(key=lambda x: x['combined'], reverse=True)
++    return results
++```
++
++### Step 3: Sequence Optimization (If needed)
++
++```python
++def optimize_problematic_sequences(sequences_needing_optimization):
++    """
++    Use SolubleMPNN to redesign problematic sequences
++    Returns improved variants
++    """
++    optimized = []
++    for name, seq in sequences_needing_optimization:
++        # Generate multiple variants
++        variants = optimize_sequence(
++            sequence=seq,
++            num_variants=10,
++            temperature=0.2
++        )
++
++        # Score variants with ESM
++        for variant in variants:
++            variant['esm_score'] = score_sequence_esm(variant['sequence'])
++
++        # Keep best variants
++        variants.sort(
++            key=lambda x: x['solubility_score'] * x['esm_score'],
++            reverse=True
++        )
++
++        optimized.extend(variants[:3])  # Top 3 variants per sequence
++
++    return optimized
++```
++
++### Step 4: Structure-Based Validation (For critical sequences)
++
++```python
++def structure_validation(top_candidates):
++    """
++    Predict structures and calculate pSAE for top candidates
++    Final validation before experimental testing
++    """
++    validated = []
++    for candidate in top_candidates:
++        # Predict structure with AlphaFold
++        structure_pdb = predict_structure_alphafold(candidate['sequence'])
++
++        # Calculate pSAE
++        psae = calculate_psae(structure_pdb)
++
++        candidate['psae'] = psae
++        candidate['pass_structure_check'] = psae < 30
++
++        validated.append(candidate)
++
++    return validated
++```
++
++### Complete Workflow Example
++
++```python
++def complete_optimization_pipeline(initial_sequences):
++    """
++    End-to-end optimization pipeline
++
++    Input: Dictionary of {name: sequence}
++    Output: Ranked list of optimized, validated sequences
++    """
++
++    print("Step 1: Initial screening with NetSolP...")
++    filtered = initial_screening(initial_sequences)
++    print(f"  Passed: {len(filtered)}/{len(initial_sequences)}")
++
++    print("Step 2: Detailed assessment with SoluProt and ESM...")
++    assessed = detailed_assessment(filtered)
++
++    # Split into good and needs-optimization
++    good_sequences = [s for s in assessed if s['soluprot'] > 0.6]
++    needs_optimization = [s for s in assessed if s['soluprot'] <= 0.6]
++
++    print(f"  Good sequences: {len(good_sequences)}")
++    print(f"  Need optimization: {len(needs_optimization)}")
++
++    if needs_optimization:
++        print("Step 3: Optimizing problematic sequences with SolubleMPNN...")
++        optimized = optimize_problematic_sequences(needs_optimization)
++        all_sequences = good_sequences + optimized
++    else:
++        all_sequences = good_sequences
++
++    print("Step 4: Structure-based validation for top candidates...")
++    top_20 = all_sequences[:20]
++    final_validated = structure_validation(top_20)
++
++    # Final ranking
++    final_validated.sort(
++        key=lambda x: (
++            x['pass_structure_check'],
++            x['combined'],
++            -x['psae']
++        ),
++        reverse=True
++    )
++
++    return final_validated
++
++# Usage
++initial_library = {
++    'variant_1': 'MKVLWAALLGLLGAAA...',
++    'variant_2': 'MATGVLWAALLGLLGA...',
++    # ... more sequences
++}
++
++optimized_library = complete_optimization_pipeline(initial_library)
++
++# Submit top sequences to Adaptyv
++top_sequences_for_testing = optimized_library[:50]
++```
++
++## Best Practices Summary
++
++1. **Always pre-screen** before experimental testing
++2. **Use NetSolP first** for fast filtering of large libraries
++3. **Apply SolubleMPNN** as default optimization tool
++4. **Validate with ESM** to avoid unnatural sequences
++5. **Calculate pSAE** for structure-based validation
++6. **Test multiple variants** per design to account for prediction uncertainty
++7. **Keep controls** - include wild-type or known-good sequences
++8. **Iterate** - use experimental results to refine predictions
++
++## Integration with Adaptyv
++
++After computational optimization, submit sequences to Adaptyv:
++
++```python
++# After optimization pipeline
++optimized_sequences = complete_optimization_pipeline(initial_library)
++
++# Prepare FASTA format
++fasta_content = ""
++for seq_data in optimized_sequences[:50]:  # Top 50
++    fasta_content += f">{seq_data['name']}\n{seq_data['sequence']}\n"
++
++# Submit to Adaptyv
++import requests
++response = requests.post(
++    "https://kq5jp7qj7wdqklhsxmovkzn4l40obksv.lambda-url.eu-central-1.on.aws/experiments",
++    headers={"Authorization": f"Bearer {api_key}"},
++    json={
++        "sequences": fasta_content,
++        "experiment_type": "expression",
++        "metadata": {
++            "optimization_method": "SolubleMPNN_ESM_pipeline",
++            "computational_scores": [s['combined'] for s in optimized_sequences[:50]]
++        }
++    }
++)
++```
++
++## Troubleshooting
++
++**Issue: All sequences score poorly on solubility predictions**
++- Check if sequences contain unusual amino acids
++- Verify FASTA format is correct
++- Consider if protein family is naturally low-solubility
++- May need experimental validation despite predictions
++
++**Issue: SolubleMPNN changes functionally important residues**
++- Provide structure file to preserve spatial constraints
++- Mask critical residues from mutation
++- Lower temperature parameter for conservative changes
++- Manually revert problematic mutations
++
++**Issue: ESM scores are low after optimization**
++- Optimization may be too aggressive
++- Try lower temperature in SolubleMPNN
++- Balance between solubility and naturalness
++- Consider that some optimization may require non-natural mutations
++
++**Issue: Predictions don't match experimental results**
++- Predictions are probabilistic, not deterministic
++- Host system and conditions affect expression
++- Some proteins may need experimental validation
++- Use predictions as enrichment, not absolute filters

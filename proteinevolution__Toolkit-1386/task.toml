@@ -1,0 +1,62 @@
+version = "1.0"
+
+[task]
+name = "default/proteinevolution__Toolkit-1386"
+description = "Update sbt-buildinfo to 0.11.0"
+
+[metadata]
+difficulty = "easy"
+category = "bugfix"
+keywords = [
+    "Toolkit",
+    "pr_diff",
+]
+
+[metadata.repo2env]
+pipeline = "pr_diff"
+pipeline_version = "0.3.0"
+repo = "proteinevolution/Toolkit"
+ref = "12e4570f33b063eeea7175fec942b034056620f6"
+reference = "https://github.com/proteinevolution/Toolkit/pull/1386"
+source_access = "auto"
+built_at = "2026-11-16T06:00:59.750432+00:00"
+reward_kinds = [
+    "diff_similarity",
+]
+spec_version = "0.2.0"
+content_hash = "sha256:16b79e1242c7100408d446af28651f7a3d84b6f3e71299e6ca70b32ed5a0459a"
+
+[metadata.repo2env.pr_diff]
+pr_merged_at = "2022-02-18T09:39:10Z"
+diff_format = "unified"
+context_files = [
+    "project/plugins.sbt",
+]
+
+[metadata.repo2env.reward_calibration]
+baseline_reward = 0.0
+loc_changed = 2
+difficulty = "trivial"
+
+[metadata.repo2env.evaluation]
+schema_version = "1"
+status = "unverified"
+stage = "generation"
+reason_codes = [
+    "validation_not_run",
+]
+detail = "Generated task; validation has not been established."
+provenance = "unknown"
+evidence = []
+
+[metadata.repo2env.reproducibility]
+mode = "local_only"
+image_ref = "python:3.12-slim"
+image_tag = "python:3.12-slim"
+image_visibility = "private"
+
+[agent]
+timeout_sec = 1800.0
+
+[verifier]
+timeout_sec = 300.0

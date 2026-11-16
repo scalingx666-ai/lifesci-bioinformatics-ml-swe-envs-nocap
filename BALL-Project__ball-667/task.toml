@@ -1,0 +1,71 @@
+version = "1.0"
+
+[task]
+name = "default/BALL-Project__ball-667"
+description = "fix(ufg-06/bottomdrawer): drive maximumHeight from current height and resizeDocks"
+
+[metadata]
+difficulty = "large"
+category = "bugfix"
+keywords = [
+    "ball",
+    "pr_diff",
+]
+
+[metadata.repo2env]
+pipeline = "pr_diff"
+pipeline_version = "0.3.0"
+repo = "BALL-Project/ball"
+ref = "94a6873d89e7fbc90cca0f0238499dad3035a9bc"
+reference = "https://github.com/BALL-Project/ball/pull/667"
+source_access = "auto"
+built_at = "2026-11-16T05:52:24.050441+00:00"
+reward_kinds = [
+    "diff_similarity",
+]
+spec_version = "0.2.0"
+content_hash = "sha256:da4195220c319b558a924674d2be9e2f1b20b2072d4364b4c4c21af290308b31"
+
+[metadata.repo2env.pr_diff]
+pr_merged_at = "2026-05-18T09:56:26Z"
+diff_format = "unified"
+context_files = [
+    ".planning/phases/ufg-06-bottomdrawer-fix/PLAN.md",
+    ".planning/v1.7-USER-FEEDBACK-GATE.md",
+    "include/BALL/VIEW/DIALOGS/displayProperties.h",
+    "source/APPLICATIONS/BALLVIEW/main.C",
+    "source/APPLICATIONS/BALLVIEW/mainframe.C",
+    "source/VIEW/KERNEL/controllers/coloringController.C",
+    "source/VIEW/KERNEL/controllers/materialController.C",
+    "source/VIEW/KERNEL/controllers/modelController.C",
+    "source/VIEW/KERNEL/theme/theme-neutral.qss",
+    "source/VIEW/WIDGETS/bottomDrawer.C",
+]
+
+[metadata.repo2env.reward_calibration]
+baseline_reward = 0.0
+loc_changed = 721
+difficulty = "large"
+
+[metadata.repo2env.evaluation]
+schema_version = "1"
+status = "unverified"
+stage = "generation"
+reason_codes = [
+    "validation_not_run",
+]
+detail = "Generated task; validation has not been established."
+provenance = "unknown"
+evidence = []
+
+[metadata.repo2env.reproducibility]
+mode = "local_only"
+image_ref = "python:3.12-slim"
+image_tag = "python:3.12-slim"
+image_visibility = "private"
+
+[agent]
+timeout_sec = 1800.0
+
+[verifier]
+timeout_sec = 300.0

@@ -1,0 +1,13 @@
+diff --git a/project/Dependencies.scala b/project/Dependencies.scala
+index 7320bb9d25..a01ddcd5b5 100644
+--- a/project/Dependencies.scala
++++ b/project/Dependencies.scala
+@@ -30,7 +30,7 @@ object Dependencies {
+       .exclude("com.typesafe.akka", "*")  // provided
+       .exclude("com.typesafe.play", "*"), // provided
+     "org.typelevel" %% "cats-core"            % "2.7.0",
+-    "org.typelevel" %% "cats-effect"          % "3.3.8",
++    "org.typelevel" %% "cats-effect"          % "3.3.9",
+     "co.fs2"        %% "fs2-core"             % "3.2.5",
+     "co.fs2"        %% "fs2-io"               % "3.2.5",
+     "com.chuusai"   %% "shapeless"            % "2.3.8",

@@ -1,0 +1,62 @@
+version = "1.0"
+
+[task]
+name = "default/proteinevolution__Toolkit-1241"
+description = "Bump browserslist from 4.16.4 to 4.16.6 in /frontend"
+
+[metadata]
+difficulty = "medium"
+category = "bugfix"
+keywords = [
+    "Toolkit",
+    "pr_diff",
+]
+
+[metadata.repo2env]
+pipeline = "pr_diff"
+pipeline_version = "0.3.0"
+repo = "proteinevolution/Toolkit"
+ref = "eab282e5e95e07e33ef91d26e0e4e120b38f7674"
+reference = "https://github.com/proteinevolution/Toolkit/pull/1241"
+source_access = "auto"
+built_at = "2026-11-16T06:04:49.361866+00:00"
+reward_kinds = [
+    "diff_similarity",
+]
+spec_version = "0.2.0"
+content_hash = "sha256:a485b417406bbcc249be8a5c872049e3b6cdc8411778bb86079b7f44c1679230"
+
+[metadata.repo2env.pr_diff]
+pr_merged_at = "2021-06-06T11:13:07Z"
+diff_format = "unified"
+context_files = [
+    "frontend/yarn.lock",
+]
+
+[metadata.repo2env.reward_calibration]
+baseline_reward = 0.0
+loc_changed = 32
+difficulty = "medium"
+
+[metadata.repo2env.evaluation]
+schema_version = "1"
+status = "unverified"
+stage = "generation"
+reason_codes = [
+    "validation_not_run",
+]
+detail = "Generated task; validation has not been established."
+provenance = "unknown"
+evidence = []
+
+[metadata.repo2env.reproducibility]
+mode = "local_only"
+image_ref = "python:3.12-slim"
+image_tag = "python:3.12-slim"
+image_visibility = "private"
+
+[agent]
+timeout_sec = 1800.0
+
+[verifier]
+timeout_sec = 300.0

@@ -1,0 +1,98 @@
+diff --git a/R/sel.R b/R/sel.R
+index 7b17c04..0082e71 100644
+--- a/R/sel.R
++++ b/R/sel.R
+@@ -59,16 +59,16 @@ m_sel <- function(
+                   model = NULL,
+                   resi = NULL,
+                   resn = NULL,
+-                  invert = FALSE,
+-                  byres = FALSE,
+-                  expand = FALSE,
++                  invert = NULL,
++                  byres = NULL,
++                  expand = NULL,
+                   elem = NULL,
+                   chain = NULL,
+                   atom = NULL,
+                   bonds = NULL,
+                   ss = NULL,
+                   b = NULL,
+-                  clickable = FALSE,
++                  clickable = NULL,
+                   callback = NULL) {
+ 
+   ## Create the list of values from inputs
+diff --git a/R/view_options.R b/R/view_options.R
+index 433c0fa..e78acc5 100644
+--- a/R/view_options.R
++++ b/R/view_options.R
+@@ -12,8 +12,8 @@
+ #' @param cartoonQuality Defaults to 5
+ #' @param lowerZoomLimit Specify how far the user can zoom in.
+ #' @param upperZoomLimit Specify how far the user can zoom out.
+-#' @param antialias Logical whether to enable antialiasing, improving graphical
+-#' quality. (can slow down large structures)
++#' @param antialias Logical, disable to decrease quality but improve
++#' performance.
+ #' @param orthographic Logical. Setting orthographic instead of perspective
+ #' representation.
+ #' @param disableFog Logical, disable fog, defaults to \code{FALSE}
+@@ -22,7 +22,7 @@ m_viewer_spec <- function(
+                           id = NULL,
+                           defaultcolors = NULL,
+                           cartoonQuality = 5,
+-                          antialias = FALSE,
++                          antialias = TRUE,
+                           nomouse = FALSE,
+                           backgroundColor = "white",
+                           lowerZoomLimit = 5,
+diff --git a/man/m_sel.Rd b/man/m_sel.Rd
+index fd710b3..c9864c3 100644
+--- a/man/m_sel.Rd
++++ b/man/m_sel.Rd
+@@ -8,16 +8,16 @@ m_sel(
+   model = NULL,
+   resi = NULL,
+   resn = NULL,
+-  invert = FALSE,
+-  byres = FALSE,
+-  expand = FALSE,
++  invert = NULL,
++  byres = NULL,
++  expand = NULL,
+   elem = NULL,
+   chain = NULL,
+   atom = NULL,
+   bonds = NULL,
+   ss = NULL,
+   b = NULL,
+-  clickable = FALSE,
++  clickable = NULL,
+   callback = NULL
+ )
+ }
+diff --git a/man/m_viewer_spec.Rd b/man/m_viewer_spec.Rd
+index 6ce1e71..e0b5e10 100644
+--- a/man/m_viewer_spec.Rd
++++ b/man/m_viewer_spec.Rd
+@@ -8,7 +8,7 @@ m_viewer_spec(
+   id = NULL,
+   defaultcolors = NULL,
+   cartoonQuality = 5,
+-  antialias = FALSE,
++  antialias = TRUE,
+   nomouse = FALSE,
+   backgroundColor = "white",
+   lowerZoomLimit = 5,
+@@ -25,8 +25,8 @@ property value pairs for all models within this viewer}
+ 
+ \item{cartoonQuality}{Defaults to 5}
+ 
+-\item{antialias}{Logical whether to enable antialiasing, improving graphical
+-quality. (can slow down large structures)}
++\item{antialias}{Logical, disable to decrease quality but improve
++performance.}
+ 
+ \item{nomouse}{Whether to disable handling of mouse events. Disabled will
+ prevent user interaction.}

@@ -1,0 +1,178 @@
+diff --git a/NEWS.md b/NEWS.md
+index 8548e2e..b295bc3 100644
+--- a/NEWS.md
++++ b/NEWS.md
+@@ -1,8 +1,9 @@
+ # r3dmol 0.1.3
+ 
+-### Bug
++### Bugs
+ 
+ * Fix the incorrect layout of `m_button()` in the rmarkdown ([#31](https://github.com/swsoyee/r3dmol/pull/31)).
++* Fix `colorScheme="default"` overriding user-specified colors ([#34](https://github.com/swsoyee/r3dmol/pull/34))
+ 
+ # r3dmol 0.1.2
+ 
+diff --git a/R/style.R b/R/style.R
+index be8df6b..7b90482 100644
+--- a/R/style.R
++++ b/R/style.R
+@@ -7,7 +7,7 @@
+ #' @param radius Override van der waals radius.
+ #' @param scale Scale radius by specified amount.
+ #' @param colorScheme Specify scheme to color the atoms by. Default is
+-#' "default". Other choies are "Carbon", ssPyMOL", "ssJmol", "Jmol",
++#' "default". Other choices are "Carbon", "ssPyMOL", "ssJmol", "Jmol",
+ #' "default", "amino",
+ #' "shapely", "nucleic", "chain", "chainHetatm", "prop".
+ #' @param color Discrete, fixed coloring, overrides any colorScheme.
+@@ -22,7 +22,7 @@
+ #' @export
+ m_style_sphere <- function(
+                            scale = 1,
+-                           colorScheme = "default",
++                           colorScheme = NULL,
+                            color = NULL,
+                            radius = NULL,
+                            hidden = FALSE,
+@@ -108,7 +108,7 @@ m_style_cartoon <- function(
+ #' @param radius Radius of sticks.
+ #' @param singleBonds Draw all bonds as single bonds if \code{TRUE}.
+ #' @param colorScheme Specify scheme to color the atoms by. Default is
+-#' "default". Other choies are "Carbon", ssPyMOL", "ssJmol", "Jmol",
++#' "default". Other choices are "Carbon", "ssPyMOL", "ssJmol", "Jmol",
+ #' "default", "amino",
+ #' "shapely", "nucleic", "chain", "chainHetatm", "prop".
+ #' @param color Fixed coloring, overrides colorScheme.
+@@ -122,7 +122,7 @@ m_style_cartoon <- function(
+ m_style_stick <- function(
+                           radius = 0.3,
+                           singleBonds = FALSE,
+-                          colorScheme = "default",
++                          colorScheme = NULL,
+                           color = NULL,
+                           opacity = 1,
+                           hidden = FALSE) {
+@@ -230,7 +230,7 @@ m_style_label <- function(
+ #' when adding individual lines with \code{m_add_line()}.
+ #'
+ #' @param colorScheme Specify scheme to color the atoms by. Default is
+-#' "default". Other choies are "Carbon", ssPyMOL", "ssJmol", "Jmol",
++#' "default". Other choices are "Carbon", "ssPyMOL", "ssJmol", "Jmol",
+ #' "default", "amino",
+ #' "shapely", "nucleic", "chain", "chainHetatm", "prop".
+ #' @param color Fixed coloring, overrides \code{colorScheme}.
+@@ -243,7 +243,7 @@ m_style_label <- function(
+ #'   m_zoom_to()
+ #' @export
+ m_style_line <- function(
+-                         colorScheme = "default",
++                         colorScheme = NULL,
+                          color = NULL,
+                          opacity = 1,
+                          hidden = FALSE) {
+@@ -266,7 +266,7 @@ m_style_line <- function(
+ #'
+ #' @param opacity Opacity, 0 for transparent, 1 for opaque.
+ #' @param colorScheme Specify scheme to color the atoms by. Default is
+-#' "default". Other choies are "Carbon", ssPyMOL", "ssJmol", "Jmol",
++#' "default". Other choices are "Carbon", "ssPyMOL", "ssJmol", "Jmol",
+ #' "default", "amino",
+ #' "shapely", "nucleic", "chain", "chainHetatm", "prop".
+ #' @param color Fixed coloring, overrides colorScheme.
+@@ -279,7 +279,7 @@ m_style_line <- function(
+ #' @export
+ m_style_surface <- function(
+                             opacity = 1,
+-                            colorScheme = "default",
++                            colorScheme = NULL,
+                             color = NULL) {
+   surface_style <- list(
+     opacity = opacity,
+diff --git a/man/m_style_line.Rd b/man/m_style_line.Rd
+index 0364d3e..834d05c 100644
+--- a/man/m_style_line.Rd
++++ b/man/m_style_line.Rd
+@@ -4,16 +4,11 @@
+ \alias{m_style_line}
+ \title{Specify Styling for Lines}
+ \usage{
+-m_style_line(
+-  colorScheme = "default",
+-  color = NULL,
+-  opacity = 1,
+-  hidden = FALSE
+-)
++m_style_line(colorScheme = NULL, color = NULL, opacity = 1, hidden = FALSE)
+ }
+ \arguments{
+ \item{colorScheme}{Specify scheme to color the atoms by. Default is
+-"default". Other choies are "Carbon", ssPyMOL", "ssJmol", "Jmol",
++"default". Other choices are "Carbon", "ssPyMOL", "ssJmol", "Jmol",
+ "default", "amino",
+ "shapely", "nucleic", "chain", "chainHetatm", "prop".}
+ 
+diff --git a/man/m_style_sphere.Rd b/man/m_style_sphere.Rd
+index cc08352..da19cc7 100644
+--- a/man/m_style_sphere.Rd
++++ b/man/m_style_sphere.Rd
+@@ -6,7 +6,7 @@
+ \usage{
+ m_style_sphere(
+   scale = 1,
+-  colorScheme = "default",
++  colorScheme = NULL,
+   color = NULL,
+   radius = NULL,
+   hidden = FALSE,
+@@ -17,7 +17,7 @@ m_style_sphere(
+ \item{scale}{Scale radius by specified amount.}
+ 
+ \item{colorScheme}{Specify scheme to color the atoms by. Default is
+-"default". Other choies are "Carbon", ssPyMOL", "ssJmol", "Jmol",
++"default". Other choices are "Carbon", "ssPyMOL", "ssJmol", "Jmol",
+ "default", "amino",
+ "shapely", "nucleic", "chain", "chainHetatm", "prop".}
+ 
+diff --git a/man/m_style_stick.Rd b/man/m_style_stick.Rd
+index 663080d..d0e0fb0 100644
+--- a/man/m_style_stick.Rd
++++ b/man/m_style_stick.Rd
+@@ -7,7 +7,7 @@
+ m_style_stick(
+   radius = 0.3,
+   singleBonds = FALSE,
+-  colorScheme = "default",
++  colorScheme = NULL,
+   color = NULL,
+   opacity = 1,
+   hidden = FALSE
+@@ -19,7 +19,7 @@ m_style_stick(
+ \item{singleBonds}{Draw all bonds as single bonds if \code{TRUE}.}
+ 
+ \item{colorScheme}{Specify scheme to color the atoms by. Default is
+-"default". Other choies are "Carbon", ssPyMOL", "ssJmol", "Jmol",
++"default". Other choices are "Carbon", "ssPyMOL", "ssJmol", "Jmol",
+ "default", "amino",
+ "shapely", "nucleic", "chain", "chainHetatm", "prop".}
+ 
+diff --git a/man/m_style_surface.Rd b/man/m_style_surface.Rd
+index 75389c3..fe7be9f 100644
+--- a/man/m_style_surface.Rd
++++ b/man/m_style_surface.Rd
+@@ -4,13 +4,13 @@
+ \alias{m_style_surface}
+ \title{Specify Styling for Surface}
+ \usage{
+-m_style_surface(opacity = 1, colorScheme = "default", color = NULL)
++m_style_surface(opacity = 1, colorScheme = NULL, color = NULL)
+ }
+ \arguments{
+ \item{opacity}{Opacity, 0 for transparent, 1 for opaque.}
+ 
+ \item{colorScheme}{Specify scheme to color the atoms by. Default is
+-"default". Other choies are "Carbon", ssPyMOL", "ssJmol", "Jmol",
++"default". Other choices are "Carbon", "ssPyMOL", "ssJmol", "Jmol",
+ "default", "amino",
+ "shapely", "nucleic", "chain", "chainHetatm", "prop".}
+ 

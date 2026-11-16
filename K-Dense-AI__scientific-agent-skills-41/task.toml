@@ -1,0 +1,75 @@
+version = "1.0"
+
+[task]
+name = "default/K-Dense-AI__scientific-agent-skills-41"
+description = "Sync writing skills from claude-scientific-writer"
+
+[metadata]
+difficulty = "large"
+category = "bugfix"
+keywords = [
+    "scientific-agent-skills",
+    "pr_diff",
+]
+
+[metadata.repo2env]
+pipeline = "pr_diff"
+pipeline_version = "0.3.0"
+repo = "K-Dense-AI/scientific-agent-skills"
+ref = "49024095e30416d9c9ad73316b9e28c4bbf1dbe1"
+reference = "https://github.com/K-Dense-AI/scientific-agent-skills/pull/41"
+source_access = "auto"
+built_at = "2026-11-15T10:25:18.418533+00:00"
+reward_kinds = [
+    "diff_similarity",
+]
+spec_version = "0.2.0"
+content_hash = "sha256:e355372470bf155e0bf7e8d3d6aafcdacd987e71b81301b739cd14757c31149d"
+
+[metadata.repo2env.pr_diff]
+pr_merged_at = "2026-02-05T16:52:19Z"
+diff_format = "unified"
+context_files = [
+    "scientific-skills/hypothesis-generation/references/literature_search_strategies.md",
+    "scientific-skills/infographics/SKILL.md",
+    "scientific-skills/infographics/references/color_palettes.md",
+    "scientific-skills/infographics/references/design_principles.md",
+    "scientific-skills/infographics/references/infographic_types.md",
+    "scientific-skills/infographics/scripts/generate_infographic.py",
+    "scientific-skills/infographics/scripts/generate_infographic_ai.py",
+    "scientific-skills/latex-posters/SKILL.md",
+    "scientific-skills/literature-review/references/database_strategies.md",
+    "scientific-skills/markitdown/assets/example_usage.md",
+    "scientific-skills/research-lookup/SKILL.md",
+    "scientific-skills/scientific-schematics/references/best_practices.md",
+    "scientific-skills/scientific-schematics/scripts/generate_schematic_ai.py",
+    "scientific-skills/scientific-writing/references/imrad_structure.md",
+]
+
+[metadata.repo2env.reward_calibration]
+baseline_reward = 0.0
+loc_changed = 5134
+difficulty = "large"
+
+[metadata.repo2env.evaluation]
+schema_version = "1"
+status = "unverified"
+stage = "generation"
+reason_codes = [
+    "validation_not_run",
+]
+detail = "Generated task; validation has not been established."
+provenance = "unknown"
+evidence = []
+
+[metadata.repo2env.reproducibility]
+mode = "local_only"
+image_ref = "python:3.12-slim"
+image_tag = "python:3.12-slim"
+image_visibility = "private"
+
+[agent]
+timeout_sec = 1800.0
+
+[verifier]
+timeout_sec = 300.0

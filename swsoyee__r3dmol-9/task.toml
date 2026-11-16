@@ -1,0 +1,67 @@
+version = "1.0"
+
+[task]
+name = "default/swsoyee__r3dmol-9"
+description = "Improving existing functions"
+
+[metadata]
+difficulty = "medium"
+category = "bugfix"
+keywords = [
+    "r3dmol",
+    "pr_diff",
+]
+
+[metadata.repo2env]
+pipeline = "pr_diff"
+pipeline_version = "0.3.0"
+repo = "swsoyee/r3dmol"
+ref = "a7e9e36d24a038c8bbb374ebcd64cab59bf0d811"
+reference = "https://github.com/swsoyee/r3dmol/pull/9"
+source_access = "auto"
+built_at = "2026-11-16T04:45:10.272921+00:00"
+reward_kinds = [
+    "diff_similarity",
+]
+spec_version = "0.2.0"
+content_hash = "sha256:9c9904b34d17f3a3d9007808ae15e32fa65872ae0d620fdcf69acaa402abcea3"
+
+[metadata.repo2env.pr_diff]
+pr_merged_at = "2021-02-17T05:26:14Z"
+diff_format = "unified"
+context_files = [
+    "R/add.R",
+    "R/bio3d.R",
+    "R/sel.R",
+    "R/set.R",
+    "man/m_add_style.Rd",
+    "man/m_set_style.Rd",
+]
+
+[metadata.repo2env.reward_calibration]
+baseline_reward = 0.0
+loc_changed = 41
+difficulty = "medium"
+
+[metadata.repo2env.evaluation]
+schema_version = "1"
+status = "unverified"
+stage = "generation"
+reason_codes = [
+    "validation_not_run",
+]
+detail = "Generated task; validation has not been established."
+provenance = "unknown"
+evidence = []
+
+[metadata.repo2env.reproducibility]
+mode = "local_only"
+image_ref = "python:3.12-slim"
+image_tag = "python:3.12-slim"
+image_visibility = "private"
+
+[agent]
+timeout_sec = 1800.0
+
+[verifier]
+timeout_sec = 300.0

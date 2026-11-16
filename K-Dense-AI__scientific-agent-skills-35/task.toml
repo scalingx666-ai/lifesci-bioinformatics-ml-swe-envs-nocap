@@ -1,0 +1,65 @@
+version = "1.0"
+
+[task]
+name = "default/K-Dense-AI__scientific-agent-skills-35"
+description = "Added Imaging Data Commons skill"
+
+[metadata]
+difficulty = "large"
+category = "bugfix"
+keywords = [
+    "scientific-agent-skills",
+    "pr_diff",
+]
+
+[metadata.repo2env]
+pipeline = "pr_diff"
+pipeline_version = "0.3.0"
+repo = "K-Dense-AI/scientific-agent-skills"
+ref = "cd537c1af6731965817eed2ae32b8dd8ea9d0b5e"
+reference = "https://github.com/K-Dense-AI/scientific-agent-skills/pull/35"
+source_access = "auto"
+built_at = "2026-11-15T10:25:29.258196+00:00"
+reward_kinds = [
+    "diff_similarity",
+]
+spec_version = "0.2.0"
+content_hash = "sha256:58d6aef5f5fec9701ad729f283da30b7800276551270ef80de61daec7cf45b48"
+
+[metadata.repo2env.pr_diff]
+pr_merged_at = "2026-01-25T18:17:32Z"
+diff_format = "unified"
+context_files = [
+    ".claude-plugin/marketplace.json",
+    "scientific-skills/imaging-data-commons/SKILL.md",
+    "scientific-skills/imaging-data-commons/references/bigquery_guide.md",
+    "scientific-skills/imaging-data-commons/references/dicomweb_guide.md",
+]
+
+[metadata.repo2env.reward_calibration]
+baseline_reward = 0.0
+loc_changed = 1748
+difficulty = "large"
+
+[metadata.repo2env.evaluation]
+schema_version = "1"
+status = "unverified"
+stage = "generation"
+reason_codes = [
+    "validation_not_run",
+]
+detail = "Generated task; validation has not been established."
+provenance = "unknown"
+evidence = []
+
+[metadata.repo2env.reproducibility]
+mode = "local_only"
+image_ref = "python:3.12-slim"
+image_tag = "python:3.12-slim"
+image_visibility = "private"
+
+[agent]
+timeout_sec = 1800.0
+
+[verifier]
+timeout_sec = 300.0

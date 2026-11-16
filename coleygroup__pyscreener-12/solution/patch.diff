@@ -1,0 +1,253 @@
+diff --git a/README.md b/README.md
+index 7cff1cd..0adf8b2 100644
+--- a/README.md
++++ b/README.md
+@@ -30,7 +30,7 @@ This repository contains the source of pyscreener, both a library and software f
+ 0. (if necessary) [install conda](https://docs.conda.io/projects/conda/en/latest/user-guide/install/)
+ 1. `conda create -n NAME python=3.8 pip openbabel openmm rdkit`
+ 1. `conda activate NAME`
+-1. `pip install pyscreener`
++1. `pip install pyscreener` (or if installing from source, `pip install .`)
+ 1. `pip install git+https://github.com/openmm/pdbfixer.git`
+ 1. follow the corresponding directions below for the intended software
+ 
+diff --git a/pyscreener/docking/dock/runner.py b/pyscreener/docking/dock/runner.py
+index 7490d83..1af6861 100644
+--- a/pyscreener/docking/dock/runner.py
++++ b/pyscreener/docking/dock/runner.py
+@@ -6,6 +6,7 @@
+ from typing import Mapping, Optional, Tuple, Union
+ 
+ from openbabel import pybel
++from rdkit.Chem import AllChem as Chem
+ import ray
+ 
+ from pyscreener.exceptions import MisconfiguredDirectoryError, MissingEnvironmentVariableError
+@@ -143,10 +144,15 @@ def prepare_from_smi(data: CalculationData) -> CalculationData:
+         """
+         mol2 = Path(data.in_path) / f"{data.name}.mol2"
+ 
++        mol = Chem.AddHs(Chem.MolFromSmiles(data.smi))
++        Chem.EmbedMolecule(mol)
++        Chem.MMFFOptimizeMolecule(mol)
++
+         try:
+-            mol = pybel.readstring(format="smi", string=data.smi)
+-            mol.make3D()
+-            mol.addh()
++            mol = pybel.readstring("mol", Chem.MolToMolBlock(mol))
++            # mol = pybel.readstring(format="smi", string=data.smi)
++            # mol.make3D()
++            # mol.addh()
+             mol.calccharges(model="gasteiger")
+         except Exception:
+             pass
+diff --git a/pyscreener/docking/screen.py b/pyscreener/docking/screen.py
+index f60e3f0..c704241 100644
+--- a/pyscreener/docking/screen.py
++++ b/pyscreener/docking/screen.py
+@@ -130,7 +130,9 @@ def __len__(self):
+         """the number of ligands that have been simulated. NOT the total number of simulations"""
+         return self.num_ligands
+ 
+-    def __call__(self, *sources: Iterable[Union[str, Iterable[str]]]) -> np.ndarray:
++    def __call__(
++        self, *sources: Iterable[Union[str, Iterable[str]]], smiles: bool = True
++    ) -> np.ndarray:
+         """dock all of the ligands and return an array of their scores
+ 
+         This function may be called with invidual ligand sources, lists of ligand sources, or a
+@@ -160,7 +162,7 @@ def __call__(self, *sources: Iterable[Union[str, Iterable[str]]]) -> np.ndarray:
+         """
+         sources = list(chain(*([s] if isinstance(s, str) else s for s in sources)))
+ 
+-        planned_simulationsss = self.plan(sources)
++        planned_simulationsss = self.plan(sources, smiles)
+         completed_simulationsss = self.run(planned_simulationsss)
+ 
+         self.completed_simulationsss.extend(completed_simulationsss)
+@@ -224,7 +226,7 @@ def all_results(self, flatten: bool = True) -> List[Result]:
+         ]
+         if flatten:
+             return list(chain(*(chain(*resultsss))))
+-        
++
+         return resultsss
+ 
+     def plan(
+@@ -272,7 +274,7 @@ def run(
+         ]
+         return [
+             [ray.get(refs) for refs in refss]
+-            for refss in tqdm(refsss, desc='Docking', unit='ligand', smoothing=0.)
++            for refss in tqdm(refsss, desc="Docking", unit="ligand", smoothing=0.0)
+         ]
+ 
+     @run_on_all_nodes
+diff --git a/pyscreener/docking/vina/runner.py b/pyscreener/docking/vina/runner.py
+index 51202d4..defc467 100644
+--- a/pyscreener/docking/vina/runner.py
++++ b/pyscreener/docking/vina/runner.py
+@@ -7,6 +7,7 @@
+ from typing import List, Optional, Tuple, Union
+ 
+ from openbabel import pybel
++from rdkit.Chem import AllChem as Chem
+ import ray
+ 
+ from pyscreener import utils
+@@ -91,15 +92,19 @@ def prepare_from_smi(data: CalculationData) -> CalculationData:
+         """
+         pdbqt = Path(data.in_path) / f"{data.name}.pdbqt"
+ 
+-        mol = pybel.readstring(format="smi", string=data.smi)
++        mol = Chem.AddHs(Chem.MolFromSmiles(data.smi))
++        Chem.EmbedMolecule(mol)
++        Chem.MMFFOptimizeMolecule(mol)
++
+         try:
+-            mol.make3D()
+-            mol.addh()
++            mol = pybel.readstring("mol", Chem.MolToMolBlock(mol))
++            # mol.make3D()
++            # mol.addh()
+             mol.calccharges(model="gasteiger")
+         except Exception:
+             pass
+ 
+-        mol.write(format="pdbqt", filename=str(pdbqt), overwrite=True, opt={"h": None})
++        mol.write("pdbqt", str(pdbqt), overwrite=True, opt={"h": None})
+         data.metadata.prepared_ligand = pdbqt
+ 
+         return data
+diff --git a/pyscreener/supply.py b/pyscreener/supply.py
+index 0fe1190..a853065 100644
+--- a/pyscreener/supply.py
++++ b/pyscreener/supply.py
+@@ -40,17 +40,17 @@ class LigandSupply(Iterable):
+     path : Optional[Path]
+         The path under which to output all prepared files. If None, prepare all input files in the
+         same directory as their parent file.
+-    
++
+     Parameters
+     ----------
+-    ligands : Iterable[str]
+-        the SMILES strings or files containing the molecules of the supplied inputs
+     filepaths : Iterable[Union[str, Path]]
+         the chemical supply files containing the molecules
+     formats : Optional[Iterable[Union[str, FileFormat]]], default=None
+-        the corresponding filetype for each input file. Can be supplied as either a string or a 
++        the corresponding filetype for each input file. Can be supplied as either a string or a
+         Filetype for each file. E.g., for a csv file, filetype can be "csv" or FileFormat.CSV.
+         If None, guess the type of each file
++    smis : Iterable[str], default=None
++        the SMILES strings corresponding to molecules to prepare
+     use_3d : bool, default=False
+         whether to use the input 3D geometry of the supplied molecules. Does nothing if the file is
+         a CSV or SMI file.
+@@ -67,12 +67,14 @@ class LigandSupply(Iterable):
+         NOTE: Unused. the name molecular property containing the molecule's ID
+     path : Optional[str], default=None
+         The path under which to output all prepared files. If None, prepare all input files in the
+-        same directory as their parent file.
++        same directory as their parent file and all SMILES strings in the current directory.
+     """
++
+     def __init__(
+         self,
+         filepaths: Iterable[Union[str, Path]],
+         formats: Optional[Iterable[Union[str, FileFormat]]] = None,
++        smis: Optional[Iterable[str]] = None,
+         use_3d: bool = False,
+         optimize: bool = False,
+         title_line: bool = True,
+@@ -137,7 +139,16 @@ def __init__(
+                         filepath, self.id_property, self.optimize, self.path
+                     )
+                 )
+-
++        if smis is not None:
++            if not self.optimize:
++                ligands.extend(smis)
++            else:
++                mols = [Chem.MolFromSmiles(smi) for smi in smis]
++                ligands.extend(
++                    LigandSupply.optimize_and_write_mols(
++                        mols, Path("ligand"), self.path
++                    )
++                )
+         self.ligands = ligands
+ 
+     def __len__(self):
+@@ -156,7 +167,7 @@ def get_ligands_from_csv(
+         smiles_col: int = 0,
+         name_col: int = 1,
+         optimize: bool = False,
+-        path: Optional[Path] = None
++        path: Optional[Path] = None,
+     ) -> list[str]:
+         with open(filepath) as fid:
+             reader = csv.reader(fid)
+@@ -176,7 +187,7 @@ def get_ligands_from_file(
+         filepath: Path,
+         use_3d: bool = False,
+         optimize: bool = False,
+-        path: Optional[Path] = None
++        path: Optional[Path] = None,
+     ) -> list[str]:
+         if use_3d:
+             return LigandSupply.split_file(filepath)
+@@ -199,7 +210,7 @@ def get_ligands_from_sdf(
+         id_property: Optional[str] = None,
+         use_3d: bool = False,
+         optimize: bool = False,
+-        path: Optional[Path] = None
++        path: Optional[Path] = None,
+     ) -> list[str]:
+         if use_3d:
+             return LigandSupply.split_file(filepath, path)
+@@ -216,7 +227,7 @@ def get_ligands_from_smi(
+         filepath: Path,
+         id_property: Optional[str] = None,
+         optimize: bool = False,
+-        path: Optional[Path] = None
++        path: Optional[Path] = None,
+     ) -> list[str]:
+         mols = Chem.SmilesMolSupplier(str(filepath))
+ 
+diff --git a/tests/test_supply.py b/tests/test_supply.py
+index 41dd8ae..2368760 100644
+--- a/tests/test_supply.py
++++ b/tests/test_supply.py
+@@ -22,7 +22,7 @@ def smis(request):
+     return request.param
+ 
+ 
+-@pytest.fixture(params=["csv", "smi", "sdf"])
++@pytest.fixture(params=["csv", "smi", "sdf", None])
+ def filetype(request):
+     return request.param
+ 
+@@ -89,13 +89,19 @@ def test_guess_filetype():
+ 
+ 
+ def test_ligands(smis, tmp_path, filetype):
+-    supply = LigandSupply([make_file(smis, tmp_path, filetype)])
++    if filetype is not None:
++        supply = LigandSupply([make_file(smis, tmp_path, filetype)])
++    else:
++        supply = LigandSupply([], smis=smis, path=tmp_path)
+ 
+     assert len(supply) == len(smis)
+ 
+ 
+ def test_optimize(smis, tmp_path, filetype):
+-    supply = LigandSupply([make_file(smis, tmp_path, filetype)], optimize=True)
++    if filetype is not None:
++        supply = LigandSupply([make_file(smis, tmp_path, filetype)], optimize=True, path=tmp_path)
++    else:
++        supply = LigandSupply([], smis=smis, optimize=True, path=tmp_path)
+ 
+     assert len(supply) == len(smis)
+ 

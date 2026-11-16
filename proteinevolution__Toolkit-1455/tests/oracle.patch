@@ -1,0 +1,94 @@
+diff --git a/frontend/index.html b/frontend/index.html
+index 7c21dc1fb..5fc77f36e 100644
+--- a/frontend/index.html
++++ b/frontend/index.html
+@@ -13,10 +13,6 @@
+                                           They are grouped into different sections that support sequence searches,
+                                           multiple alignment, secondary and tertiary structure prediction and classification."/>
+ 
+-    <!-- Google Fonts -->
+-    <link href="https://fonts.googleapis.com/css?family=Noto+Sans:400,700|Roboto:300|Source+Code+Pro:400,700|Vollkorn:400,700"
+-          rel="stylesheet">
+-
+     <link rel="shortcut icon" href="/favicon-green.svg">
+     <link id="tk-favicon" rel="shortcut icon" href="/favicon-32x32.png">
+     <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+diff --git a/frontend/src/App.vue b/frontend/src/App.vue
+index 40a2eafcb..5e0216a9f 100644
+--- a/frontend/src/App.vue
++++ b/frontend/src/App.vue
+@@ -279,6 +279,39 @@ $themeColor: $primary;
+ @import 'vue-slider-component/lib/theme/default.scss';
+ @import 'handy-scroll/dist/handy-scroll.css';
+ 
++@font-face {
++  font-family: 'Noto Sans';
++  src: url('./assets/fonts/NotoSans-Regular.ttf');
++  font-weight: 400;
++  font-style: normal;
++}
++
++@font-face {
++  font-family: 'Noto Sans';
++  src: url('./assets/fonts/NotoSans-Italic.ttf');
++  font-weight: 400;
++  font-style: italic;
++}
++
++@font-face {
++  font-family: 'Noto Sans';
++  src: url('./assets/fonts/NotoSans-Bold.ttf');
++  font-weight: 700;
++  font-style: normal;
++}
++
++@font-face {
++  font-family: 'Source Sans Pro';
++  src: url('./assets/fonts/SourceSansPro-Regular.ttf');
++  font-weight: 400;
++}
++
++@font-face {
++  font-family: 'Source Sans Pro';
++  src: url('./assets/fonts/SourceSansPro-Bold.ttf');
++  font-weight: 700;
++}
++
+ body {
+   overflow-y: scroll;
+   font-family: $font-family-sans-serif;
+diff --git a/frontend/src/assets/fonts/NotoSans-Bold.ttf b/frontend/src/assets/fonts/NotoSans-Bold.ttf
+new file mode 100644
+index 000000000..a24f7f3c9
+Binary files /dev/null and b/frontend/src/assets/fonts/NotoSans-Bold.ttf differ
+diff --git a/frontend/src/assets/fonts/NotoSans-Italic.ttf b/frontend/src/assets/fonts/NotoSans-Italic.ttf
+new file mode 100644
+index 000000000..fc80314b9
+Binary files /dev/null and b/frontend/src/assets/fonts/NotoSans-Italic.ttf differ
+diff --git a/frontend/src/assets/fonts/NotoSans-Regular.ttf b/frontend/src/assets/fonts/NotoSans-Regular.ttf
+new file mode 100644
+index 000000000..022f1575a
+Binary files /dev/null and b/frontend/src/assets/fonts/NotoSans-Regular.ttf differ
+diff --git a/frontend/src/assets/fonts/SourceSansPro-Bold.ttf b/frontend/src/assets/fonts/SourceSansPro-Bold.ttf
+new file mode 100644
+index 000000000..5a3aedca7
+Binary files /dev/null and b/frontend/src/assets/fonts/SourceSansPro-Bold.ttf differ
+diff --git a/frontend/src/assets/fonts/SourceSansPro-Regular.ttf b/frontend/src/assets/fonts/SourceSansPro-Regular.ttf
+new file mode 100644
+index 000000000..c4ad74d9a
+Binary files /dev/null and b/frontend/src/assets/fonts/SourceSansPro-Regular.ttf differ
+diff --git a/frontend/src/assets/scss/_variables.scss b/frontend/src/assets/scss/_variables.scss
+index 85924f916..df926e120 100644
+--- a/frontend/src/assets/scss/_variables.scss
++++ b/frontend/src/assets/scss/_variables.scss
+@@ -59,8 +59,8 @@ $modal-sm: 350px;
+ 
+ // TYPOGRAPHY
+ $font-size-base: 0.9rem;
+-$font-family-sans-serif: "Noto Sans", "Lucida Grande", "Lucida Sans Unicode", Geneva, Verdana, sans-serif;
+-$font-family-monospace: Consolas, "SFMono-Regular", "Source Code Pro", "Liberation Mono", Menlo, Courier, monospace;
++$font-family-sans-serif: "Noto Sans", Verdana, sans-serif;
++$font-family-monospace: Consolas, "Source Code Pro", Courier, monospace;
+ 
+ // MISC
+ $global-radius: 3px;

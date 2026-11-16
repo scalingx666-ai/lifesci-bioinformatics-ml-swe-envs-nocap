@@ -1,0 +1,13 @@
+diff --git a/project/plugins.sbt b/project/plugins.sbt
+index 6e6cf66a64..ed20e7c1a9 100644
+--- a/project/plugins.sbt
++++ b/project/plugins.sbt
+@@ -6,7 +6,7 @@ addSbtPlugin("com.typesafe.sbt" % "sbt-gzip" % "1.0.2")
+ 
+ addSbtPlugin("org.scoverage" % "sbt-scoverage" % "1.8.2")
+ 
+-addSbtPlugin("org.scalameta" % "sbt-scalafmt" % "2.4.2")
++addSbtPlugin("org.scalameta" % "sbt-scalafmt" % "2.4.3")
+ 
+ addSbtPlugin("com.eed3si9n" % "sbt-buildinfo" % "0.10.0")
+ 

@@ -1,0 +1,70 @@
+version = "1.0"
+
+[task]
+name = "default/swsoyee__r3dmol-12"
+description = "Update 3Dmol.js to 1.6.2"
+
+[metadata]
+difficulty = "large"
+category = "bugfix"
+keywords = [
+    "r3dmol",
+    "pr_diff",
+]
+
+[metadata.repo2env]
+pipeline = "pr_diff"
+pipeline_version = "0.3.0"
+repo = "swsoyee/r3dmol"
+ref = "1f402960cbd7af027966c3432297209675a00434"
+reference = "https://github.com/swsoyee/r3dmol/pull/12"
+source_access = "auto"
+built_at = "2026-11-16T04:45:08.889806+00:00"
+reward_kinds = [
+    "diff_similarity",
+]
+spec_version = "0.2.0"
+content_hash = "sha256:d6bde5b125e746290252cd3d2ca905a559b65fdfbd4ea6ed38182daf4ff45b1f"
+
+[metadata.repo2env.pr_diff]
+pr_merged_at = "2021-02-18T01:34:58Z"
+diff_format = "unified"
+context_files = [
+    "inst/htmlwidgets/lib/3Dmol-1.5.4/3Dmol-nojquery.js",
+    "inst/htmlwidgets/lib/3Dmol-1.5.4/3Dmol-nojquery.min.js",
+    "inst/htmlwidgets/lib/3Dmol-1.5.4/3Dmol.js",
+    "inst/htmlwidgets/lib/3Dmol-1.5.4/3Dmol.min.js",
+    "inst/htmlwidgets/lib/3Dmol/3Dmol-min.js",
+    "inst/htmlwidgets/lib/3Dmol/3Dmol-nojquery-min.js",
+    "inst/htmlwidgets/lib/3Dmol/3Dmol-nojquery.js",
+    "inst/htmlwidgets/lib/3Dmol/3Dmol.js",
+    "inst/htmlwidgets/r3dmol.yaml",
+]
+
+[metadata.repo2env.reward_calibration]
+baseline_reward = 0.0
+loc_changed = 152524
+difficulty = "large"
+
+[metadata.repo2env.evaluation]
+schema_version = "1"
+status = "unverified"
+stage = "generation"
+reason_codes = [
+    "validation_not_run",
+]
+detail = "Generated task; validation has not been established."
+provenance = "unknown"
+evidence = []
+
+[metadata.repo2env.reproducibility]
+mode = "local_only"
+image_ref = "python:3.12-slim"
+image_tag = "python:3.12-slim"
+image_visibility = "private"
+
+[agent]
+timeout_sec = 1800.0
+
+[verifier]
+timeout_sec = 300.0

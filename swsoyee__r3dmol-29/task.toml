@@ -1,0 +1,65 @@
+version = "1.0"
+
+[task]
+name = "default/swsoyee__r3dmol-29"
+description = "feat(button): add button implementation"
+
+[metadata]
+difficulty = "large"
+category = "bugfix"
+keywords = [
+    "r3dmol",
+    "pr_diff",
+]
+
+[metadata.repo2env]
+pipeline = "pr_diff"
+pipeline_version = "0.3.0"
+repo = "swsoyee/r3dmol"
+ref = "135aaf5512e2006aa1a9917a1d301d7a3c27b730"
+reference = "https://github.com/swsoyee/r3dmol/pull/29"
+source_access = "auto"
+built_at = "2026-11-16T04:44:59.725810+00:00"
+reward_kinds = [
+    "diff_similarity",
+]
+spec_version = "0.2.0"
+content_hash = "sha256:07bbf86f1713ee6e3066fd02aa5c171dcc637cbde09242f622afdc4ebe3b8342"
+
+[metadata.repo2env.pr_diff]
+pr_merged_at = "2021-03-12T22:28:14Z"
+diff_format = "unified"
+context_files = [
+    "NAMESPACE",
+    "R/button.R",
+    "inst/htmlwidgets/r3dmol.js",
+    "man/m_button.Rd",
+]
+
+[metadata.repo2env.reward_calibration]
+baseline_reward = 0.0
+loc_changed = 164
+difficulty = "large"
+
+[metadata.repo2env.evaluation]
+schema_version = "1"
+status = "unverified"
+stage = "generation"
+reason_codes = [
+    "validation_not_run",
+]
+detail = "Generated task; validation has not been established."
+provenance = "unknown"
+evidence = []
+
+[metadata.repo2env.reproducibility]
+mode = "local_only"
+image_ref = "python:3.12-slim"
+image_tag = "python:3.12-slim"
+image_visibility = "private"
+
+[agent]
+timeout_sec = 1800.0
+
+[verifier]
+timeout_sec = 300.0

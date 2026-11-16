@@ -1,0 +1,12 @@
+diff --git a/project/plugins.sbt b/project/plugins.sbt
+index 8723b09ed2..b5921fa5f6 100644
+--- a/project/plugins.sbt
++++ b/project/plugins.sbt
+@@ -12,6 +12,6 @@ addSbtPlugin("com.eed3si9n" % "sbt-buildinfo" % "0.10.0")
+ 
+ addSbtPlugin("com.github.sbt" % "sbt-release" % "1.1.0")
+ 
+-addSbtPlugin("de.heikoseeberger" % "sbt-header" % "5.6.0")
++addSbtPlugin("de.heikoseeberger" % "sbt-header" % "5.6.5")
+ 
+ resolvers += "Typesafe Repository".at("https://repo.typesafe.com/typesafe/maven-releases")

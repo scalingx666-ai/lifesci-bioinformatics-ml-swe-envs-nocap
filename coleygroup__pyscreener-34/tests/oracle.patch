@@ -1,0 +1,58 @@
+diff --git a/.github/workflows/CI.yaml b/.github/workflows/CI.yaml
+index 4489e91..6ec3235 100644
+--- a/.github/workflows/CI.yaml
++++ b/.github/workflows/CI.yaml
+@@ -50,7 +50,7 @@ jobs:
+     - name: Run tests
+       shell: bash -l {0}
+       run: |
+-        pytest -v -k "not vina" --cov=pyscreener --cov-report=xml --color=yes
++        pytest -k "not vina" --cov-report=xml --color=yes
+ 
+     - name: CodeCov
+       uses: codecov/codecov-action@v1
+diff --git a/pyproject.toml b/pyproject.toml
+index e2216b0..fb8de05 100644
+--- a/pyproject.toml
++++ b/pyproject.toml
+@@ -5,6 +5,17 @@ build-backend = "setuptools.build_meta"
+ [tool.setuptools_scm]
+ write_to = "pyscreener/_version.py"
+ 
++[tool.pytest.ini_options]
++addopts = "--cov pyscreener"
++
++[tool.coverage.run]
++branch = true
++omit = [
++    "pyscreener/dft/*",
++    "pyscreener/md/*",
++    "pyscreener/docking/dock/scripts/*"
++]
++
+ [tool.black]
+ line-length = 100
+ target-version = ["py38"]
+diff --git a/tests/5WIU.pdb b/test/5WIU.pdb
+similarity index 100%
+rename from tests/5WIU.pdb
+rename to test/5WIU.pdb
+diff --git a/test/__init__.py b/test/__init__.py
+new file mode 100644
+index 0000000..e69de29
+diff --git a/tests/test_autobox.py b/test/test_autobox.py
+similarity index 100%
+rename from tests/test_autobox.py
+rename to test/test_autobox.py
+diff --git a/tests/test_data.py b/test/test_data.py
+similarity index 100%
+rename from tests/test_data.py
+rename to test/test_data.py
+diff --git a/tests/test_supply.py b/test/test_supply.py
+similarity index 100%
+rename from tests/test_supply.py
+rename to test/test_supply.py
+diff --git a/tests/test_vina_runner.py b/test/test_vina_runner.py
+similarity index 100%
+rename from tests/test_vina_runner.py
+rename to test/test_vina_runner.py

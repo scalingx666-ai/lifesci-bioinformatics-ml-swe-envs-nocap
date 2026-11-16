@@ -1,0 +1,76 @@
+version = "1.0"
+
+[task]
+name = "default/swsoyee__r3dmol-17"
+description = "Multi lines"
+
+[metadata]
+difficulty = "large"
+category = "bugfix"
+keywords = [
+    "r3dmol",
+    "pr_diff",
+]
+
+[metadata.repo2env]
+pipeline = "pr_diff"
+pipeline_version = "0.3.0"
+repo = "swsoyee/r3dmol"
+ref = "93aea9f6b45d31814e5d1051ad43db91ffd2f88a"
+reference = "https://github.com/swsoyee/r3dmol/pull/17"
+source_access = "auto"
+built_at = "2026-11-16T04:45:06.640146+00:00"
+reward_kinds = [
+    "diff_similarity",
+]
+spec_version = "0.2.0"
+content_hash = "sha256:eac9179644a4e5d2badd2dd11d599544527fc293d2837bb784bfe0c858c5fd52"
+
+[metadata.repo2env.pr_diff]
+pr_merged_at = "2021-03-02T07:27:23Z"
+diff_format = "unified"
+context_files = [
+    "NAMESPACE",
+    "R/add.R",
+    "R/multi.R",
+    "R/rd.R",
+    "R/sel.R",
+    "R/utils.R",
+    "man/add_model.Rd",
+    "man/dot-m_multi_spec.Rd",
+    "man/m_add_cylinder.Rd",
+    "man/m_add_line.Rd",
+    "man/m_add_lines.Rd",
+    "man/m_multi_resi_sel.Rd",
+    "tests/testthat/test-add.R",
+    "tests/testthat/test-multi.R",
+    "vignettes/style-functions.Rmd",
+]
+
+[metadata.repo2env.reward_calibration]
+baseline_reward = 0.0
+loc_changed = 878
+difficulty = "large"
+
+[metadata.repo2env.evaluation]
+schema_version = "1"
+status = "unverified"
+stage = "generation"
+reason_codes = [
+    "validation_not_run",
+]
+detail = "Generated task; validation has not been established."
+provenance = "unknown"
+evidence = []
+
+[metadata.repo2env.reproducibility]
+mode = "local_only"
+image_ref = "python:3.12-slim"
+image_tag = "python:3.12-slim"
+image_visibility = "private"
+
+[agent]
+timeout_sec = 1800.0
+
+[verifier]
+timeout_sec = 300.0

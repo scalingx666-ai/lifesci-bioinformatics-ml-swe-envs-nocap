@@ -1,0 +1,18 @@
+diff --git a/.scalafmt.conf b/.scalafmt.conf
+index 5081bd52eb..615f576b22 100644
+--- a/.scalafmt.conf
++++ b/.scalafmt.conf
+@@ -7,11 +7,11 @@ rewrite.rules                    = [AvoidInfix, RedundantParens, SortImports, Pr
+ rewrite.sortModifiers.order      = [ "private", "protected", "final", "sealed", "abstract", "implicit", "override", "lazy" ]
+ spaces.inImportCurlyBraces       = true
+ binPack.literalArgumentLists     = false
+-unindentTopLevelOperators        = true
++indentOperator.exemptScope       = all
+ docstrings.style                 = Asterisk
+ optIn.breakChainOnFirstMethodDot = false
+ align.openParenDefnSite          = false
+ project.git                      = true
+ assumeStandardLibraryStripMargin = true
+-version                          = 3.3.3
++version                          = 3.5.0
+ runner.dialect                   = scala213

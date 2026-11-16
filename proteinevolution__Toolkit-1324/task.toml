@@ -1,0 +1,62 @@
+version = "1.0"
+
+[task]
+name = "default/proteinevolution__Toolkit-1324"
+description = "Update sbt-scalafmt to 2.4.4"
+
+[metadata]
+difficulty = "easy"
+category = "bugfix"
+keywords = [
+    "Toolkit",
+    "pr_diff",
+]
+
+[metadata.repo2env]
+pipeline = "pr_diff"
+pipeline_version = "0.3.0"
+repo = "proteinevolution/Toolkit"
+ref = "0fdf62460b678328c0579ade9771db64d9624557"
+reference = "https://github.com/proteinevolution/Toolkit/pull/1324"
+source_access = "auto"
+built_at = "2026-11-16T06:02:54.824964+00:00"
+reward_kinds = [
+    "diff_similarity",
+]
+spec_version = "0.2.0"
+content_hash = "sha256:c56383ffa460ad0b36513c7b34b39d1727d6dba238e60d339baf8df72a2c4e4a"
+
+[metadata.repo2env.pr_diff]
+pr_merged_at = "2021-11-19T09:57:52Z"
+diff_format = "unified"
+context_files = [
+    "project/plugins.sbt",
+]
+
+[metadata.repo2env.reward_calibration]
+baseline_reward = 0.0
+loc_changed = 2
+difficulty = "trivial"
+
+[metadata.repo2env.evaluation]
+schema_version = "1"
+status = "unverified"
+stage = "generation"
+reason_codes = [
+    "validation_not_run",
+]
+detail = "Generated task; validation has not been established."
+provenance = "unknown"
+evidence = []
+
+[metadata.repo2env.reproducibility]
+mode = "local_only"
+image_ref = "python:3.12-slim"
+image_tag = "python:3.12-slim"
+image_visibility = "private"
+
+[agent]
+timeout_sec = 1800.0
+
+[verifier]
+timeout_sec = 300.0

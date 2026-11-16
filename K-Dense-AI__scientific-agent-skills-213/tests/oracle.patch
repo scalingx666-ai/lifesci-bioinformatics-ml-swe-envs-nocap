@@ -1,0 +1,26 @@
+diff --git a/skills/rdkit/references/api_reference.md b/skills/rdkit/references/api_reference.md
+index 5a9804828..4640db138 100644
+--- a/skills/rdkit/references/api_reference.md
++++ b/skills/rdkit/references/api_reference.md
+@@ -24,7 +24,7 @@ The fundamental module for working with molecules.
+ **Writing Molecules:**
+ 
+ - `Chem.MolToSmiles(mol, isomericSmiles=True, canonical=True)` - Convert to SMILES
+-- `Chem.MolToSmarts(mol, isomericSmarts=False)` - Convert to SMARTS
++- `Chem.MolToSmarts(mol, isomericSmiles=False)` - Convert to SMARTS
+ - `Chem.MolToMolBlock(mol, includeStereo=True, confId=-1)` - Convert to MOL block
+ - `Chem.MolToMolFile(mol, filename, includeStereo=True, confId=-1)` - Write MOL file
+ - `Chem.MolToPDBBlock(mol, confId=-1)` - Convert to PDB block
+diff --git a/skills/rdkit/scripts/molecular_properties.py b/skills/rdkit/scripts/molecular_properties.py
+index 33fa02ce3..8e216e97d 100644
+--- a/skills/rdkit/scripts/molecular_properties.py
++++ b/skills/rdkit/scripts/molecular_properties.py
+@@ -62,7 +62,7 @@ def calculate_properties(mol):
+ 
+         # Flexibility
+         'Rotatable_Bonds': Descriptors.NumRotatableBonds(mol),
+-        'Fraction_Csp3': Descriptors.FractionCsp3(mol),
++        'Fraction_Csp3': Lipinski.FractionCSP3(mol),
+ 
+         # Complexity
+         'BertzCT': Descriptors.BertzCT(mol),

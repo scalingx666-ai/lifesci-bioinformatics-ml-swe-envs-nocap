@@ -1,0 +1,13 @@
+diff --git a/project/Dependencies.scala b/project/Dependencies.scala
+index 994cdaf1b..01a242b8b 100644
+--- a/project/Dependencies.scala
++++ b/project/Dependencies.scala
+@@ -33,7 +33,7 @@ object Dependencies {
+     "org.typelevel" %% "cats-effect"          % "3.3.14",
+     "co.fs2"        %% "fs2-core"             % "3.2.14",
+     "co.fs2"        %% "fs2-io"               % "3.2.14",
+-    "com.chuusai"   %% "shapeless"            % "2.3.9",
++    "com.chuusai"   %% "shapeless"            % "2.3.10",
+     "com.dripower"  %% "play-circe"           % "2814.2",
+     "io.circe"      %% "circe-generic"        % circeV,
+     "io.circe"      %% "circe-generic-extras" % circeV,

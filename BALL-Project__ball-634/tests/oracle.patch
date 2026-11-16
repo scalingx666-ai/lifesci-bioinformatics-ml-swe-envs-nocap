@@ -1,0 +1,415 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 9b90431b2e..eabb39f8bc 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -633,15 +633,30 @@ IF(BALL_HAS_VIEW)
+ 	)
+ ENDIF()
+ 
++# TODO read version from the command line (CTDConverter/CTDSchema versions), default to "master"
++
+ 
+ # TOOLS and Ballaxy targets
+ OPTION(BALL_BUILD_TOOLS "Build BALL command line tools (BALLTools)" ON)
+ OPTION(BALL_BUILD_BALLAXY "Build Ballaxy stubs. To create full Ballaxy instance including Galaxy also set -DBALLAXY_INSTANCE=ON" ON)
++OPTION(BALL_BUILD_CWL "Build CWL stubs." ON)
+ OPTION(BALLAXY_INSTANCE "Create working Ballaxy instance." OFF)
+ 
+ SET(TOOLS_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin/TOOLS")
+ SET(UTILS_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin/UTILITIES")
+ 
++## read the version for CTDSchema/CTDConverter if they are needed
++IF(BALL_BUILD_BALAXY OR BALL_BUILD_CWL)
++	IF (NOT CTDSCHEMA_VERSION)
++		MESSAGE(STATUS "Setting CTDSchema version to its default value (v1.7)")
++		SET(CTDSCHEMA_VERSION "v1.7")
++	ENDIF()
++	IF (NOT CTDCONVERTER_VERSION)
++		MESSAGE(STATUS "Setting CTDConverter version to its default value (v2.0)")
++		SET(CTDCONVERTER_VERSION "v2.0")
++	ENDIF()	
++ENDIF()
++
+ IF(BALL_BUILD_BALLAXY)
+ 	# Galaxy release version (GitHub release branch) can be changed via the the following CMake variable.
+ 	# Only used when using -DBALLAXY_INSTANCE=ON to create a full Ballaxy instance including Galaxy.
+@@ -653,13 +668,17 @@ IF(BALL_BUILD_BALLAXY)
+ 	ADD_SUBDIRECTORY(workflow_support/galaxy)
+ ENDIF()
+ 
++IF(BALL_BUILD_CWL)
++	# We need the TOOLS to generate the CWL stubs
++	SET(BALL_BUILD_TOOLS ON)
++	ADD_SUBDIRECTORY(workflow_support/cwl)
++ENDIF()
++
+ IF(BALL_BUILD_TOOLS)
+ 	ADD_SUBDIRECTORY(source/APPLICATIONS/TOOLS)
+ 	ADD_SUBDIRECTORY(source/APPLICATIONS/UTILITIES)
+ ENDIF()
+ 
+-
+-
+ ## add targets for Python modules
+ ADD_SUBDIRECTORY(source/PYTHON/EXTENSIONS)
+ 
+diff --git a/workflow_support/README.md b/workflow_support/README.md
+new file mode 100644
+index 0000000000..9c6a564e19
+--- /dev/null
++++ b/workflow_support/README.md
+@@ -0,0 +1,14 @@
++# BALL Workflow Support
++## Generating Task Descriptors
++
++All BALL TOOLS are able to generate a CTD file describing their inputs, outputs, parameters. These descriptors can then be transformed to other formats to be used in different workflow engines.
++
++Each supported format has a separate folder with specific information. Currently, [Galaxy] and [CWL] are supported. 
++
++The following common configure options are provided as `CMake` flags:
++- `CTDSCHEMA_VERSION` (default: `v1.7`): The tag/branch from the [CTDSchema GitHub repository](https://github.com/WorkflowConversion/CTDSchema) to use.  
++- `CTDCONVERTER_VERSION` (default: `v2.0`):  The tag/branch from the [CTDConverter GitHub repository](https://github.com/WorkflowConversion/CTDSConverter) to use.
++  
++
++[CWL]: https://github.com/common-workflow-language
++[Galaxy]: https://usegalaxy.org/
+diff --git a/workflow_support/common/generate_ctds.cmake.in b/workflow_support/common/generate_ctds.cmake.in
+new file mode 100644
+index 0000000000..f3cf5dc663
+--- /dev/null
++++ b/workflow_support/common/generate_ctds.cmake.in
+@@ -0,0 +1,11 @@
++# Generates the CTDs for the tools
++MESSAGE(STATUS "Generating CTDs")
++FILE(GLOB BALL_TOOLS "@TOOLS_RUNTIME_OUTPUT_DIRECTORY@/*")
++FOREACH(TOOL ${BALL_TOOLS})
++	GET_FILENAME_COMPONENT(TOOL_NAME ${TOOL} NAME)
++	EXECUTE_PROCESS(COMMAND "${TOOL}" -write_par "@CTD_OUTFILE_DIR@/${TOOL_NAME}.ctd"
++		OUTPUT_FILE "@LOGFILE_DIR@/ctd_generation_out.log"
++		ERROR_FILE "@LOGFILE_DIR@/ctd_generation_err.log"
++		WORKING_DIRECTORY @PROJECT_BINARY_DIR@
++	)
++ENDFOREACH()
+\ No newline at end of file
+diff --git a/workflow_support/common/install_ctdconverter.cmake.in b/workflow_support/common/install_ctdconverter.cmake.in
+new file mode 100644
+index 0000000000..545f3f34ae
+--- /dev/null
++++ b/workflow_support/common/install_ctdconverter.cmake.in
+@@ -0,0 +1,70 @@
++# Script to install CTDConverter and its dependencies via conda
++MESSAGE(STATUS "Installing CTDConverter and its dependencies")
++
++MESSAGE(STATUS "Using CTDConverter version @CTDCONVERTER_VERSION@")
++MESSAGE(STATUS "Using CTDSchema version @CTDSCHEMA_VERSION@")
++
++# Download Miniconda installer
++MESSAGE(STATUS "Installing miniconda")
++FILE(DOWNLOAD "https://repo.continuum.io/miniconda/@MINICONDA_INSTALLER@" "@PROJECT_BINARY_DIR@/@MINICONDA_INSTALLER@")
++
++# Install Miniconda
++EXECUTE_PROCESS(COMMAND sh @MINICONDA_INSTALLER@ -b -p @MINICONDA_INSTALL_DIR@
++	OUTPUT_FILE "@LOGFILE_DIR@/miniconda_install_out.log"
++	ERROR_FILE "@LOGFILE_DIR@/miniconda_install_err.log"
++	WORKING_DIRECTORY @PROJECT_BINARY_DIR@
++)
++
++# Install dependencies in the proper order: ctdopts, lxml, ruamel.yaml, downgraded libxml2
++# Install CTDopts
++MESSAGE(STATUS "Installing CTDopts (CTDConverter dependency)")
++EXECUTE_PROCESS(COMMAND "@MINICONDA_INSTALL_DIR@/bin/conda" install -y --channel workflowconversion ctdopts
++	OUTPUT_FILE "@LOGFILE_DIR@/miniconda_install_ctdopts_out.log"
++	ERROR_FILE "@LOGFILE_DIR@/miniconda_install_ctdopts_err.log"
++	WORKING_DIRECTORY @PROJECT_BINARY_DIR@
++)
++
++# Install Miniconda lxml
++MESSAGE(STATUS "Installing lxml (CTDConverter dependency)")
++EXECUTE_PROCESS(COMMAND "@MINICONDA_INSTALL_DIR@/bin/conda" install -y lxml
++	OUTPUT_FILE "@LOGFILE_DIR@/miniconda_install_lxml_out.log"
++	ERROR_FILE "@LOGFILE_DIR@/miniconda_install_lxml_err.log"
++	WORKING_DIRECTORY @PROJECT_BINARY_DIR@
++)
++
++# Install ruamel.yaml
++MESSAGE(STATUS "Installing ruamel.yaml (CTDConverter dependency)")
++EXECUTE_PROCESS(COMMAND "@MINICONDA_INSTALL_DIR@/bin/conda" install -y --channel conda-forge ruamel.yaml
++	OUTPUT_FILE "@LOGFILE_DIR@/miniconda_install_ruamel_yaml_out.log"
++	ERROR_FILE "@LOGFILE_DIR@/miniconda_install_ruamel_yaml_err.log"
++	WORKING_DIRECTORY @PROJECT_BINARY_DIR@
++)
++
++# lxml depends on libxml2; installing lxml installs libxml2 v2.9.4., which contains a bug in schema validation
++# so, we downgrade to the latest known version of libxml2 that works
++MESSAGE(STATUS "Downgrading libxml2 (CTDConverter dependency)")
++EXECUTE_PROCESS(COMMAND "@MINICONDA_INSTALL_DIR@/bin/conda" install -y libxml2=2.9.2
++        OUTPUT_FILE "@LOGFILE_DIR@/miniconda_install_libxml2_out.log"
++        ERROR_FILE "@LOGFILE_DIR@/miniconda_install_libxml2_err.log"
++        WORKING_DIRECTORY @PROJECT_BINARY_DIR@
++)
++
++# Clone CTDConverter
++IF(NOT EXISTS "@PROJECT_BINARY_DIR@/CTDConverter")
++	MESSAGE(STATUS "Cloning CTDConverter GitHub repository")
++	EXECUTE_PROCESS(COMMAND git clone --branch @CTDCONVERTER_VERSION@ https://github.com/WorkflowConversion/CTDConverter
++		OUTPUT_FILE "@LOGFILE_DIR@/ctdconverter_clone_out.log"
++		ERROR_FILE "@LOGFILE_DIR@/ctdconverter_clone_err.log"
++		WORKING_DIRECTORY @PROJECT_BINARY_DIR@
++	)	
++ENDIF()
++
++# Clone CTDSchema
++IF(NOT EXISTS "@PROJECT_BINARY_DIR@/CTDSchema")
++	MESSAGE(STATUS "Cloning CTDSchema GitHub repository")
++	EXECUTE_PROCESS(COMMAND git clone --branch @CTDSCHEMA_VERSION@ https://github.com/WorkflowConversion/CTDSchema
++		OUTPUT_FILE "@LOGFILE_DIR@/ctdschema_clone_out.log"
++		ERROR_FILE "@LOGFILE_DIR@/ctdschema_clone_err.log"
++		WORKING_DIRECTORY @PROJECT_BINARY_DIR@
++	)	
++ENDIF()
+diff --git a/workflow_support/cwl/CMakeLists.txt b/workflow_support/cwl/CMakeLists.txt
+new file mode 100644
+index 0000000000..59369938a8
+--- /dev/null
++++ b/workflow_support/cwl/CMakeLists.txt
+@@ -0,0 +1,40 @@
++# The name of the project to build
++PROJECT(CWL)
++
++# Check OS and set appropriate Miniconda setup file URL
++IF(WIN32)
++	SET(MINICONDA_INSTALLER "Miniconda2-latest-Windows-x86_64.exe")
++	# what now? SET(LD_LIBRARY_PATH_VAR "DYLD_LIBRARY_PATH")
++ELSEIF(APPLE)
++	SET(MINICONDA_INSTALLER "Miniconda2-latest-MacOSX-x86_64.sh")
++	SET(LD_LIBRARY_PATH_VAR "DYLD_LIBRARY_PATH")
++ELSE()
++	SET(MINICONDA_INSTALLER "Miniconda2-latest-Linux-x86_64.sh")
++	SET(LD_LIBRARY_PATH_VAR "LD_LIBRARY_PATH")
++ENDIF()
++
++
++# Set required output directories
++SET(MINICONDA_INSTALL_DIR "${PROJECT_BINARY_DIR}/miniconda")
++SET(CTD_OUTFILE_DIR "${PROJECT_BINARY_DIR}/ctd_files")
++SET(CWL_STUBS_DIR "${PROJECT_BINARY_DIR}/cwl_stubs")
++SET(LOGFILE_DIR "${PROJECT_BINARY_DIR}/log")
++
++# Configure file that will install CTDConverter and its dependencies
++CONFIGURE_FILE("${CMAKE_SOURCE_DIR}/workflow_support/common/install_ctdconverter.cmake.in" 
++               "${PROJECT_BINARY_DIR}/install_ctdconverter.cmake" @ONLY)
++
++# Configure file that will generate all CTDs
++CONFIGURE_FILE("${CMAKE_SOURCE_DIR}/workflow_support/common/generate_ctds.cmake.in" 
++               "${PROJECT_BINARY_DIR}/generate_ctds.cmake" @ONLY)
++
++# Configure CWL build file
++CONFIGURE_FILE("${PROJECT_SOURCE_DIR}/cwl_generator.cmake.in" 
++               "${PROJECT_BINARY_DIR}/cwl_generator.cmake" @ONLY)
++
++# Add cwl target
++ADD_CUSTOM_TARGET(cwl
++	COMMAND ${CMAKE_COMMAND} -P "${PROJECT_BINARY_DIR}/cwl_generator.cmake"
++	DEPENDS BALLTOOLS
++	COMMENT "Generating CWL stubs."
++)
+diff --git a/workflow_support/cwl/README.md b/workflow_support/cwl/README.md
+new file mode 100644
+index 0000000000..d94d5ef707
+--- /dev/null
++++ b/workflow_support/cwl/README.md
+@@ -0,0 +1,15 @@
++# CWL project
++## Generating Task Descriptors for CWL
++
++This folder contains a BALL dependent subproject to generate [CWL] task definitions for the BALL TOOLS. The project is configured and included by the top level BALL project. It is available as build target *cwl* and excluded from default build targets.
++
++The following configure options are provided as CMake flags:
++
++- `BALL_BUILD_CWL` (default: `ON`): Builds required [CWL] task descriptors to include BALL TOOLS in [CWL] workflows.
++
++To generate the [CWL] task descriptors, simply use the `cwl` target, like so:
++
++    $ make cwl
++ 
++
++[CWL]: https://github.com/common-workflow-language
+diff --git a/workflow_support/cwl/cwl_generator.cmake.in b/workflow_support/cwl/cwl_generator.cmake.in
+new file mode 100644
+index 0000000000..d9fd72b34a
+--- /dev/null
++++ b/workflow_support/cwl/cwl_generator.cmake.in
+@@ -0,0 +1,25 @@
++# Generate necessary directories
++FILE(MAKE_DIRECTORY @CTD_OUTFILE_DIR@)
++FILE(MAKE_DIRECTORY @CWL_STUBS_DIR@)
++FILE(MAKE_DIRECTORY @LOGFILE_DIR@)
++
++# Install CTDConverter and its dependencies
++INCLUDE(@PROJECT_BINARY_DIR@/install_ctdconverter.cmake)
++
++# Generate CTDs for BALLTools
++INCLUDE(@PROJECT_BINARY_DIR@/generate_ctds.cmake)
++
++# Generate CWL stubs
++MESSAGE(STATUS "Generating CWL task files")
++FILE(GLOB CTD_FILES "@CTD_OUTFILE_DIR@/*.ctd")
++
++EXECUTE_PROCESS(COMMAND "@MINICONDA_INSTALL_DIR@/bin/python" "convert.py"
++	cwl
++	--input ${CTD_FILES}
++	--output-destination @CWL_STUBS_DIR@
++	--validation-schema "@PROJECT_BINARY_DIR@/CTDSchema/CTD.xsd"
++	--blacklist help h write_par par env write_ini
++	OUTPUT_FILE "@LOGFILE_DIR@/cwl_gen_out.log"
++	ERROR_FILE "@LOGFILE_DIR@/cwl_gen_err.log"
++	WORKING_DIRECTORY "@PROJECT_BINARY_DIR@/CTDConverter"
++)
+diff --git a/workflow_support/galaxy/CMakeLists.txt b/workflow_support/galaxy/CMakeLists.txt
+index 58ce1c3b59..121a197955 100644
+--- a/workflow_support/galaxy/CMakeLists.txt
++++ b/workflow_support/galaxy/CMakeLists.txt
+@@ -19,9 +19,17 @@ SET(CTD_OUTFILE_DIR "${PROJECT_BINARY_DIR}/ctd_files")
+ SET(GALAXY_STUBS_DIR "${PROJECT_BINARY_DIR}/galaxy_stubs")
+ SET(LOGFILE_DIR "${PROJECT_BINARY_DIR}/log")
+ 
++# Configure file that will install CTDConverter and its dependencies
++CONFIGURE_FILE("${CMAKE_SOURCE_DIR}/workflow_support/common/install_ctdconverter.cmake.in" 
++               "${PROJECT_BINARY_DIR}/install_ctdconverter.cmake" @ONLY)
++
++# Configure file that will generate all CTDs
++CONFIGURE_FILE("${CMAKE_SOURCE_DIR}/workflow_support/common/generate_ctds.cmake.in" 
++               "${PROJECT_BINARY_DIR}/generate_ctds.cmake" @ONLY)
+ 
+ # Configure Ballaxy build file
+-CONFIGURE_FILE("${PROJECT_SOURCE_DIR}/ballaxy_generator.cmake.in" "${PROJECT_BINARY_DIR}/ballaxy_generator.cmake" @ONLY)
++CONFIGURE_FILE("${PROJECT_SOURCE_DIR}/ballaxy_generator.cmake.in" 
++               "${PROJECT_BINARY_DIR}/ballaxy_generator.cmake" @ONLY)
+ 
+ # Generate Galaxy startup file including necessary ENV variables
+ IF(${BALLAXY_INSTANCE})
+diff --git a/workflow_support/galaxy/README.md b/workflow_support/galaxy/README.md
+index 221c443dc8..63b6e49ee6 100644
+--- a/workflow_support/galaxy/README.md
++++ b/workflow_support/galaxy/README.md
+@@ -30,6 +30,10 @@ For a detailed description how a working Ballaxy instance can be setup using the
+ please have a look at the corresponding [Galaxy documentation] and a configured BALLAXY setup script 
+ for a full ballaxy instance (ball_build_dir/workflow_support/galaxy/ballaxy_generator.cmake).
+ 
++To generate the [Galaxy] *ToolConfigs* and all related files, simply use the `ballaxy` target, like so:
++
++    $ make ballaxy
++
+ 
+ [Galaxy]: https://galaxyproject.org
+ [Galaxy documentation]: https://new.galaxyproject.org/Admin/Tools/AddToolTutorial
+diff --git a/workflow_support/galaxy/ballaxy_generator.cmake.in b/workflow_support/galaxy/ballaxy_generator.cmake.in
+index 5e86611e18..f448fb2312 100644
+--- a/workflow_support/galaxy/ballaxy_generator.cmake.in
++++ b/workflow_support/galaxy/ballaxy_generator.cmake.in
+@@ -3,65 +3,18 @@ FILE(MAKE_DIRECTORY @CTD_OUTFILE_DIR@)
+ FILE(MAKE_DIRECTORY @GALAXY_STUBS_DIR@)
+ FILE(MAKE_DIRECTORY @LOGFILE_DIR@)
+ 
+-# Download Miniconda installer
+-FILE(DOWNLOAD "https://repo.continuum.io/miniconda/@MINICONDA_INSTALLER@" "@PROJECT_BINARY_DIR@/@MINICONDA_INSTALLER@")
+-
+-# Install Miniconda
+-EXECUTE_PROCESS(COMMAND sh @MINICONDA_INSTALLER@ -b -p @MINICONDA_INSTALL_DIR@
+-	OUTPUT_FILE "@LOGFILE_DIR@/miniconda_install_out.log"
+-	ERROR_FILE "@LOGFILE_DIR@/miniconda_install_err.log"
+-	WORKING_DIRECTORY @PROJECT_BINARY_DIR@
+-)
+-
+-# Install Miniconda lxml
+-EXECUTE_PROCESS(COMMAND "@MINICONDA_INSTALL_DIR@/bin/conda" install -y lxml
+-	OUTPUT_FILE "@LOGFILE_DIR@/miniconda_install_lxml_out.log"
+-	ERROR_FILE "@LOGFILE_DIR@/miniconda_install_lxml_err.log"
+-	WORKING_DIRECTORY @PROJECT_BINARY_DIR@
+-)
+-
+-# lxml depends on libxml2; installing lxml installs libxml2 v2.9.4., which contains a bug in schema validation
+-# so, we downgrade to the latest known version of libxml2 that works
+-EXECUTE_PROCESS(COMMAND "@MINICONDA_INSTALL_DIR@/bin/conda" install -y libxml2=2.9.2
+-        OUTPUT_FILE "@LOGFILE_DIR@/miniconda_install_libxml2_out.log"
+-        ERROR_FILE "@LOGFILE_DIR@/miniconda_install_libxml2_err.log"
+-        WORKING_DIRECTORY @PROJECT_BINARY_DIR@
+-)
+-
+-# Install Miniconda ctdopts
+-EXECUTE_PROCESS(COMMAND "@MINICONDA_INSTALL_DIR@/bin/conda" install -y -c workflowconversion ctdopts
+-	OUTPUT_FILE "@LOGFILE_DIR@/miniconda_install_ctd_out.log"
+-	ERROR_FILE "@LOGFILE_DIR@/miniconda_install_ctd_err.log"
+-	WORKING_DIRECTORY @PROJECT_BINARY_DIR@
+-)
+-
+-# Clone CTD2Galaxy and CTDSchema
+-IF(NOT EXISTS "@PROJECT_BINARY_DIR@/CTD2Galaxy")
+-	EXECUTE_PROCESS(COMMAND git clone https://github.com/WorkflowConversion/CTD2Galaxy
+-		OUTPUT_FILE "@LOGFILE_DIR@/ctd2galaxy_clone_out.log"
+-		ERROR_FILE "@LOGFILE_DIR@/ctd2galaxy_clone_err.log"
+-		WORKING_DIRECTORY @PROJECT_BINARY_DIR@
+-	)
+-ENDIF()
+-
++# Install CTDConverter and its dependencies
++INCLUDE(@PROJECT_BINARY_DIR@/install_ctdconverter.cmake)
+ 
+ # Generate CTDs for BALLTools
+-FILE(GLOB BALL_TOOLS "@TOOLS_RUNTIME_OUTPUT_DIRECTORY@/*")
+-
+-FOREACH(TOOL ${BALL_TOOLS})
+-	GET_FILENAME_COMPONENT(TOOL_NAME ${TOOL} NAME)
+-	EXECUTE_PROCESS(COMMAND "${TOOL}" -write_par "@CTD_OUTFILE_DIR@/${TOOL_NAME}.ctd"
+-		OUTPUT_FILE "@LOGFILE_DIR@/ctd_generation_out.log"
+-		ERROR_FILE "@LOGFILE_DIR@/ctd_generation_err.log"
+-		WORKING_DIRECTORY @PROJECT_BINARY_DIR@
+-	)
+-ENDFOREACH()
+-
++INCLUDE(@PROJECT_BINARY_DIR@/generate_ctds.cmake)
+ 
+ # Generate Galaxy XML stubs
++MESSAGE(STATUS "Generating Galaxy ToolConfig files")
+ FILE(GLOB CTD_FILES "@CTD_OUTFILE_DIR@/*.ctd")
+ 
+-EXECUTE_PROCESS(COMMAND "@MINICONDA_INSTALL_DIR@/bin/python" "CTD2Galaxy/generator.py"
++EXECUTE_PROCESS(COMMAND "@MINICONDA_INSTALL_DIR@/bin/python" "convert.py"
++	galaxy	
+ 	--input ${CTD_FILES}
+ 	--output-destination @GALAXY_STUBS_DIR@
+ 	--datatypes-destination "@GALAXY_STUBS_DIR@/datatypes_conf.xml"
+@@ -74,7 +27,7 @@ EXECUTE_PROCESS(COMMAND "@MINICONDA_INSTALL_DIR@/bin/python" "CTD2Galaxy/generat
+ 	--blacklist help h write_par par env write_ini
+ 	OUTPUT_FILE "@LOGFILE_DIR@/galaxy_xml_gen_out.log"
+ 	ERROR_FILE "@LOGFILE_DIR@/galaxy_xml_gen_err.log"
+-	WORKING_DIRECTORY @PROJECT_BINARY_DIR@
++	WORKING_DIRECTORY "@PROJECT_BINARY_DIR@/CTDConverter"
+ )
+ 
+ # Copy macros.xml
+@@ -101,24 +54,3 @@ EXECUTE_PROCESS(COMMAND ${CMAKE_COMMAND} -E create_symlink "@GALAXY_STUBS_DIR@"
+ 
+ # Deploy Ballaxy tool_conf.xml
+ EXECUTE_PROCESS(COMMAND ${CMAKE_COMMAND} -E copy "@GALAXY_STUBS_DIR@/tool_conf.xml" "@PROJECT_BINARY_DIR@/galaxy/config/tool_conf.xml")
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-

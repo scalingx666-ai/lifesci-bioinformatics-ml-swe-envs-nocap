@@ -1,0 +1,71 @@
+version = "1.0"
+
+[task]
+name = "default/K-Dense-AI__scientific-agent-skills-258"
+description = "Close two gaps in the skill link contract, and fix what they surface"
+
+[metadata]
+difficulty = "large"
+category = "bugfix"
+keywords = [
+    "scientific-agent-skills",
+    "pr_diff",
+]
+
+[metadata.repo2env]
+pipeline = "pr_diff"
+pipeline_version = "0.3.0"
+repo = "K-Dense-AI/scientific-agent-skills"
+ref = "1e5eeffbdad3749125afe7ab48a39694e27f181c"
+reference = "https://github.com/K-Dense-AI/scientific-agent-skills/pull/258"
+source_access = "auto"
+built_at = "2026-11-15T10:20:53.187795+00:00"
+reward_kinds = [
+    "diff_similarity",
+]
+spec_version = "0.2.0"
+content_hash = "sha256:a615f3c42dc1ebf90404644d914af75aeea23af3f0ea05ab89a0c7aa8c8737a7"
+
+[metadata.repo2env.pr_diff]
+pr_merged_at = "2026-09-10T22:54:38Z"
+diff_format = "unified"
+context_files = [
+    "skills/nextflow/SKILL.md",
+    "skills/nextflow/references/developing.md",
+    "skills/research-grants/SKILL.md",
+    "skills/research-grants/references/README.md",
+    "skills/scientific-critical-thinking/SKILL.md",
+    "skills/scientific-slides/SKILL.md",
+    "skills/scientific-slides/assets/powerpoint_design_guide.md",
+    "skills/scientific-slides/references/slide_capabilities.md",
+    "tests/_contract/structure.py",
+    "tests/_meta/test_repo_contract.py",
+]
+
+[metadata.repo2env.reward_calibration]
+baseline_reward = 0.0
+loc_changed = 171
+difficulty = "large"
+
+[metadata.repo2env.evaluation]
+schema_version = "1"
+status = "unverified"
+stage = "generation"
+reason_codes = [
+    "validation_not_run",
+]
+detail = "Generated task; validation has not been established."
+provenance = "unknown"
+evidence = []
+
+[metadata.repo2env.reproducibility]
+mode = "local_only"
+image_ref = "python:3.12-slim"
+image_tag = "python:3.12-slim"
+image_visibility = "private"
+
+[agent]
+timeout_sec = 1800.0
+
+[verifier]
+timeout_sec = 300.0

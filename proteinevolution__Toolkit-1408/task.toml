@@ -1,0 +1,65 @@
+version = "1.0"
+
+[task]
+name = "default/proteinevolution__Toolkit-1408"
+description = "Update scalafmt-core to 3.5.1"
+
+[metadata]
+difficulty = "small"
+category = "bugfix"
+keywords = [
+    "Toolkit",
+    "pr_diff",
+]
+
+[metadata.repo2env]
+pipeline = "pr_diff"
+pipeline_version = "0.3.0"
+repo = "proteinevolution/Toolkit"
+ref = "7bef0936a54f31ca0cfac36289ebf8fab59a1018"
+reference = "https://github.com/proteinevolution/Toolkit/pull/1408"
+source_access = "auto"
+built_at = "2026-11-16T06:00:26.025095+00:00"
+reward_kinds = [
+    "diff_similarity",
+]
+spec_version = "0.2.0"
+content_hash = "sha256:661da449771889d0cba5faa55f4b96f3c805963f09b1b5a8e6bf18e51b70a987"
+
+[metadata.repo2env.pr_diff]
+pr_merged_at = "2022-04-17T10:44:47Z"
+diff_format = "unified"
+context_files = [
+    ".scalafmt.conf",
+    "modules/auth/src/main/scala/de/proteinevolution/auth/models/MailTemplate.scala",
+    "modules/jobs/src/main/scala/de/proteinevolution/jobs/actors/JobActor.scala",
+    "modules/statistics/src/main/scala/de/proteinevolution/statistics/JobEventLog.scala",
+]
+
+[metadata.repo2env.reward_calibration]
+baseline_reward = 0.0
+loc_changed = 10
+difficulty = "small"
+
+[metadata.repo2env.evaluation]
+schema_version = "1"
+status = "unverified"
+stage = "generation"
+reason_codes = [
+    "validation_not_run",
+]
+detail = "Generated task; validation has not been established."
+provenance = "unknown"
+evidence = []
+
+[metadata.repo2env.reproducibility]
+mode = "local_only"
+image_ref = "python:3.12-slim"
+image_tag = "python:3.12-slim"
+image_visibility = "private"
+
+[agent]
+timeout_sec = 1800.0
+
+[verifier]
+timeout_sec = 300.0

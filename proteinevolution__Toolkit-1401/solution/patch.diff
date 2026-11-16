@@ -1,0 +1,10 @@
+diff --git a/project/plugins.sbt b/project/plugins.sbt
+index ca2d70002f..8c165ed04b 100644
+--- a/project/plugins.sbt
++++ b/project/plugins.sbt
+@@ -1,4 +1,4 @@
+-addSbtPlugin("com.typesafe.play" % "sbt-plugin" % "2.8.14")
++addSbtPlugin("com.typesafe.play" % "sbt-plugin" % "2.8.15")
+ 
+ addSbtPlugin("com.typesafe.sbt" % "sbt-digest" % "1.1.4")
+ 

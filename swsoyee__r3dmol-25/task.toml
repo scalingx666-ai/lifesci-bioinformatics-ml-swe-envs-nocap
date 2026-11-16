@@ -1,0 +1,68 @@
+version = "1.0"
+
+[task]
+name = "default/swsoyee__r3dmol-25"
+description = "feat(gridView): implement feature (#24)"
+
+[metadata]
+difficulty = "large"
+category = "bugfix"
+keywords = [
+    "r3dmol",
+    "pr_diff",
+]
+
+[metadata.repo2env]
+pipeline = "pr_diff"
+pipeline_version = "0.3.0"
+repo = "swsoyee/r3dmol"
+ref = "27a5ebbf965251097c081b4ded4c1d71d34d3a3f"
+reference = "https://github.com/swsoyee/r3dmol/pull/25"
+source_access = "auto"
+built_at = "2026-11-16T04:45:02.680596+00:00"
+reward_kinds = [
+    "diff_similarity",
+]
+spec_version = "0.2.0"
+content_hash = "sha256:cd6def9acd6f4c4a9814b835748f99d578721edf80aa48ab27ba7d57e6562399"
+
+[metadata.repo2env.pr_diff]
+pr_merged_at = "2021-03-09T03:59:57Z"
+diff_format = "unified"
+context_files = [
+    "NAMESPACE",
+    "NEWS.md",
+    "R/grid.R",
+    "R/r3dmol.R",
+    "inst/htmlwidgets/r3dmol.js",
+    "man/m_grid.Rd",
+    "vignettes/r3dmol.Rmd",
+]
+
+[metadata.repo2env.reward_calibration]
+baseline_reward = 0.0
+loc_changed = 294
+difficulty = "large"
+
+[metadata.repo2env.evaluation]
+schema_version = "1"
+status = "unverified"
+stage = "generation"
+reason_codes = [
+    "validation_not_run",
+]
+detail = "Generated task; validation has not been established."
+provenance = "unknown"
+evidence = []
+
+[metadata.repo2env.reproducibility]
+mode = "local_only"
+image_ref = "python:3.12-slim"
+image_tag = "python:3.12-slim"
+image_visibility = "private"
+
+[agent]
+timeout_sec = 1800.0
+
+[verifier]
+timeout_sec = 300.0

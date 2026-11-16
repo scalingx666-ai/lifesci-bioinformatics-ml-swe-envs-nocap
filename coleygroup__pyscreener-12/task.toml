@@ -1,0 +1,67 @@
+version = "1.0"
+
+[task]
+name = "default/coleygroup__pyscreener-12"
+description = "Feature/smiles input lig supply"
+
+[metadata]
+difficulty = "medium"
+category = "bugfix"
+keywords = [
+    "pyscreener",
+    "pr_diff",
+]
+
+[metadata.repo2env]
+pipeline = "pr_diff"
+pipeline_version = "0.3.0"
+repo = "coleygroup/pyscreener"
+ref = "06beae1045a0e1a31579300602863a86ddc486eb"
+reference = "https://github.com/coleygroup/pyscreener/pull/12"
+source_access = "auto"
+built_at = "2026-11-16T11:23:06.376629+00:00"
+reward_kinds = [
+    "diff_similarity",
+]
+spec_version = "0.2.0"
+content_hash = "sha256:2beb822d5ecab81059f213ec12bda954f6f527395069fe87459f3b3a836b0c6f"
+
+[metadata.repo2env.pr_diff]
+pr_merged_at = "2021-10-21T22:08:24Z"
+diff_format = "unified"
+context_files = [
+    "README.md",
+    "pyscreener/docking/dock/runner.py",
+    "pyscreener/docking/screen.py",
+    "pyscreener/docking/vina/runner.py",
+    "pyscreener/supply.py",
+    "tests/test_supply.py",
+]
+
+[metadata.repo2env.reward_calibration]
+baseline_reward = 0.0
+loc_changed = 80
+difficulty = "medium"
+
+[metadata.repo2env.evaluation]
+schema_version = "1"
+status = "unverified"
+stage = "generation"
+reason_codes = [
+    "validation_not_run",
+]
+detail = "Generated task; validation has not been established."
+provenance = "unknown"
+evidence = []
+
+[metadata.repo2env.reproducibility]
+mode = "local_only"
+image_ref = "python:3.12-slim"
+image_tag = "python:3.12-slim"
+image_visibility = "private"
+
+[agent]
+timeout_sec = 1800.0
+
+[verifier]
+timeout_sec = 300.0

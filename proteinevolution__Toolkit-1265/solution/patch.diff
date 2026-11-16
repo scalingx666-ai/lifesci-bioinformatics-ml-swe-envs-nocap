@@ -1,0 +1,7 @@
+diff --git a/project/build.properties b/project/build.properties
+index 9edb75b77c..10fd9eee04 100644
+--- a/project/build.properties
++++ b/project/build.properties
+@@ -1 +1 @@
+-sbt.version=1.5.4
++sbt.version=1.5.5

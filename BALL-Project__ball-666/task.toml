@@ -1,0 +1,65 @@
+version = "1.0"
+
+[task]
+name = "default/BALL-Project__ball-666"
+description = "fix(ufg-02): macOS rendering glitches for v1.7.0-rc2"
+
+[metadata]
+difficulty = "large"
+category = "bugfix"
+keywords = [
+    "ball",
+    "pr_diff",
+]
+
+[metadata.repo2env]
+pipeline = "pr_diff"
+pipeline_version = "0.3.0"
+repo = "BALL-Project/ball"
+ref = "94a6873d89e7fbc90cca0f0238499dad3035a9bc"
+reference = "https://github.com/BALL-Project/ball/pull/666"
+source_access = "auto"
+built_at = "2026-11-16T05:52:29.504639+00:00"
+reward_kinds = [
+    "diff_similarity",
+]
+spec_version = "0.2.0"
+content_hash = "sha256:63574ee3c08cc670711e053ddee7ccf6f55b573ab81b8487065f197ecb3c9167"
+
+[metadata.repo2env.pr_diff]
+pr_merged_at = "2026-05-18T09:55:54Z"
+diff_format = "unified"
+context_files = [
+    ".planning/v1.7-USER-FEEDBACK-GATE.md",
+    "source/APPLICATIONS/BALLVIEW/main.C",
+    "source/APPLICATIONS/BALLVIEW/mainframe.C",
+    "source/VIEW/KERNEL/theme/theme-neutral.qss",
+]
+
+[metadata.repo2env.reward_calibration]
+baseline_reward = 0.0
+loc_changed = 110
+difficulty = "large"
+
+[metadata.repo2env.evaluation]
+schema_version = "1"
+status = "unverified"
+stage = "generation"
+reason_codes = [
+    "validation_not_run",
+]
+detail = "Generated task; validation has not been established."
+provenance = "unknown"
+evidence = []
+
+[metadata.repo2env.reproducibility]
+mode = "local_only"
+image_ref = "python:3.12-slim"
+image_tag = "python:3.12-slim"
+image_visibility = "private"
+
+[agent]
+timeout_sec = 1800.0
+
+[verifier]
+timeout_sec = 300.0

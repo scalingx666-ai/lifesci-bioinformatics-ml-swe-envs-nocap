@@ -1,0 +1,16 @@
+diff --git a/.github/workflows/release.yml b/.github/workflows/release.yml
+index 6ce1810db..644163bf5 100644
+--- a/.github/workflows/release.yml
++++ b/.github/workflows/release.yml
+@@ -17,7 +17,7 @@ jobs:
+     
+     steps:
+       - name: Checkout repository
+-        uses: actions/checkout@v4
++        uses: actions/checkout@v6
+         with:
+           fetch-depth: 0  # Fetch all history for release notes
+       
+diff --git a/docs/k-dense-web.gif b/docs/k-dense-web.gif
+index 8190d3068..97e433743 100644
+Binary files a/docs/k-dense-web.gif and b/docs/k-dense-web.gif differ
